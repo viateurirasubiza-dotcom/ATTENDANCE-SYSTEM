@@ -1,0 +1,3756 @@
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎵 Choir Attendance System</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #06b6d4;
+            --bg: #f8fafc;
+            --bg-card: #ffffff;
+            --text: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --gradient-1: linear-gradient(135deg, #6366f1, #8b5cf6);
+            --gradient-2: linear-gradient(135deg, #10b981, #06b6d4);
+            --gradient-3: linear-gradient(135deg, #ef4444, #f59e0b);
+            --gradient-4: linear-gradient(135deg, #f59e0b, #ec4899);
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.12);
+            --radius: 16px;
+            --radius-lg: 24px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg: #0f172a;
+            --bg-card: #1e293b;
+            --text: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.08) 0%, transparent 40%);
+            z-index: -1;
+        }
+
+        /* LOADING SCREEN */
+        .loading-screen {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            color: white;
+        }
+
+        .loading-screen.hidden { display: none; }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255, 255, 255, 0.2);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .loading-screen h2 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .loading-screen p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* AUTH SCREEN */
+        .auth-screen {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        }
+
+        .auth-screen.hidden { display: none; }
+
+        .auth-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 440px;
+            width: 100%;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(40px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .auth-logo .icon {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-1);
+            color: white;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin: 0 auto 16px;
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.4);
+        }
+
+        .auth-logo h1 {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 6px;
+        }
+
+        .auth-logo p {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .auth-tabs {
+            display: flex;
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 24px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            border-radius: 10px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .auth-tab.active {
+            background: white;
+            color: #6366f1;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .auth-form { display: none; }
+        .auth-form.active { display: block; }
+
+        .auth-input-group {
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .auth-input-group i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 15px;
+        }
+
+        .auth-input-group input {
+            width: 100%;
+            padding: 14px 16px 14px 44px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: #f8fafc;
+            color: #1e293b;
+            font-family: inherit;
+            font-size: 14.5px;
+            transition: all 0.3s;
+        }
+
+        .auth-input-group input:focus {
+            outline: none;
+            border-color: #6366f1;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--gradient-1);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .auth-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4); }
+        .auth-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .auth-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .auth-error.active { display: block; }
+
+        /* PROFILE PHOTO UPLOAD (Auth) */
+        .auth-photo-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 18px;
+            cursor: pointer;
+        }
+
+        .auth-photo-preview {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            border: 3px dashed #cbd5e1;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .auth-photo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .auth-photo-upload:hover .auth-photo-preview {
+            border-color: #6366f1;
+            color: #6366f1;
+        }
+
+        .auth-photo-text {
+            font-size: 12px;
+            color: #64748b;
+            text-align: center;
+        }
+
+        /* APP */
+        .app { display: none; }
+        .app.active { display: block; }
+
+        /* HEADER */
+        .header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 14px; }
+
+        .menu-toggle {
+            display: none;
+            width: 40px; height: 40px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text);
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 19px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .logo i { font-size: 26px; }
+
+        .header-right { display: flex; align-items: center; gap: 12px; }
+
+        .live-clock {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--bg);
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .live-clock .dot {
+            width: 7px; height: 7px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            50% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+        }
+
+        .icon-btn {
+            width: 42px; height: 42px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .icon-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .user-chip {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 14px 6px 6px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 34px; height: 34px;
+            background: var(--gradient-1);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            overflow: hidden;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-chip span { font-size: 13px; font-weight: 600; }
+
+        /* LAYOUT */
+        .layout { display: flex; min-height: calc(100vh - 71px); }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 250px;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            padding: 24px 16px;
+            flex-shrink: 0;
+            overflow-y: auto;
+            transition: var(--transition);
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            padding: 0 12px;
+            margin: 18px 0 10px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition);
+            margin-bottom: 4px;
+            position: relative;
+        }
+
+        .nav-item:hover { background: var(--bg); color: var(--text); }
+
+        .nav-item.active {
+            background: linear-gradient(90deg, rgba(99, 102, 241, 0.12), transparent);
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 50%;
+            transform: translateY(-50%);
+            width: 3px; height: 60%;
+            background: var(--gradient-1);
+            border-radius: 0 3px 3px 0;
+        }
+
+        .nav-item i { font-size: 17px; width: 22px; text-align: center; }
+
+        .nav-item .count {
+            margin-left: auto;
+            background: var(--primary);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 50px;
+        }
+
+        /* MAIN */
+        .main { flex: 1; padding: 28px; overflow-y: auto; max-width: 100%; }
+
+        .page { display: none; animation: pageFade 0.4s ease; }
+        .page.active { display: block; }
+
+        @keyframes pageFade {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .page-header h1 { font-size: 26px; font-weight: 800; }
+        .page-header p { color: var(--text-secondary); font-size: 14px; margin-top: 4px; }
+
+        /* BUTTONS */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 22px;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .btn-primary { background: var(--gradient-1); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .btn-success { background: var(--gradient-2); color: white; }
+        .btn-success:hover { transform: translateY(-2px); }
+
+        .btn-danger { background: var(--gradient-3); color: white; }
+        .btn-danger:hover { transform: translateY(-2px); }
+
+        .btn-outline {
+            background: var(--bg-card);
+            color: var(--text);
+            border: 1.5px solid var(--border);
+        }
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+        .btn-sm { padding: 8px 14px; font-size: 12.5px; }
+        .btn-lg { padding: 16px 32px; font-size: 15px; border-radius: 14px; }
+
+        /* STATS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 22px;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+
+        .stat-icon {
+            width: 48px; height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            background: var(--gradient-1);
+            margin-bottom: 14px;
+        }
+
+        .stat-card.success .stat-icon { background: var(--gradient-2); }
+        .stat-card.danger .stat-icon { background: var(--gradient-3); }
+        .stat-card.warning .stat-icon { background: var(--gradient-4); }
+
+        .stat-value { font-size: 32px; font-weight: 800; margin-bottom: 4px; }
+        .stat-label { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
+
+        /* BANNER */
+        .new-attendance-banner {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            margin-bottom: 20px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .new-attendance-banner:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.4);
+        }
+
+        .new-attendance-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%; right: -10%;
+            width: 300px; height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .new-attendance-content {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .new-attendance-icon {
+            width: 70px; height: 70px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            flex-shrink: 0;
+        }
+
+        .new-attendance-text h2 { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+        .new-attendance-text p { opacity: 0.9; font-size: 14px; }
+
+        /* QR BANNER */
+        .qr-register-banner {
+            background: linear-gradient(135deg, #10b981, #06b6d4);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            margin-bottom: 32px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .qr-register-banner:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.4);
+        }
+
+        /* SECTION TITLE */
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .section-title i { color: var(--primary); }
+
+        /* SAVED LIST */
+        .saved-list { display: flex; flex-direction: column; gap: 14px; }
+
+        .saved-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            transition: var(--transition);
+        }
+
+        .saved-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+
+        .saved-info { flex: 1; min-width: 200px; }
+        .saved-info h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+        .saved-info h3 i { color: var(--primary); font-size: 15px; }
+
+        .saved-meta { display: flex; gap: 16px; font-size: 13px; color: var(--text-secondary); flex-wrap: wrap; }
+        .saved-meta span { display: flex; align-items: center; gap: 5px; }
+
+        .saved-percent {
+            background: var(--gradient-2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .saved-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+        .action-btn {
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .action-btn:hover { transform: translateY(-2px); }
+        .action-btn.view:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        .action-btn.pdf:hover { background: var(--danger); color: white; border-color: var(--danger); }
+        .action-btn.delete:hover { background: var(--danger); color: white; border-color: var(--danger); }
+        .action-btn.edit:hover { background: var(--warning); color: white; border-color: var(--warning); }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+            background: var(--bg-card);
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+        }
+
+        .empty-state .icon { font-size: 60px; color: var(--primary); opacity: 0.3; margin-bottom: 16px; }
+        .empty-state h3 { font-size: 18px; color: var(--text); margin-bottom: 8px; }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .modal {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.4s ease;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+        }
+
+        .modal-header h3 {
+            font-size: 19px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-header h3 i { color: var(--primary); }
+
+        .close-btn {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            border: none;
+            background: var(--bg);
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .close-btn:hover { background: var(--danger); color: white; transform: rotate(90deg); }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+        .form-group label span { color: var(--danger); }
+
+        .form-control {
+            width: 100%;
+            padding: 13px 16px;
+            border: 2px solid var(--border);
+            border-radius: 11px;
+            background: var(--bg);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--bg-card);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+        }
+
+        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
+
+        /* PHOTO UPLOAD (Modal) */
+        .photo-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding: 20px;
+            border: 2px dashed var(--border);
+            border-radius: 14px;
+            background: var(--bg);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .photo-upload:hover { border-color: var(--primary); background: rgba(99, 102, 241, 0.05); }
+
+        .photo-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        .photo-placeholder {
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 800;
+        }
+
+        .photo-upload-text { font-size: 13px; color: var(--text-secondary); text-align: center; }
+        .photo-upload-text strong { display: block; color: var(--primary); margin-bottom: 4px; font-size: 14px; }
+
+        /* ATTENDANCE TABLE */
+        .attendance-info-bar {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            border: 2px solid rgba(99, 102, 241, 0.2);
+            border-radius: var(--radius);
+            padding: 18px 22px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .attendance-info-bar .info h2 { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+        .attendance-info-bar .info p { font-size: 13px; color: var(--text-secondary); }
+
+        .counter-badge {
+            background: var(--gradient-2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .attendance-table {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .attendance-table table { width: 100%; border-collapse: collapse; }
+
+        .attendance-table th {
+            padding: 14px 18px;
+            text-align: left;
+            font-size: 11.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .attendance-table td {
+            padding: 14px 18px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .attendance-table tbody tr:last-child td { border-bottom: none; }
+        .attendance-table tbody tr { cursor: pointer; transition: background 0.2s; }
+        .attendance-table tbody tr:hover { background: var(--bg); }
+        .attendance-table tbody tr.checked { background: rgba(16, 185, 129, 0.05); }
+
+        .member-cell-row { display: flex; align-items: center; gap: 12px; }
+
+        .row-photo {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .row-avatar {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            border: 2px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .row-info .name { font-weight: 600; font-size: 14px; }
+        .row-info .id { font-size: 12px; color: var(--text-secondary); }
+
+        .voice-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .voice-badge.soprano { background: rgba(236, 72, 153, 0.12); color: #ec4899; }
+        .voice-badge.alto { background: rgba(6, 182, 212, 0.12); color: #06b6d4; }
+        .voice-badge.tenor { background: rgba(245, 158, 11, 0.12); color: #f59e0b; }
+        .voice-badge.bass { background: rgba(16, 185, 129, 0.12); color: #10b981; }
+
+        .tick-btn {
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            background: var(--bg-card);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--text-secondary);
+            transition: all 0.25s;
+        }
+
+        .tick-btn:hover { border-color: var(--success); color: var(--success); transform: scale(1.05); }
+
+        .tick-btn.checked {
+            background: var(--gradient-2);
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+            animation: tickPop 0.3s ease;
+        }
+
+        @keyframes tickPop {
+            0% { transform: scale(0.8); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+
+        .submit-bar {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            position: sticky;
+            bottom: 20px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .submit-bar .summary { font-size: 14px; font-weight: 600; }
+        .submit-bar .summary strong { color: var(--success); font-size: 18px; }
+
+        /* DETAIL MODAL */
+        .detail-header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .detail-header h2 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+        .detail-header p { color: var(--text-secondary); font-size: 13px; }
+
+        .detail-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+
+        .detail-stat {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 14px;
+            text-align: center;
+        }
+
+        .detail-stat .value { font-size: 24px; font-weight: 800; margin-bottom: 2px; }
+        .detail-stat .label { font-size: 11px; color: var(--text-secondary); text-transform: uppercase; font-weight: 600; }
+        .detail-stat.green .value { color: var(--success); }
+        .detail-stat.red .value { color: var(--danger); }
+        .detail-stat.blue .value { color: var(--primary); }
+
+        .view-table-wrapper {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .view-table-wrapper table { width: 100%; border-collapse: collapse; }
+
+        .view-table-wrapper th {
+            padding: 14px 18px;
+            text-align: left;
+            font-size: 11.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .view-table-wrapper td {
+            padding: 14px 18px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .view-table-wrapper tbody tr:last-child td { border-bottom: none; }
+
+        .view-row-photo { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); }
+        .view-row-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--gradient-1); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; }
+
+        /* CHART */
+        .chart-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 22px;
+            margin-bottom: 24px;
+        }
+
+        .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+        .chart-title { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .chart-title i { color: var(--primary); }
+
+        /* PHOTO GALLERY */
+        .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 18px; }
+
+        .photo-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .photo-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+        .photo-card img { width: 100%; height: 180px; object-fit: cover; }
+        .photo-card .photo-info { padding: 12px 14px; }
+        .photo-card .photo-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+
+        /* TABLE */
+        .table-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .table-header {
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .table-title { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 700; }
+        .table-title i { color: var(--primary); }
+        .table-wrapper { overflow-x: auto; }
+        .table-card table { width: 100%; border-collapse: collapse; }
+
+        .table-card th {
+            padding: 14px 20px;
+            text-align: left;
+            font-size: 11.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table-card td { padding: 14px 20px; font-size: 14px; border-bottom: 1px solid var(--border); }
+        .table-card tbody tr:hover { background: var(--bg); }
+        .table-card tbody tr:last-child td { border-bottom: none; }
+
+        /* SETTINGS */
+        .settings-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .settings-card h3 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .settings-card h3 i { color: var(--primary); }
+
+        /* PROFILE */
+        .profile-header {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            border-radius: var(--radius);
+            margin-bottom: 24px;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: 800;
+            margin: 0 auto 16px;
+            border: 4px solid white;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        .profile-avatar .camera-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .profile-avatar:hover .camera-overlay { opacity: 1; }
+
+        .profile-name { font-size: 24px; font-weight: 800; margin-bottom: 4px; }
+        .profile-email { color: var(--text-secondary); font-size: 14px; }
+
+        /* FILTER */
+        .filter-bar {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .filter-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .filter-group label { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+
+        .filter-select, .filter-input {
+            padding: 9px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 13.5px;
+            cursor: pointer;
+        }
+
+        .filter-select:focus, .filter-input:focus { outline: none; border-color: var(--primary); }
+
+        .search-box { position: relative; min-width: 220px; }
+        .search-box i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 14px 10px 40px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 13.5px;
+        }
+
+        .search-box input:focus { outline: none; border-color: var(--primary); }
+
+        /* PERIOD TABS */
+        .period-tabs {
+            display: flex;
+            gap: 8px;
+            background: var(--bg);
+            padding: 6px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+
+        .period-tab {
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .period-tab.active {
+            background: var(--bg-card);
+            color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        /* QR DISPLAY */
+        .qr-display {
+            text-align: center;
+            padding: 30px;
+            background: white;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+        }
+
+        .qr-display #qr-register-code { display: inline-block; padding: 20px; background: white; border-radius: 16px; }
+        .qr-display #qr-register-code img,
+        .qr-display #qr-register-code canvas { display: block !important; }
+
+        .qr-title { font-size: 20px; font-weight: 800; margin-bottom: 6px; color: #1e293b; }
+        .qr-subtitle { font-size: 13px; color: #64748b; margin-bottom: 20px; }
+
+        .qr-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .qr-actions .btn { width: 100%; }
+
+        /* TOAST */
+        .toast-container {
+            position: fixed;
+            top: 90px; right: 24px;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13.5px;
+            font-weight: 500;
+            box-shadow: var(--shadow-lg);
+            min-width: 280px;
+            max-width: 400px;
+            transform: translateX(500px);
+            opacity: 0;
+            transition: all 0.4s;
+            pointer-events: auto;
+            border-left: 4px solid var(--success);
+        }
+
+        .toast.show { transform: translateX(0); opacity: 1; }
+        .toast.error { border-left-color: var(--danger); }
+        .toast.warning { border-left-color: var(--warning); }
+        .toast.info { border-left-color: var(--info); }
+
+        .toast-icon {
+            width: 34px; height: 34px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            flex-shrink: 0;
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--success);
+        }
+
+        .toast.error .toast-icon { background: rgba(239, 68, 68, 0.12); color: var(--danger); }
+        .toast.warning .toast-icon { background: rgba(245, 158, 11, 0.12); color: var(--warning); }
+        .toast.info .toast-icon { background: rgba(6, 182, 212, 0.12); color: var(--info); }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .menu-toggle { display: flex; }
+            .sidebar {
+                position: fixed;
+                left: 0; top: 71px; bottom: 0;
+                z-index: 99;
+                transform: translateX(-100%);
+                box-shadow: var(--shadow-lg);
+            }
+            .sidebar.open { transform: translateX(0); }
+            .main { padding: 20px; }
+            .live-clock { display: none; }
+        }
+
+        @media (max-width: 600px) {
+            .header { padding: 12px 16px; }
+            .logo span { display: none; }
+            .user-chip span { display: none; }
+            .main { padding: 14px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .detail-stats { grid-template-columns: 1fr; }
+            .saved-card { flex-direction: column; align-items: stretch; }
+            .submit-bar { flex-direction: column; }
+            .submit-bar .btn { width: 100%; }
+            .qr-actions { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOADING SCREEN -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-spinner"></div>
+        <h2>Choir Attendance System</h2>
+        <p id="loadingText">Turashakisha amakuru...</p>
+    </div>
+
+    <!-- AUTH SCREEN -->
+    <div class="auth-screen hidden" id="authScreen">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <div class="icon"><i class="fas fa-music"></i></div>
+                <h1>Choir Attendance</h1>
+                <p>Injira muri sisitemu</p>
+            </div>
+
+            <div class="auth-tabs">
+                <div class="auth-tab active" onclick="switchAuth('login', event)">Injira</div>
+                <div class="auth-tab" onclick="switchAuth('signup', event)">Iyandikishe</div>
+            </div>
+
+            <div class="auth-error" id="authError"></div>
+
+            <!-- LOGIN -->
+            <div class="auth-form active" id="loginForm">
+                <div class="auth-input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="loginEmail" placeholder="Email yawe">
+                </div>
+                <div class="auth-input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="loginPassword" placeholder="Ijambo ry'ibanga">
+                </div>
+                <button class="auth-btn" id="loginBtn" onclick="handleLogin()">
+                    <i class="fas fa-sign-in-alt"></i> INJIRA
+                </button>
+            </div>
+
+            <!-- SIGNUP -->
+            <div class="auth-form" id="signupForm">
+                <div class="auth-photo-upload" onclick="document.getElementById('signupPhotoInput').click()">
+                    <div class="auth-photo-preview" id="signupPhotoPreview">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <div class="auth-photo-text">Kanda hano uongeremo ifoto yawe</div>
+                </div>
+                <input type="file" id="signupPhotoInput" accept="image/*" style="display: none;" onchange="previewSignupPhoto(event)">
+
+                <div class="auth-input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="signupName" placeholder="Amazina yawe">
+                </div>
+                <div class="auth-input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="signupEmail" placeholder="Email yawe">
+                </div>
+                <div class="auth-input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="signupPassword" placeholder="Ijambo ry'ibanga (nibura 6)">
+                </div>
+                <div class="auth-input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="signupConfirm" placeholder="Emeza ijambo ry'ibanga">
+                </div>
+                <button class="auth-btn" id="signupBtn" onclick="handleSignup()">
+                    <i class="fas fa-user-plus"></i> IYANDIKISHE
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- APP -->
+    <div class="app" id="app">
+
+        <header class="header">
+            <div class="header-left">
+                <button class="menu-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="logo">
+                    <i class="fas fa-music"></i>
+                    <span>Choir Attendance</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="live-clock">
+                    <span class="dot"></span>
+                    <span id="liveClock">--:--:--</span>
+                </div>
+                <button class="icon-btn" onclick="toggleTheme()" title="Theme">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </button>
+                <div class="user-chip" onclick="switchPage('profile', document.querySelectorAll('.nav-item')[7])">
+                    <div class="user-avatar" id="headerAvatar">?</div>
+                    <span id="headerName">...</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="layout">
+
+            <aside class="sidebar" id="sidebar">
+                <div class="nav-label">Menu Nyamukuru</div>
+                
+                <div class="nav-item active" onclick="switchPage('dashboard', this)">
+                    <i class="fas fa-home"></i><span>Ahabanza</span>
+                </div>
+                
+                <div class="nav-item" onclick="switchPage('members', this)">
+                    <i class="fas fa-users"></i><span>Abaririmbyi</span>
+                    <span class="count" id="sidebarMemberCount">0</span>
+                </div>
+                
+                <div class="nav-item" onclick="switchPage('attendance', this)">
+                    <i class="fas fa-calendar-check"></i><span>Ubwitabire</span>
+                    <span class="count" id="sidebarSessionCount">0</span>
+                </div>
+
+                <div class="nav-label">Isesengura</div>
+                
+                <div class="nav-item" onclick="switchPage('voices', this)">
+                    <i class="fas fa-microphone"></i><span>Amajwi</span>
+                </div>
+                
+                <div class="nav-item" onclick="switchPage('photos', this)">
+                    <i class="fas fa-camera"></i><span>Amafoto</span>
+                </div>
+                
+                <div class="nav-item" onclick="switchPage('reports', this)">
+                    <i class="fas fa-chart-line"></i><span>Raporo</span>
+                </div>
+
+                <div class="nav-label">Konti</div>
+                
+                <div class="nav-item" onclick="switchPage('profile', this)">
+                    <i class="fas fa-user-circle"></i><span>Profile</span>
+                </div>
+                
+                <div class="nav-item" onclick="switchPage('settings', this)">
+                    <i class="fas fa-cog"></i><span>Igenamiterere</span>
+                </div>
+
+                <div class="nav-item" onclick="handleLogout()" style="color: var(--danger);">
+                    <i class="fas fa-sign-out-alt"></i><span>Sohoka</span>
+                </div>
+            </aside>
+
+            <main class="main">
+
+                <!-- DASHBOARD -->
+                <div class="page active" id="page-dashboard">
+                    <div class="page-header">
+                        <div>
+                            <h1>Murakaza neza! 👋</h1>
+                            <p>Reba ubwitabire bw'abaririmbyi</p>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-users"></i></div>
+                            <div class="stat-value" id="statTotalMembers">0</div>
+                            <div class="stat-label">Abaririmbyi Bose</div>
+                        </div>
+                        <div class="stat-card success">
+                            <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+                            <div class="stat-value" id="statTotalSessions">0</div>
+                            <div class="stat-label">Iteraniro Ryakozwe</div>
+                        </div>
+                        <div class="stat-card warning">
+                            <div class="stat-icon"><i class="fas fa-percentage"></i></div>
+                            <div class="stat-value" id="statAvgPercent">0%</div>
+                            <div class="stat-label">Ubwitabire Rusange</div>
+                        </div>
+                        <div class="stat-card danger">
+                            <div class="stat-icon"><i class="fas fa-user-slash"></i></div>
+                            <div class="stat-value" id="statAbsentToday">0</div>
+                            <div class="stat-label">Bataje mu Iteraniro Rishize</div>
+                        </div>
+                    </div>
+
+                    <div class="new-attendance-banner" onclick="openCreateModal()">
+                        <div class="new-attendance-content">
+                            <div class="new-attendance-icon"><i class="fas fa-plus"></i></div>
+                            <div class="new-attendance-text">
+                                <h2>Kora Attendance Nshya</h2>
+                                <p>Kanda hano utangire iteraniro rishya</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qr-register-banner" onclick="openQRRegisterModal()">
+                        <div class="new-attendance-content">
+                            <div class="new-attendance-icon"><i class="fas fa-qrcode"></i></div>
+                            <div class="new-attendance-text">
+                                <h2>Kora QR y'Umuririmbyi Mushya</h2>
+                                <p>Umuririmbyi mushya ascane QR yiyandikishe</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-title">
+                        <i class="fas fa-folder-open"></i>
+                        <span>Saved Attendances</span>
+                        <span style="margin-left: auto; font-size: 13px; color: var(--text-secondary); font-weight: 500;" id="savedCount">0</span>
+                    </div>
+
+                    <div class="saved-list" id="savedList"></div>
+                </div>
+
+                <!-- CREATE ATTENDANCE -->
+                <div class="page" id="page-create">
+                    <div class="page-header">
+                        <div>
+                            <h1>📋 Kora Attendance</h1>
+                            <p>Kanda ku muririmbyi wese waje</p>
+                        </div>
+                        <button class="btn btn-outline" onclick="cancelCreate()">
+                            <i class="fas fa-times"></i> Hagarika
+                        </button>
+                    </div>
+
+                    <div class="attendance-info-bar">
+                        <div class="info">
+                            <h2 id="currentSessionName">-</h2>
+                            <p id="currentSessionMeta">-</p>
+                        </div>
+                        <div class="counter-badge">
+                            <i class="fas fa-check-circle"></i>
+                            <span id="counterText">0 / 0</span>
+                        </div>
+                    </div>
+
+                    <div class="search-box" style="margin-bottom: 16px;">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchMember" placeholder="Shakisha umuririmbyi..." oninput="filterMembersList()">
+                    </div>
+
+                    <div class="attendance-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">#</th>
+                                    <th>Umuririmbyi</th>
+                                    <th>Nimero</th>
+                                    <th>Ijwi</th>
+                                    <th style="width: 100px; text-align: center;">Yaje?</th>
+                                </tr>
+                            </thead>
+                            <tbody id="membersTableBody"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="submit-bar">
+                        <div class="summary">
+                            <i class="fas fa-users" style="color: var(--primary);"></i>
+                            Baje: <strong id="submitCount">0</strong> / <span id="submitTotal">0</span>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-outline" onclick="cancelCreate()">
+                                <i class="fas fa-times"></i> Hagarika
+                            </button>
+                            <button class="btn btn-success btn-lg" id="submitBtn" onclick="submitAttendance()">
+                                <i class="fas fa-check"></i> SUBMIT
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MEMBERS -->
+                <div class="page" id="page-members">
+                    <div class="page-header">
+                        <div>
+                            <h1>👥 Abaririmbyi</h1>
+                            <p>Manage abaririmbyi bose</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="openAddMemberModal()">
+                            <i class="fas fa-user-plus"></i> Ongeraho
+                        </button>
+                    </div>
+
+                    <div class="filter-bar">
+                        <div class="filter-group">
+                            <label>Ijwi:</label>
+                            <select class="filter-select" id="membersFilterVoice" onchange="renderMembers()">
+                                <option value="">Bose</option>
+                                <option value="Soprano">Soprano</option>
+                                <option value="Alto">Alto</option>
+                                <option value="Tenor">Tenor</option>
+                                <option value="Bass">Bass</option>
+                            </select>
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="membersSearch" placeholder="Shakisha..." oninput="renderMembers()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-card">
+                        <div class="table-header">
+                            <div class="table-title">
+                                <i class="fas fa-users"></i>
+                                Abaririmbyi Bose (<span id="membersCount">0</span>)
+                            </div>
+                        </div>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Umuririmbyi</th>
+                                        <th>Nimero</th>
+                                        <th>Ijwi</th>
+                                        <th>Ibikorwa</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="membersBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ATTENDANCE HISTORY -->
+                <div class="page" id="page-attendance">
+                    <div class="page-header">
+                        <div>
+                            <h1>📅 Ubwitabire</h1>
+                            <p>Amateka yose y'ubwitabire</p>
+                        </div>
+                    </div>
+
+                    <div class="period-tabs">
+                        <div class="period-tab active" onclick="switchPeriod('all', this)">
+                            <i class="fas fa-list"></i> Byose
+                        </div>
+                        <div class="period-tab" onclick="switchPeriod('day', this)">
+                            <i class="fas fa-sun"></i> Uyu Munsi
+                        </div>
+                        <div class="period-tab" onclick="switchPeriod('week', this)">
+                            <i class="fas fa-calendar-week"></i> Iki Cyumweru
+                        </div>
+                        <div class="period-tab" onclick="switchPeriod('month', this)">
+                            <i class="fas fa-calendar-alt"></i> Uku Kwezi
+                        </div>
+                    </div>
+
+                    <div class="saved-list" id="attendanceHistoryList"></div>
+                </div>
+
+                <!-- VOICES -->
+                <div class="page" id="page-voices">
+                    <div class="page-header">
+                        <div>
+                            <h1>🎤 Amajwi</h1>
+                            <p>Isesengura ry'amajwi y'abaririmbyi</p>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #ec4899, #f472b6);"><i class="fas fa-microphone"></i></div>
+                            <div class="stat-value" id="voiceStatSoprano">0</div>
+                            <div class="stat-label">Soprano</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #06b6d4, #22d3ee);"><i class="fas fa-microphone"></i></div>
+                            <div class="stat-value" id="voiceStatAlto">0</div>
+                            <div class="stat-label">Alto</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #fbbf24);"><i class="fas fa-microphone"></i></div>
+                            <div class="stat-value" id="voiceStatTenor">0</div>
+                            <div class="stat-label">Tenor</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #34d399);"><i class="fas fa-microphone"></i></div>
+                            <div class="stat-value" id="voiceStatBass">0</div>
+                            <div class="stat-label">Bass</div>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-title">
+                                <i class="fas fa-chart-bar"></i> Umubare w'Abaririmbyi ku Majwi
+                            </div>
+                        </div>
+                        <canvas id="voiceChart" height="100"></canvas>
+                    </div>
+                </div>
+
+                <!-- PHOTOS -->
+                <div class="page" id="page-photos">
+                    <div class="page-header">
+                        <div>
+                            <h1>📸 Amafoto</h1>
+                            <p>Gallery y'amafoto y'abaririmbyi</p>
+                        </div>
+                    </div>
+                    <div class="photo-grid" id="photoGrid"></div>
+                </div>
+
+                <!-- REPORTS -->
+                <div class="page" id="page-reports">
+                    <div class="page-header">
+                        <div>
+                            <h1>📈 Raporo</h1>
+                            <p>Kora raporo z'ubwitabire</p>
+                        </div>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3><i class="fas fa-file-alt"></i> Kora Raporo</h3>
+                        
+                        <div class="form-group">
+                            <label>Ubwoko bwa raporo</label>
+                            <select class="form-control" id="reportType">
+                                <option value="daily">📅 Raporo y'Umunsi</option>
+                                <option value="weekly">📆 Raporo y'Icyumweru</option>
+                                <option value="monthly">🗓️ Raporo y'Ukwezi</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Kuva</label>
+                            <input type="date" class="form-control" id="reportFrom">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Kugeza</label>
+                            <input type="date" class="form-control" id="reportTo">
+                        </div>
+
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button class="btn btn-primary" onclick="generateReport()">
+                                <i class="fas fa-chart-line"></i> Kora Raporo
+                            </button>
+                            <button class="btn btn-danger" onclick="downloadReport()">
+                                <i class="fas fa-download"></i> Download PDF
+                            </button>
+                            <button class="btn btn-success" onclick="downloadReportExcel()">
+                                <i class="fas fa-file-excel"></i> Download Excel
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid" id="reportStats" style="display: none;">
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-calendar"></i></div>
+                            <div class="stat-value" id="reportDays">0</div>
+                            <div class="stat-label">Iteraniro</div>
+                        </div>
+                        <div class="stat-card success">
+                            <div class="stat-icon"><i class="fas fa-check"></i></div>
+                            <div class="stat-value" id="reportAvg">0%</div>
+                            <div class="stat-label">Ubwitabire Rusange</div>
+                        </div>
+                        <div class="stat-card warning">
+                            <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+                            <div class="stat-value" id="reportTop" style="font-size: 16px;">-</div>
+                            <div class="stat-label">Umuririmbyi Waje Cyane</div>
+                        </div>
+                    </div>
+
+                    <div id="reportDetailsContainer" style="display: none;">
+                        <div class="table-card">
+                            <div class="table-header">
+                                <div class="table-title">
+                                    <i class="fas fa-list"></i> Amakuru yuzuye
+                                </div>
+                            </div>
+                            <div class="table-wrapper" id="reportTableWrapper"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PROFILE -->
+                <div class="page" id="page-profile">
+                    <div class="page-header">
+                        <div>
+                            <h1>👤 Profile</h1>
+                            <p>Amakuru yawe bwite</p>
+                        </div>
+                    </div>
+
+                    <div class="profile-header">
+                        <div class="profile-avatar" onclick="document.getElementById('profilePhotoInput').click()">
+                            <div id="profileAvatarContent">?</div>
+                            <div class="camera-overlay">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                        </div>
+                        <input type="file" id="profilePhotoInput" accept="image/*" style="display: none;" onchange="uploadProfilePhoto(event)">
+                        <div class="profile-name" id="profileName">...</div>
+                        <div class="profile-email" id="profileEmail">...</div>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3><i class="fas fa-user-edit"></i> Hindura Profile</h3>
+                        <div class="form-group">
+                            <label>Amazina</label>
+                            <input type="text" class="form-control" id="profileInputName">
+                        </div>
+                        <div class="form-group">
+                            <label>Telefone</label>
+                            <input type="text" class="form-control" id="profileInputPhone" placeholder="0788123456">
+                        </div>
+                        <button class="btn btn-primary" onclick="saveProfile()">
+                            <i class="fas fa-save"></i> Bika Profile
+                        </button>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3><i class="fas fa-lock"></i> Hindura Ijambo ry'Ibanga</h3>
+                        <div class="form-group">
+                            <label>Ijambo ry'ibanga rya kera</label>
+                            <input type="password" class="form-control" id="oldPassword">
+                        </div>
+                        <div class="form-group">
+                            <label>Ijambo ry'ibanga rishya</label>
+                            <input type="password" class="form-control" id="newPassword">
+                        </div>
+                        <button class="btn btn-primary" onclick="changePassword()">
+                            <i class="fas fa-key"></i> Hindura
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SETTINGS -->
+                <div class="page" id="page-settings">
+                    <div class="page-header">
+                        <div>
+                            <h1>⚙️ Igenamiterere</h1>
+                            <p>Genzura sisitemu</p>
+                        </div>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3><i class="fas fa-users-cog"></i> Amakuru y'Itsinda</h3>
+                        <div class="form-group">
+                            <label>Izina ry'itsinda</label>
+                            <input type="text" class="form-control" value="Choir Imanzi" id="choirName">
+                        </div>
+                        <button class="btn btn-primary" onclick="saveSettings()">
+                            <i class="fas fa-save"></i> Bika
+                        </button>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3><i class="fas fa-palette"></i> Ibara</h3>
+                        <button class="btn btn-outline" onclick="toggleTheme()">
+                            <i class="fas fa-adjust"></i> Dark / Light Mode
+                        </button>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3><i class="fas fa-database"></i> Data</h3>
+                        <button class="btn btn-outline" onclick="exportData()">
+                            <i class="fas fa-download"></i> Kura Data Yose (JSON)
+                        </button>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+    <div class="modal-overlay" id="createModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-calendar-plus"></i> Iteraniro Rishya</h3>
+                <button class="close-btn" onclick="closeModal('createModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="form-group">
+                <label>Izina ry'Iteraniro <span>*</span></label>
+                <input type="text" class="form-control" id="sessionName" placeholder="Iteraniro rya ...">
+            </div>
+
+            <div class="form-group">
+                <label>Itariki <span>*</span></label>
+                <input type="date" class="form-control" id="sessionDate">
+            </div>
+
+            <div class="form-group">
+                <label>Isaha <span>*</span></label>
+                <input type="time" class="form-control" id="sessionTime" value="18:00">
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeModal('createModal')">Hagarika</button>
+                <button class="btn btn-primary" onclick="startAttendance()">
+                    <i class="fas fa-arrow-right"></i> KOMEZA
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="qrRegisterModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-qrcode"></i> QR y'Umuririmbyi Mushya</h3>
+                <button class="close-btn" onclick="closeModal('qrRegisterModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <p style="margin-bottom: 20px; color: var(--text-secondary); font-size: 14px;">
+                Ha umuririmbyi mushya iyi QR code. Iyo ayiscanise, ashyirwa kuri <strong>member.html</strong> aho yiyandikisha.
+            </p>
+
+            <div class="qr-display">
+                <div class="qr-title">Iyandikishe nk'Umuririmbyi</div>
+                <div class="qr-subtitle">Scan iyi QR ukoresheje telefone</div>
+                <div id="qr-register-code"></div>
+            </div>
+
+            <div class="qr-actions">
+                <button class="btn btn-primary" onclick="downloadQRRegister()">
+                    <i class="fas fa-download"></i> Download PNG
+                </button>
+                <button class="btn btn-info" onclick="copyQRRegisterLink()">
+                    <i class="fas fa-link"></i> Copy Link
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="addMemberModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> Ongeraho Umuririmbyi</h3>
+                <button class="close-btn" onclick="closeModal('addMemberModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="form-group">
+                <label>Ifoto y'Umuririmbyi</label>
+                <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
+                    <div id="photoPreviewContainer">
+                        <div class="photo-placeholder">📷</div>
+                    </div>
+                    <div class="photo-upload-text">
+                        <strong>Kanda hano uongeremo ifoto</strong>
+                        JPG, PNG (max 5MB)
+                    </div>
+                </div>
+                <input type="file" id="photoInput" accept="image/*" style="display: none;" onchange="previewPhoto(event)">
+            </div>
+
+            <div class="form-group">
+                <label>Amazina <span>*</span></label>
+                <input type="text" class="form-control" id="newName" placeholder="Uwase Marie">
+            </div>
+            <div class="form-group">
+                <label>Nimero <span>*</span></label>
+                <input type="text" class="form-control" id="newNumber" placeholder="CH-001">
+            </div>
+            <div class="form-group">
+                <label>Ijwi <span>*</span></label>
+                <select class="form-control" id="newVoice">
+                    <option value="">-- Hitamo --</option>
+                    <option value="Soprano">Soprano</option>
+                    <option value="Alto">Alto</option>
+                    <option value="Tenor">Tenor</option>
+                    <option value="Bass">Bass</option>
+                </select>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeModal('addMemberModal')">Hagarika</button>
+                <button class="btn btn-primary" id="addMemberBtn" onclick="addMember()">
+                    <i class="fas fa-save"></i> Bika
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="editMemberModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i> Hindura Umuririmbyi</h3>
+                <button class="close-btn" onclick="closeModal('editMemberModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="form-group">
+                <label>Ifoto</label>
+                <div class="photo-upload" onclick="document.getElementById('editPhotoInput').click()">
+                    <div id="editPhotoPreviewContainer">
+                        <div class="photo-placeholder">📷</div>
+                    </div>
+                    <div class="photo-upload-text">
+                        <strong>Kanda uhindure ifoto</strong>
+                    </div>
+                </div>
+                <input type="file" id="editPhotoInput" accept="image/*" style="display: none;" onchange="previewEditPhoto(event)">
+            </div>
+
+            <input type="hidden" id="editMemberId">
+            <div class="form-group"><label>Amazina</label><input type="text" class="form-control" id="editName"></div>
+            <div class="form-group"><label>Nimero</label><input type="text" class="form-control" id="editNumber"></div>
+            <div class="form-group">
+                <label>Ijwi</label>
+                <select class="form-control" id="editVoice">
+                    <option value="Soprano">Soprano</option>
+                    <option value="Alto">Alto</option>
+                    <option value="Tenor">Tenor</option>
+                    <option value="Bass">Bass</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeModal('editMemberModal')">Hagarika</button>
+                <button class="btn btn-primary" id="saveEditBtn" onclick="saveEditMember()">
+                    <i class="fas fa-save"></i> Bika
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-eye"></i> Amakuru y'Iteraniro</h3>
+                <button class="close-btn" onclick="closeModal('detailModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="detailContent"></div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ============================================
+         FIREBASE + APP CODE
+         ============================================ -->
+    <script type="module">
+        // ============================================
+        // 🔥 FIREBASE CONFIG — SHYIRAMO YAWE HANO
+        // ============================================
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+        import { 
+            getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, 
+            query, orderBy, where, serverTimestamp, setDoc, getDoc 
+        } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+        import { 
+            getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, 
+            signOut, onAuthStateChanged, updateProfile, updatePassword, 
+            EmailAuthProvider, reauthenticateWithCredential
+        } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+        import { 
+            getStorage, ref, uploadBytes, getDownloadURL 
+        } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js";
+
+        // ============================================
+        // ⚠️ HINDUA IBI UKURIKIJE FIREBASE CONFIG YAWE
+        // ============================================
+     const firebaseConfig = {
+  apiKey: "AIzaSyBaL44npcmLRcAX4cAo8duE-V5Sn_wbALQ",
+  authDomain: "choir-system-9745a.firebaseapp.com",
+  projectId: "choir-system-9745a",
+  storageBucket: "choir-system-9745a.firebasestorage.app",
+  messagingSenderId: "14825832420",
+  appId: "1:14825832420:web:502ea3315c8623fc57d1f1"
+};
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const storage = getStorage(app);
+
+        // ============================================
+        // GLOBAL VARIABLES
+        // ============================================
+        let currentUser = null;         // Firebase user
+        let currentUserData = null;     // Firestore user data
+        let members = [];
+        let sessions = [];
+        let currentSession = null;
+        let currentTickList = [];
+        let newMemberPhoto = null;      // File object
+        let editingPhoto = null;        // File object
+        let signupPhotoFile = null;     // File object
+        let currentPeriod = 'all';
+        let lastReportData = null;
+
+        // ============================================
+        // LOADING / UI HELPERS
+        // ============================================
+        window.showLoading = function(text) {
+            document.getElementById('loadingText').textContent = text || 'Turashakisha...';
+            document.getElementById('loadingScreen').classList.remove('hidden');
+        };
+
+        window.hideLoading = function() {
+            document.getElementById('loadingScreen').classList.add('hidden');
+        };
+
+        window.showToast = function(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const icons = { success: 'fa-check', error: 'fa-times', warning: 'fa-exclamation', info: 'fa-info' };
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <div class="toast-icon"><i class="fas ${icons[type]}"></i></div>
+                <span>${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, 3500);
+        };
+
+        window.closeModal = function(id) {
+            document.getElementById(id).classList.remove('active');
+        };
+
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) this.classList.remove('active');
+            });
+        });
+
+        // ============================================
+        // PHOTO PREVIEW
+        // ============================================
+        window.previewSignupPhoto = function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('Ifoto ni nini cyane (max 5MB)', 'warning');
+                return;
+            }
+            signupPhotoFile = file;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('signupPhotoPreview').innerHTML = 
+                    `<img src="${e.target.result}">`;
+            };
+            reader.readAsDataURL(file);
+        };
+
+        window.previewPhoto = function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('Ifoto ni nini cyane', 'warning');
+                return;
+            }
+            newMemberPhoto = file;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('photoPreviewContainer').innerHTML = 
+                    `<img src="${e.target.result}" class="photo-preview">`;
+            };
+            reader.readAsDataURL(file);
+        };
+
+        window.previewEditPhoto = function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('Ifoto ni nini cyane', 'warning');
+                return;
+            }
+            editingPhoto = file;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('editPhotoPreviewContainer').innerHTML = 
+                    `<img src="${e.target.result}" class="photo-preview">`;
+            };
+            reader.readAsDataURL(file);
+        };
+
+        // ============================================
+        // AUTH FUNCTIONS
+        // ============================================
+        window.switchAuth = function(tab, event) {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            document.getElementById(tab + 'Form').classList.add('active');
+            
+            document.getElementById('authError').classList.remove('active');
+        };
+
+        function showAuthError(msg) {
+            const el = document.getElementById('authError');
+            el.textContent = msg;
+            el.classList.add('active');
+        }
+
+        window.handleLogin = async function() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const btn = document.getElementById('loginBtn');
+            
+            if (!email || !password) {
+                showAuthError('Uzuza email na ijambo ry\'ibanga');
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turakwinjiza...';
+            
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                // onAuthStateChanged will handle the rest
+            } catch (error) {
+                console.error(error);
+                let msg = 'Email cyangwa ijambo ry\'ibanga sibyo';
+                if (error.code === 'auth/user-not-found') msg = 'Konti ntabonetse';
+                if (error.code === 'auth/wrong-password') msg = 'Ijambo ry\'ibanga sibyo';
+                if (error.code === 'auth/too-many-requests') msg = 'Ugerageje kenshi. Tegereza';
+                showAuthError(msg);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> INJIRA';
+            }
+        };
+
+        window.handleSignup = async function() {
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const password = document.getElementById('signupPassword').value;
+            const confirm = document.getElementById('signupConfirm').value;
+            const btn = document.getElementById('signupBtn');
+            
+            if (!name || !email || !password || !confirm) {
+                showAuthError('Uzuza ibisabwa byose');
+                return;
+            }
+            
+            if (password !== confirm) {
+                showAuthError('Amagambo y\'ibanga ntabwo ahura');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showAuthError('Ijambo ry\'ibanga rigomba kuba nibura 6');
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turakwiyandikisha...';
+            
+            try {
+                // 1. Create auth user
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                // 2. Upload photo kuri Firebase Storage (niba iriho)
+                let photoURL = null;
+                if (signupPhotoFile) {
+                    const storageRef = ref(storage, `users/${user.uid}/profile.jpg`);
+                    await uploadBytes(storageRef, signupPhotoFile);
+                    photoURL = await getDownloadURL(storageRef);
+                }
+                
+                // 3. Update Auth profile
+                await updateProfile(user, {
+                    displayName: name,
+                    photoURL: photoURL
+                });
+                
+                // 4. Bika muri Firestore
+                await setDoc(doc(db, 'users', user.uid), {
+                    uid: user.uid,
+                    name: name,
+                    email: email,
+                    phone: '',
+                    photo: photoURL,
+                    choirName: 'Choir Imanzi',
+                    createdAt: serverTimestamp()
+                });
+                
+                showToast('✅ Wakiriwe!', 'success');
+                // onAuthStateChanged will enter the app
+                
+            } catch (error) {
+                console.error(error);
+                let msg = 'Ikibazo cyabaye. Ongera ugerageze';
+                if (error.code === 'auth/email-already-in-use') msg = 'Email isanzwe ikoreshwa';
+                if (error.code === 'auth/invalid-email') msg = 'Email ntariyo';
+                if (error.code === 'auth/weak-password') msg = 'Ijambo ry\'ibanga ni ribi cyane';
+                showAuthError(msg);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-user-plus"></i> IYANDIKISHE';
+            }
+        };
+
+        window.handleLogout = async function() {
+            if (!confirm('Urabyemeza ko ushaka gusohoka?')) return;
+            await signOut(auth);
+        };
+
+        // ============================================
+        // AUTH STATE
+        // ============================================
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                
+                // Fata user data muri Firestore
+                try {
+                    const userDoc = await getDoc(doc(db, 'users', user.uid));
+                    if (userDoc.exists()) {
+                        currentUserData = userDoc.data();
+                    } else {
+                        // Bika default
+                        currentUserData = {
+                            uid: user.uid,
+                            name: user.displayName || user.email,
+                            email: user.email,
+                            phone: '',
+                            photo: user.photoURL,
+                            choirName: 'Choir Imanzi'
+                        };
+                        await setDoc(doc(db, 'users', user.uid), {
+                            ...currentUserData,
+                            createdAt: serverTimestamp()
+                        });
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+                
+                // Load data
+                await loadMembers();
+                await loadSessions();
+                
+                // Enter app
+                enterApp();
+            } else {
+                currentUser = null;
+                currentUserData = null;
+                showAuthScreen();
+            }
+        });
+
+        function showAuthScreen() {
+            document.getElementById('authScreen').classList.remove('hidden');
+            document.getElementById('app').classList.remove('active');
+            hideLoading();
+        }
+
+        function enterApp() {
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('app').classList.add('active');
+            hideLoading();
+            
+            updateProfileUI();
+            renderDashboard();
+            renderMembers();
+            renderAttendancePage();
+            renderPhotosPage();
+            
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('sessionDate').value = today;
+        }
+
+        window.updateProfileUI = function() {
+            if (!currentUserData) return;
+            
+            const name = currentUserData.name || '';
+            const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || '?';
+            
+            // Header
+            const headerAvatar = document.getElementById('headerAvatar');
+            if (currentUserData.photo) {
+                headerAvatar.innerHTML = `<img src="${currentUserData.photo}">`;
+            } else {
+                headerAvatar.textContent = initials;
+            }
+            document.getElementById('headerName').textContent = name;
+            
+            // Profile page
+            const profileAvatarContent = document.getElementById('profileAvatarContent');
+            if (currentUserData.photo) {
+                profileAvatarContent.innerHTML = `<img src="${currentUserData.photo}">`;
+            } else {
+                profileAvatarContent.textContent = initials;
+            }
+            document.getElementById('profileName').textContent = name;
+            document.getElementById('profileEmail').textContent = currentUserData.email || '';
+            document.getElementById('profileInputName').value = name;
+            document.getElementById('profileInputPhone').value = currentUserData.phone || '';
+            document.getElementById('choirName').value = currentUserData.choirName || 'Choir Imanzi';
+        };
+
+        // ============================================
+        // PROFILE PHOTO UPLOAD
+        // ============================================
+        window.uploadProfilePhoto = async function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('Ifoto ni nini cyane (max 5MB)', 'warning');
+                return;
+            }
+            
+            try {
+                showLoading('Turazamura ifoto...');
+                
+                // Upload kuri Firebase Storage
+                const storageRef = ref(storage, `users/${currentUser.uid}/profile.jpg`);
+                await uploadBytes(storageRef, file);
+                const photoURL = await getDownloadURL(storageRef);
+                
+                // Update Firestore
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    photo: photoURL
+                });
+                currentUserData.photo = photoURL;
+                
+                // Update Auth profile
+                await updateProfile(currentUser, { photoURL });
+                
+                hideLoading();
+                updateProfileUI();
+                showToast('✅ Ifoto yahinduwe', 'success');
+                
+            } catch (error) {
+                hideLoading();
+                console.error(error);
+                showToast('❌ ' + error.message, 'error');
+            }
+        };
+
+        window.saveProfile = async function() {
+            const name = document.getElementById('profileInputName').value.trim();
+            const phone = document.getElementById('profileInputPhone').value.trim();
+            const choirName = document.getElementById('choirName').value.trim();
+            
+            if (!name) {
+                showToast('Amazina ntashobora kuba ubusa', 'warning');
+                return;
+            }
+            
+            try {
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    name, phone, choirName
+                });
+                currentUserData.name = name;
+                currentUserData.phone = phone;
+                currentUserData.choirName = choirName;
+                
+                await updateProfile(currentUser, { displayName: name });
+                
+                updateProfileUI();
+                showToast('✅ Profile yabitswe', 'success');
+            } catch (error) {
+                showToast('❌ ' + error.message, 'error');
+            }
+        };
+
+        window.changePassword = async function() {
+            const oldPwd = document.getElementById('oldPassword').value;
+            const newPwd = document.getElementById('newPassword').value;
+            
+            if (!oldPwd || !newPwd) {
+                showToast('Uzuza amagambo y\'ibanga yose', 'warning');
+                return;
+            }
+            
+            if (newPwd.length < 6) {
+                showToast('Ijambo ry\'ibanga rigomba kuba nibura 6', 'warning');
+                return;
+            }
+            
+            try {
+                // Reauthenticate
+                const credential = EmailAuthProvider.credential(currentUser.email, oldPwd);
+                await reauthenticateWithCredential(currentUser, credential);
+                
+                // Change password
+                await updatePassword(currentUser, newPwd);
+                
+                document.getElementById('oldPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                showToast('✅ Ijambo ry\'ibanga ryahinduwe', 'success');
+            } catch (error) {
+                let msg = 'Ikibazo';
+                if (error.code === 'auth/wrong-password') msg = 'Ijambo ry\'ibanga rya kera sibyo';
+                showToast('❌ ' + msg, 'error');
+            }
+        };
+
+        // ============================================
+        // LOAD MEMBERS (Firestore)
+        // ============================================
+        async function loadMembers() {
+            try {
+                const q = query(collection(db, 'members'), orderBy('createdAt', 'desc'));
+                const snap = await getDocs(q);
+                members = [];
+                snap.forEach(d => {
+                    members.push({ id: d.id, ...d.data() });
+                });
+            } catch (e) {
+                console.error('Load members error:', e);
+                members = [];
+            }
+        }
+
+        async function loadSessions() {
+            try {
+                const q = query(collection(db, 'sessions'), orderBy('date', 'desc'));
+                const snap = await getDocs(q);
+                sessions = [];
+                snap.forEach(d => {
+                    sessions.push({ id: d.id, ...d.data() });
+                });
+            } catch (e) {
+                console.error('Load sessions error:', e);
+                sessions = [];
+            }
+        }
+
+        // ============================================
+        // SIDEBAR / PAGE
+        // ============================================
+        window.toggleSidebar = function() {
+            document.getElementById('sidebar').classList.toggle('open');
+        };
+
+        window.switchPage = function(page, element) {
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            if (element) element.classList.add('active');
+            
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + page).classList.add('active');
+            
+            if (page === 'members') renderMembers();
+            if (page === 'attendance') renderAttendancePage();
+            if (page === 'voices') renderVoicesPage();
+            if (page === 'photos') renderPhotosPage();
+            if (page === 'reports') initReportsPage();
+            if (page === 'profile') updateProfileUI();
+            
+            if (window.innerWidth <= 900) {
+                document.getElementById('sidebar').classList.remove('open');
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.toggleTheme = function() {
+            const html = document.documentElement;
+            const icon = document.getElementById('themeIcon');
+            
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.removeAttribute('data-theme');
+                icon.className = 'fas fa-moon';
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                icon.className = 'fas fa-sun';
+            }
+        };
+
+        // ============================================
+        // CLOCK
+        // ============================================
+        function updateClock() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            const el = document.getElementById('liveClock');
+            if (el) el.textContent = `${h}:${m}:${s}`;
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // ============================================
+        // DASHBOARD
+        // ============================================
+        window.renderDashboard = function() {
+            document.getElementById('statTotalMembers').textContent = members.length;
+            document.getElementById('statTotalSessions').textContent = sessions.length;
+            
+            let totalPct = 0;
+            sessions.forEach(s => {
+                const pct = members.length > 0 ? (s.presentMembers.length / members.length) * 100 : 0;
+                totalPct += pct;
+            });
+            const avgPct = sessions.length > 0 ? Math.round(totalPct / sessions.length) : 0;
+            document.getElementById('statAvgPercent').textContent = avgPct + '%';
+            
+            let absent = 0;
+            if (sessions.length > 0) {
+                const last = sessions[0]; // sorted desc
+                absent = members.length - last.presentMembers.length;
+            }
+            document.getElementById('statAbsentToday').textContent = absent;
+            
+            document.getElementById('sidebarMemberCount').textContent = members.length;
+            document.getElementById('sidebarSessionCount').textContent = sessions.length;
+            
+            renderSavedList();
+        };
+
+        function renderSavedList() {
+            const list = document.getElementById('savedList');
+            document.getElementById('savedCount').textContent = sessions.length;
+            
+            if (sessions.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon"><i class="fas fa-folder-open"></i></div>
+                        <h3>Nta attendance irahari</h3>
+                        <p>Kanda "Kora Attendance Nshya" utangire</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = sessions.map(s => {
+                const present = s.presentMembers.length;
+                const total = members.length;
+                const pct = total > 0 ? Math.round((present / total) * 100) : 0;
+                
+                return `
+                    <div class="saved-card">
+                        <div class="saved-info">
+                            <h3><i class="fas fa-calendar-check"></i> ${s.name}</h3>
+                            <div class="saved-meta">
+                                <span><i class="fas fa-calendar"></i> ${formatDate(s.date)}</span>
+                                <span><i class="fas fa-clock"></i> ${s.time}</span>
+                                <span><i class="fas fa-users"></i> ${present} / ${total}</span>
+                            </div>
+                        </div>
+                        <div class="saved-percent">
+                            <i class="fas fa-chart-line"></i> ${pct}%
+                        </div>
+                        <div class="saved-actions">
+                            <button class="action-btn view" onclick="viewSession('${s.id}')" title="Reba">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn pdf" onclick="exportPDF('${s.id}')" title="PDF">
+                                <i class="fas fa-file-pdf"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="deleteSession('${s.id}')" title="Siba">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ============================================
+        // QR REGISTER
+        // ============================================
+        window.openQRRegisterModal = function() {
+            const baseUrl = window.location.href.replace('index.html', '').replace(/\/$/, '');
+            const registerUrl = baseUrl + '/member.html';
+            
+            document.getElementById('qr-register-code').innerHTML = '';
+            
+            new QRCode(document.getElementById('qr-register-code'), {
+                text: registerUrl,
+                width: 240,
+                height: 240,
+                colorDark: '#1e293b',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            
+            document.getElementById('qr-register-code').dataset.url = registerUrl;
+            document.getElementById('qrRegisterModal').classList.add('active');
+        };
+
+        window.downloadQRRegister = function() {
+            const container = document.getElementById('qr-register-code');
+            const canvas = container.querySelector('canvas');
+            const img = container.querySelector('img');
+            const url = canvas ? canvas.toDataURL('image/png') : img?.src;
+            
+            if (!url) return;
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `QR-Register-${Date.now()}.png`;
+            a.click();
+            showToast('📥 QR yakuwe', 'success');
+        };
+
+        window.copyQRRegisterLink = function() {
+            const container = document.getElementById('qr-register-code');
+            navigator.clipboard.writeText(container.dataset.url);
+            showToast('📋 Link yakopiwe', 'success');
+        };
+
+        // ============================================
+        // CREATE ATTENDANCE
+        // ============================================
+        window.openCreateModal = function() {
+            if (members.length === 0) {
+                showToast('Banza wongereho abaririmbyi', 'warning');
+                return;
+            }
+            
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('sessionDate').value = today;
+            
+            const d = new Date();
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year = d.getFullYear();
+            document.getElementById('sessionName').value = `Iteraniro rya ${day}/${month}/${year}`;
+            
+            document.getElementById('createModal').classList.add('active');
+        };
+
+        window.startAttendance = function() {
+            const name = document.getElementById('sessionName').value.trim();
+            const date = document.getElementById('sessionDate').value;
+            const time = document.getElementById('sessionTime').value;
+            
+            if (!name || !date || !time) {
+                showToast('Uzuza izina, itariki, na isaha', 'warning');
+                return;
+            }
+            
+            currentSession = { name, date, time };
+            currentTickList = [];
+            
+            closeModal('createModal');
+            
+            document.getElementById('currentSessionName').textContent = name;
+            document.getElementById('currentSessionMeta').innerHTML = `
+                <i class="fas fa-calendar"></i> ${formatDate(date)} &nbsp;|&nbsp; 
+                <i class="fas fa-clock"></i> ${time}
+            `;
+            
+            renderMembersForAttendance();
+            updateCounter();
+            
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-create').classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        function renderMembersForAttendance() {
+            const tbody = document.getElementById('membersTableBody');
+            
+            tbody.innerHTML = members.map((m, index) => {
+                const initials = m.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                const photoHtml = m.photo 
+                    ? `<img src="${m.photo}" class="row-photo" onerror="this.outerHTML='<div class=\\'row-avatar\\'>${initials}</div>'">`
+                    : `<div class="row-avatar">${initials}</div>`;
+                
+                const isChecked = currentTickList.some(t => t.id === m.id);
+                
+                return `
+                    <tr onclick="toggleMember('${m.id}', this)" data-member-id="${m.id}">
+                        <td><strong>${index + 1}</strong></td>
+                        <td>
+                            <div class="member-cell-row">
+                                ${photoHtml}
+                                <div class="row-info">
+                                    <div class="name">${m.name}</div>
+                                    <div class="id">${m.number}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td><strong>${m.number}</strong></td>
+                        <td>
+                            <span class="voice-badge ${m.voice.toLowerCase()}">
+                                <i class="fas fa-microphone"></i> ${m.voice}
+                            </span>
+                        </td>
+                        <td style="text-align: center;">
+                            <button class="tick-btn ${isChecked ? 'checked' : ''}" onclick="event.stopPropagation(); toggleMember('${m.id}', this.closest('tr'))">
+                                <i class="fas fa-check"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        window.toggleMember = function(memberId, row) {
+            const index = currentTickList.findIndex(t => t.id === memberId);
+            const tickBtn = row.querySelector('.tick-btn');
+            
+            if (index === -1) {
+                const now = new Date();
+                const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+                currentTickList.push({ id: memberId, time: time });
+                tickBtn.classList.add('checked');
+                row.classList.add('checked');
+            } else {
+                currentTickList.splice(index, 1);
+                tickBtn.classList.remove('checked');
+                row.classList.remove('checked');
+            }
+            
+            updateCounter();
+        };
+
+        function updateCounter() {
+            document.getElementById('counterText').textContent = `${currentTickList.length} / ${members.length}`;
+            document.getElementById('submitCount').textContent = currentTickList.length;
+            document.getElementById('submitTotal').textContent = members.length;
+        }
+
+        window.filterMembersList = function() {
+            const search = document.getElementById('searchMember').value.toLowerCase();
+            document.querySelectorAll('#membersTableBody tr').forEach(row => {
+                const name = row.querySelector('.name')?.textContent.toLowerCase() || '';
+                const number = row.querySelectorAll('td')[2]?.textContent.toLowerCase() || '';
+                row.style.display = (name.includes(search) || number.includes(search)) ? '' : 'none';
+            });
+        };
+
+        window.submitAttendance = async function() {
+            if (!currentSession) return;
+            
+            if (currentTickList.length === 0) {
+                showToast('Nta muntu waje', 'warning');
+                return;
+            }
+            
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turabika...';
+            
+            try {
+                await addDoc(collection(db, 'sessions'), {
+                    name: currentSession.name,
+                    date: currentSession.date,
+                    time: currentSession.time,
+                    presentMembers: currentTickList.map(t => ({ id: t.id, time: t.time })),
+                    totalPresent: currentTickList.length,
+                    createdAt: serverTimestamp(),
+                    createdBy: currentUser.uid
+                });
+                
+                confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+                showToast(`✅ ${currentSession.name} ryabitswe!`, 'success');
+                
+                await loadSessions();
+                
+                currentSession = null;
+                currentTickList = [];
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check"></i> SUBMIT';
+                
+                setTimeout(() => {
+                    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                    document.querySelector('.nav-item').classList.add('active');
+                    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                    document.getElementById('page-dashboard').classList.add('active');
+                    renderDashboard();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }, 800);
+                
+            } catch (error) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check"></i> SUBMIT';
+                showToast('❌ ' + error.message, 'error');
+            }
+        };
+
+        window.cancelCreate = function() {
+            if (currentTickList.length > 0) {
+                if (!confirm('Ufite abaje batabitswe. Urabyemeza?')) return;
+            }
+            currentSession = null;
+            currentTickList = [];
+            
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.querySelector('.nav-item').classList.add('active');
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-dashboard').classList.add('active');
+        };
+
+        // ============================================
+        // VIEW SESSION
+        // ============================================
+        window.viewSession = function(id) {
+            const session = sessions.find(s => s.id === id);
+            if (!session) return;
+            
+            const present = session.presentMembers.length;
+            const total = members.length;
+            const absent = total - present;
+            const pct = total > 0 ? Math.round((present / total) * 100) : 0;
+            
+            const rows = session.presentMembers.map((item, i) => {
+                const m = members.find(x => x.id === item.id);
+                if (!m) return '';
+                const initials = m.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                const photoHtml = m.photo 
+                    ? `<img src="${m.photo}" class="view-row-photo" onerror="this.outerHTML='<div class=\\'view-row-avatar\\'>${initials}</div>'">`
+                    : `<div class="view-row-avatar">${initials}</div>`;
+                
+                return `
+                    <tr>
+                        <td><strong>${i + 1}</strong></td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                ${photoHtml}
+                                <div>
+                                    <div style="font-weight: 600;">${m.name}</div>
+                                    <div style="font-size: 12px; color: var(--text-secondary);">${m.number}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td><strong>${m.number}</strong></td>
+                        <td>
+                            <span class="voice-badge ${m.voice.toLowerCase()}">
+                                <i class="fas fa-microphone"></i> ${m.voice}
+                            </span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span style="font-weight: 700; color: var(--success);">
+                                <i class="fas fa-clock"></i> ${item.time}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            document.getElementById('detailContent').innerHTML = `
+                <div class="detail-header">
+                    <h2>${session.name}</h2>
+                    <p><i class="fas fa-calendar"></i> ${formatDate(session.date)} &nbsp;|&nbsp; <i class="fas fa-clock"></i> ${session.time}</p>
+                </div>
+                
+                <div class="detail-stats">
+                    <div class="detail-stat blue"><div class="value">${total}</div><div class="label">Bose</div></div>
+                    <div class="detail-stat green"><div class="value">${present}</div><div class="label">Baje</div></div>
+                    <div class="detail-stat red"><div class="value">${absent}</div><div class="label">Bataje</div></div>
+                </div>
+                
+                <h4 style="margin-bottom: 12px; font-size: 15px;">
+                    <i class="fas fa-check-circle" style="color: var(--success);"></i> 
+                    Abaje (${present}) — ${pct}%
+                </h4>
+                
+                <div class="view-table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">#</th>
+                                <th>Umuririmbyi</th>
+                                <th>Nimero</th>
+                                <th>Ijwi</th>
+                                <th style="text-align: center;">Isaha Yaje</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="btn btn-danger" onclick="exportPDF('${session.id}')">
+                        <i class="fas fa-file-pdf"></i> Kura PDF
+                    </button>
+                    <button class="btn btn-outline" onclick="closeModal('detailModal')">Funga</button>
+                </div>
+            `;
+            
+            document.getElementById('detailModal').classList.add('active');
+        };
+
+        // ============================================
+        // DELETE SESSION
+        // ============================================
+        window.deleteSession = async function(id) {
+            const session = sessions.find(s => s.id === id);
+            if (!session) return;
+            
+            if (!confirm(`Urabyemeza ko ushaka gusiba "${session.name}"?`)) return;
+            
+            try {
+                await deleteDoc(doc(db, 'sessions', id));
+                showToast('🗑️ Iteraniro ryasibwe', 'warning');
+                await loadSessions();
+                renderDashboard();
+                renderAttendancePage();
+            } catch (error) {
+                showToast('❌ ' + error.message, 'error');
+            }
+        };
+
+        // ============================================
+        // PERIOD FILTER
+        // ============================================
+        window.switchPeriod = function(period, element) {
+            document.querySelectorAll('.period-tab').forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+            currentPeriod = period;
+            renderAttendancePage();
+        };
+
+        function filterByPeriod(list) {
+            const now = new Date();
+            const today = now.toISOString().split('T')[0];
+            
+            if (currentPeriod === 'day') return list.filter(s => s.date === today);
+            if (currentPeriod === 'week') {
+                const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                return list.filter(s => s.date >= weekAgo);
+            }
+            if (currentPeriod === 'month') {
+                const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                return list.filter(s => s.date >= monthAgo);
+            }
+            return list;
+        }
+
+        window.renderAttendancePage = function() {
+            const list = document.getElementById('attendanceHistoryList');
+            const filtered = filterByPeriod(sessions);
+            
+            if (filtered.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon"><i class="fas fa-calendar-times"></i></div>
+                        <h3>Nta mateka arahari</h3>
+                        <p>Kora attendance mbere</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = filtered.map(s => {
+                const present = s.presentMembers.length;
+                const total = members.length;
+                const pct = total > 0 ? Math.round((present / total) * 100) : 0;
+                
+                return `
+                    <div class="saved-card">
+                        <div class="saved-info">
+                            <h3><i class="fas fa-calendar-check"></i> ${s.name}</h3>
+                            <div class="saved-meta">
+                                <span><i class="fas fa-calendar"></i> ${formatDate(s.date)}</span>
+                                <span><i class="fas fa-clock"></i> ${s.time}</span>
+                                <span><i class="fas fa-users"></i> ${present} / ${total}</span>
+                            </div>
+                        </div>
+                        <div class="saved-percent">${pct}%</div>
+                        <div class="saved-actions">
+                            <button class="action-btn view" onclick="viewSession('${s.id}')" title="Reba">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn pdf" onclick="exportPDF('${s.id}')" title="PDF">
+                                <i class="fas fa-file-pdf"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="deleteSession('${s.id}')" title="Siba">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        };
+
+        // ============================================
+        // MEMBERS
+        // ============================================
+        window.renderMembers = function() {
+            const voiceFilter = document.getElementById('membersFilterVoice')?.value || '';
+            const searchTerm = document.getElementById('membersSearch')?.value.toLowerCase().trim() || '';
+            const tbody = document.getElementById('membersBody');
+            
+            let list = [...members];
+            if (voiceFilter) list = list.filter(m => m.voice === voiceFilter);
+            if (searchTerm) {
+                list = list.filter(m => 
+                    m.name.toLowerCase().includes(searchTerm) ||
+                    m.number.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            document.getElementById('membersCount').textContent = list.length;
+            tbody.innerHTML = '';
+            
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 40px; color: var(--text-secondary);">Nta muririmbyi ubonetse</td></tr>`;
+                return;
+            }
+            
+            list.forEach(m => {
+                const initials = m.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                const photoHtml = m.photo 
+                    ? `<img src="${m.photo}" class="row-photo" onerror="this.outerHTML='<div class=\\'row-avatar\\'>${initials}</div>'">`
+                    : `<div class="row-avatar">${initials}</div>`;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <div class="member-cell-row">
+                            ${photoHtml}
+                            <div class="row-info">
+                                <div class="name">${m.name}</div>
+                                <div class="id">${m.number}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><strong>${m.number}</strong></td>
+                    <td><span class="voice-badge ${m.voice.toLowerCase()}"><i class="fas fa-microphone"></i> ${m.voice}</span></td>
+                    <td>
+                        <div style="display: flex; gap: 6px;">
+                            <button class="action-btn edit" onclick="openEditMember('${m.id}')" title="Hindura">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="deleteMember('${m.id}')" title="Siba">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        };
+
+        window.openAddMemberModal = function() {
+            newMemberPhoto = null;
+            document.getElementById('photoPreviewContainer').innerHTML = '<div class="photo-placeholder">📷</div>';
+            document.getElementById('photoInput').value = '';
+            document.getElementById('newName').value = '';
+            document.getElementById('newNumber').value = '';
+            document.getElementById('newVoice').value = '';
+            document.getElementById('addMemberModal').classList.add('active');
+        };
+
+        window.addMember = async function() {
+            const name = document.getElementById('newName').value.trim();
+            const number = document.getElementById('newNumber').value.trim().toUpperCase();
+            const voice = document.getElementById('newVoice').value;
+            
+            if (!name || !number || !voice) {
+                showToast('Uzuza amazina, nimero, na ijwi', 'warning');
+                return;
+            }
+            
+            if (members.find(m => m.number === number)) {
+                showToast(`❌ ${number} isanzwe ikoreshwa`, 'error');
+                return;
+            }
+            
+            const btn = document.getElementById('addMemberBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turabika...';
+            
+            try {
+                let photoURL = null;
+                
+                // Upload photo kuri Firebase Storage
+                if (newMemberPhoto) {
+                    const storageRef = ref(storage, `members/${Date.now()}_${number}.jpg`);
+                    await uploadBytes(storageRef, newMemberPhoto);
+                    photoURL = await getDownloadURL(storageRef);
+                }
+                
+                // Bika muri Firestore
+                await addDoc(collection(db, 'members'), {
+                    name, number, voice,
+                    photo: photoURL,
+                    createdAt: serverTimestamp(),
+                    createdBy: currentUser.uid
+                });
+                
+                showToast(`✅ ${name} yongeweho!`, 'success');
+                
+                closeModal('addMemberModal');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Bika';
+                
+                await loadMembers();
+                renderMembers();
+                renderDashboard();
+                
+            } catch (error) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Bika';
+                showToast('❌ ' + error.message, 'error');
+            }
+        };
+
+        window.openEditMember = function(id) {
+            const m = members.find(x => x.id === id);
+            if (!m) return;
+            
+            editingPhoto = null;
+            document.getElementById('editMemberId').value = m.id;
+            document.getElementById('editName').value = m.name;
+            document.getElementById('editNumber').value = m.number;
+            document.getElementById('editVoice').value = m.voice;
+            
+            const initials = m.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+            document.getElementById('editPhotoPreviewContainer').innerHTML = m.photo 
+                ? `<img src="${m.photo}" class="photo-preview" onerror="this.outerHTML='<div class=\\'photo-placeholder\\'>${initials}</div>'">`
+                : `<div class="photo-placeholder">${initials}</div>`;
+            
+            document.getElementById('editMemberModal').classList.add('active');
+        };
+
+        window.saveEditMember = async function() {
+            const id = document.getElementById('editMemberId').value;
+            const m = members.find(x => x.id === id);
+            if (!m) return;
+            
+            const name = document.getElementById('editName').value.trim();
+            const number = document.getElementById('editNumber').value.trim().toUpperCase();
+            const voice = document.getElementById('editVoice').value;
+            
+            const btn = document.getElementById('saveEditBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turabika...';
+            
+            try {
+                let photoURL = m.photo;
+                
+                if (editingPhoto) {
+                    const storageRef = ref(storage, `members/${Date.now()}_${number}.jpg`);
+                    await uploadBytes(storageRef, editingPhoto);
+                    photoURL = await getDownloadURL(storageRef);
+                }
+                
+                await updateDoc(doc(db, 'members', id), {
+                    name, number, voice, photo: photoURL
+                });
+                
+                showToast(`✅ ${name} yahinduwe`, 'success');
+                closeModal('editMemberModal');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Bika';
+                
+                await loadMembers();
+                renderMembers();
+                editingPhoto = null;
+                
+            } catch (error) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Bika';
+                showToast('❌ ' + error.message, 'error');
+            }
+        };
+
+        window.deleteMember = async function(id) {
+            const m = members.find(x => x.id === id);
+            if (!m) return;
+            
+            if (!confirm(`Urabyemeza ko ushaka gusiba ${m.name}?`)) return;
+            
+            try {
+                await deleteDoc(doc(db, 'members', id));
+                showToast('🗑️ Yasibwe', 'warning');
+                await loadMembers();
+                renderMembers();
+                renderDashboard();
+            } catch (error) {
+                showToast('❌ ' + error.message, 'error');
+            }
+        };
+
+        // ============================================
+        // VOICES
+        // ============================================
+        let voiceChartInstance = null;
+
+        window.renderVoicesPage = function() {
+            const voices = { Soprano: 0, Alto: 0, Tenor: 0, Bass: 0 };
+            members.forEach(m => voices[m.voice] = (voices[m.voice] || 0) + 1);
+            
+            document.getElementById('voiceStatSoprano').textContent = voices.Soprano;
+            document.getElementById('voiceStatAlto').textContent = voices.Alto;
+            document.getElementById('voiceStatTenor').textContent = voices.Tenor;
+            document.getElementById('voiceStatBass').textContent = voices.Bass;
+            
+            const ctx = document.getElementById('voiceChart').getContext('2d');
+            if (voiceChartInstance) voiceChartInstance.destroy();
+            
+            voiceChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Soprano', 'Alto', 'Tenor', 'Bass'],
+                    datasets: [{
+                        label: 'Umubare w\'Abaririmbyi',
+                        data: [voices.Soprano, voices.Alto, voices.Tenor, voices.Bass],
+                        backgroundColor: [
+                            'rgba(236, 72, 153, 0.8)',
+                            'rgba(6, 182, 212, 0.8)',
+                            'rgba(245, 158, 11, 0.8)',
+                            'rgba(16, 185, 129, 0.8)'
+                        ],
+                        borderColor: ['#ec4899', '#06b6d4', '#f59e0b', '#10b981'],
+                        borderWidth: 2,
+                        borderRadius: 12,
+                        barThickness: 60
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                }
+            });
+        };
+
+        // ============================================
+        // PHOTOS
+        // ============================================
+        window.renderPhotosPage = function() {
+            const grid = document.getElementById('photoGrid');
+            const withPhotos = members.filter(m => m.photo);
+            
+            if (withPhotos.length === 0) {
+                grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--text-secondary);">
+                    <i class="fas fa-camera" style="font-size: 60px; opacity: 0.3; display: block; margin-bottom: 16px;"></i>
+                    <h3>Nta mafoto</h3></div>`;
+                return;
+            }
+            
+            grid.innerHTML = withPhotos.map(m => `
+                <div class="photo-card">
+                    <img src="${m.photo}" onerror="this.src='https://via.placeholder.com/300x300?text=No+Image'">
+                    <div class="photo-info">
+                        <div class="photo-name">${m.name}</div>
+                        <span class="voice-badge ${m.voice.toLowerCase()}" style="font-size: 10.5px;">
+                            <i class="fas fa-microphone"></i> ${m.voice}
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        // ============================================
+        // REPORTS
+        // ============================================
+        window.initReportsPage = function() {
+            const today = new Date().toISOString().split('T')[0];
+            const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            if (!document.getElementById('reportFrom').value) document.getElementById('reportFrom').value = weekAgo;
+            if (!document.getElementById('reportTo').value) document.getElementById('reportTo').value = today;
+        };
+
+        window.generateReport = function() {
+            document.getElementById('reportStats').style.display = 'grid';
+            document.getElementById('reportDetailsContainer').style.display = 'block';
+            
+            const from = document.getElementById('reportFrom').value;
+            const to = document.getElementById('reportTo').value;
+            
+            const filtered = sessions.filter(s => s.date >= from && s.date <= to);
+            
+            let totalPct = 0;
+            const memberCount = {};
+            
+            filtered.forEach(s => {
+                const pct = members.length > 0 ? (s.presentMembers.length / members.length) * 100 : 0;
+                totalPct += pct;
+                s.presentMembers.forEach(pm => {
+                    memberCount[pm.id] = (memberCount[pm.id] || 0) + 1;
+                });
+            });
+            
+            const avgPct = filtered.length > 0 ? Math.round(totalPct / filtered.length) : 0;
+            
+            let topMember = '-';
+            let topCount = 0;
+            Object.keys(memberCount).forEach(mid => {
+                if (memberCount[mid] > topCount) {
+                    topCount = memberCount[mid];
+                    const m = members.find(x => x.id === mid);
+                    if (m) topMember = m.name;
+                }
+            });
+            
+            document.getElementById('reportDays').textContent = filtered.length;
+            document.getElementById('reportAvg').textContent = avgPct + '%';
+            document.getElementById('reportTop').textContent = topMember;
+            
+            lastReportData = { from, to, filtered, memberCount, avgPct, topMember };
+            
+            const rows = members.map(m => {
+                const count = memberCount[m.id] || 0;
+                const pct = filtered.length > 0 ? Math.round((count / filtered.length) * 100) : 0;
+                
+                return `
+                    <tr>
+                        <td><strong>${m.name}</strong></td>
+                        <td>${m.number}</td>
+                        <td><span class="voice-badge ${m.voice.toLowerCase()}">${m.voice}</span></td>
+                        <td><strong>${count}</strong> / ${filtered.length}</td>
+                        <td><strong style="color: ${pct >= 70 ? 'var(--success)' : pct >= 40 ? 'var(--warning)' : 'var(--danger)'};">${pct}%</strong></td>
+                    </tr>
+                `;
+            }).join('');
+            
+            document.getElementById('reportTableWrapper').innerHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Umuririmbyi</th>
+                            <th>Nimero</th>
+                            <th>Ijwi</th>
+                            <th>Yaje</th>
+                            <th>Ubwitabire</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            `;
+            
+            showToast('✅ Raporo yakozwe', 'success');
+        };
+
+        window.downloadReport = function() {
+            if (!lastReportData) {
+                showToast('Kora raporo mbere', 'warning');
+                return;
+            }
+            
+            const { from, to, filtered, memberCount, avgPct, topMember } = lastReportData;
+            
+            const rows = members.map(m => {
+                const count = memberCount[m.id] || 0;
+                const pct = filtered.length > 0 ? Math.round((count / filtered.length) * 100) : 0;
+                return `
+                    <tr>
+                        <td><strong>${m.name}</strong></td>
+                        <td>${m.number}</td>
+                        <td>${m.voice}</td>
+                        <td>${count} / ${filtered.length}</td>
+                        <td><strong>${pct}%</strong></td>
+                    </tr>
+                `;
+            }).join('');
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Raporo ${from} - ${to}</title>
+                    <style>
+                        * { margin: 0; padding: 0; box-sizing: border-box; }
+                        body { font-family: 'Inter', Arial, sans-serif; padding: 40px; color: #1e293b; }
+                        .header { text-align: center; padding-bottom: 20px; border-bottom: 3px solid #6366f1; margin-bottom: 30px; }
+                        .header h1 { font-size: 28px; color: #6366f1; margin-bottom: 8px; }
+                        .header p { color: #64748b; font-size: 14px; }
+                        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 30px; }
+                        .stat { background: #f8fafc; border-radius: 12px; padding: 18px; text-align: center; border: 1px solid #e2e8f0; }
+                        .stat .value { font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+                        .stat .label { font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600; }
+                        .stat.blue .value { color: #6366f1; }
+                        .stat.green .value { color: #10b981; }
+                        .stat.purple .value { color: #8b5cf6; }
+                        h2 { font-size: 17px; margin-bottom: 15px; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                        th { background: #6366f1; color: white; padding: 12px; text-align: left; font-size: 12px; text-transform: uppercase; }
+                        td { padding: 12px; border-bottom: 1px solid #e2e8f0; font-size: 13px; }
+                        tr:nth-child(even) td { background: #f8fafc; }
+                        .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 12px; color: #64748b; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>🎵 RAPORO Y'UBWITABIRE</h1>
+                        <p>Kuva ${formatDate(from)} kugeza ${formatDate(to)}</p>
+                    </div>
+                    <div class="stats">
+                        <div class="stat blue"><div class="value">${filtered.length}</div><div class="label">Iteraniro</div></div>
+                        <div class="stat green"><div class="value">${avgPct}%</div><div class="label">Ubwitabire</div></div>
+                        <div class="stat purple"><div class="value" style="font-size: 16px;">${topMember}</div><div class="label">Waje Cyane</div></div>
+                    </div>
+                    <h2>📊 Amakuru y'Abaririmbyi Bose</h2>
+                    <table>
+                        <thead><tr><th>Umuririmbyi</th><th>Nimero</th><th>Ijwi</th><th>Yaje</th><th>%</th></tr></thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                    <div class="footer">Icyorezo: ${new Date().toLocaleString('rw-RW')} | Choir Attendance System</div>
+                    <script>window.onload = function() { window.print(); }<\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            showToast('📄 PDF irakorwa...', 'info');
+        };
+
+        window.downloadReportExcel = function() {
+            if (!lastReportData) {
+                showToast('Kora raporo mbere', 'warning');
+                return;
+            }
+            
+            const { from, to, filtered, memberCount, avgPct, topMember } = lastReportData;
+            
+            let csv = 'RAPORO Y\'UBWITABIRE\n';
+            csv += `Kuva: ${formatDate(from)} - Kugeza: ${formatDate(to)}\n\n`;
+            csv += `Iteraniro: ${filtered.length}\n`;
+            csv += `Ubwitabire Rusange: ${avgPct}%\n`;
+            csv += `Waje Cyane: ${topMember}\n\n`;
+            csv += 'Umuririmbyi,Nimero,Ijwi,Yaje,Ubwitabire\n';
+            
+            members.forEach(m => {
+                const count = memberCount[m.id] || 0;
+                const pct = filtered.length > 0 ? Math.round((count / filtered.length) * 100) : 0;
+                csv += `"${m.name}","${m.number}","${m.voice}",${count}/${filtered.length},${pct}%\n`;
+            });
+            
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `raporo-${from}-${to}.csv`;
+            a.click();
+            showToast('📊 Excel yakuwe', 'success');
+        };
+
+        // ============================================
+        // PDF EXPORT
+        // ============================================
+        window.exportPDF = function(id) {
+            const session = sessions.find(s => s.id === id);
+            if (!session) return;
+            
+            const present = session.presentMembers.length;
+            const total = members.length;
+            const pct = total > 0 ? Math.round((present / total) * 100) : 0;
+            
+            const rows = session.presentMembers.map((item, i) => {
+                const m = members.find(x => x.id === item.id);
+                if (!m) return '';
+                return `
+                    <tr>
+                        <td><strong>${i + 1}</strong></td>
+                        <td><strong>${m.name}</strong></td>
+                        <td>${m.number}</td>
+                        <td>${m.voice}</td>
+                        <td><strong style="color: #10b981;">${item.time}</strong></td>
+                    </tr>
+                `;
+            }).join('');
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>${session.name}</title>
+                    <style>
+                        * { margin: 0; padding: 0; box-sizing: border-box; }
+                        body { font-family: 'Inter', Arial, sans-serif; padding: 40px; color: #1e293b; background: white; }
+                        .header { text-align: center; padding-bottom: 20px; border-bottom: 3px solid #6366f1; margin-bottom: 30px; }
+                        .header h1 { font-size: 28px; color: #6366f1; margin-bottom: 8px; }
+                        .header h2 { font-size: 20px; color: #1e293b; margin-bottom: 6px; }
+                        .header p { color: #64748b; font-size: 14px; }
+                        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 30px; }
+                        .stat { background: #f8fafc; border-radius: 12px; padding: 18px; text-align: center; border: 1px solid #e2e8f0; }
+                        .stat .value { font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+                        .stat .label { font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600; }
+                        .stat.blue .value { color: #6366f1; }
+                        .stat.green .value { color: #10b981; }
+                        .stat.red .value { color: #ef4444; }
+                        h2.section-title { font-size: 17px; margin-bottom: 15px; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                        th { background: #6366f1; color: white; padding: 14px 16px; text-align: left; font-size: 12px; text-transform: uppercase; }
+                        td { padding: 14px 16px; border-bottom: 1px solid #e2e8f0; font-size: 13px; }
+                        tbody tr:nth-child(even) td { background: #f8fafc; }
+                        .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 12px; color: #64748b; }
+                        .signature { margin-top: 60px; display: flex; justify-content: space-between; }
+                        .signature .line { border-top: 1px solid #1e293b; width: 250px; margin-top: 50px; padding-top: 6px; font-size: 12px; text-align: center; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>🎵 CHOIR ATTENDANCE</h1>
+                        <h2>${session.name}</h2>
+                        <p>📅 ${formatDate(session.date)} &nbsp;|&nbsp; 🕐 ${session.time}</p>
+                    </div>
+                    <div class="stats">
+                        <div class="stat blue"><div class="value">${total}</div><div class="label">Bose</div></div>
+                        <div class="stat green"><div class="value">${present}</div><div class="label">Baje</div></div>
+                        <div class="stat red"><div class="value">${total - present}</div><div class="label">Bataje</div></div>
+                    </div>
+                    <h2 class="section-title">✅ Urutonde rw'Abaje (${present}) — ${pct}%</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">#</th>
+                                <th>Amazina</th>
+                                <th>Nimero</th>
+                                <th>Ijwi</th>
+                                <th style="width: 100px;">Isaha Yaje</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                    <div class="signature">
+                        <div class="line">Umukono wa Secretary</div>
+                        <div class="line">Itariki</div>
+                    </div>
+                    <div class="footer">Icyorezo: ${new Date().toLocaleString('rw-RW')} | Choir Attendance System</div>
+                    <script>window.onload = function() { window.print(); }<\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            showToast('📄 PDF irakorwa...', 'info');
+        };
+
+        // ============================================
+        // SETTINGS
+        // ============================================
+        window.saveSettings = async function() {
+            const choirName = document.getElementById('choirName').value.trim();
+            
+            try {
+                await updateDoc(doc(db, 'users', currentUser.uid), { choirName });
+                currentUserData.choirName = choirName;
+                showToast('✅ Igenamiterere ryabitswe', 'success');
+            } catch (error) {
+                showToast('❌ ' + error.message, 'error');
+            }
+        };
+
+        window.exportData = function() {
+            const data = { members, sessions, exported: new Date().toISOString() };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `choir-data-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            showToast('✅ Data yakuwe', 'success');
+        };
+
+        // ============================================
+        // HELPERS
+        // ============================================
+        window.formatDate = function(dateStr) {
+            if (!dateStr) return '-';
+            const d = new Date(dateStr);
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year = d.getFullYear();
+            return `${day}/${month}/${year}`;
+        };
+    </script>
+
+</body>
+</html>
