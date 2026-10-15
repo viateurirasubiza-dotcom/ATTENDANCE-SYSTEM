@@ -518,16 +518,15 @@
             getStorage, ref, uploadBytes, getDownloadURL 
         } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js";
 
-        // ⚠️ HINDUA IZI — Ziri muri Firebase Console yawe
-        const firebaseConfig = {
-            apiKey: "SHYIRAMO_API_KEY_YAWE",
-            authDomain: "SHYIRAMO.firebaseapp.com",
-            projectId: "SHYIRAMO_PROJECT_ID",
-            storageBucket: "SHYIRAMO.appspot.com",
-            messagingSenderId: "SHYIRAMO_SENDER_ID",
-            appId: "SHYIRAMO_APP_ID"
-        };
-
+        // ⚠️ HINDUA IZI — Ziri muri Firebase Console yawe     const firebaseConfig = {
+  apiKey: "AIzaSyBaL44npcmLRcAX4cAo8duE-V5Sn_wbALQ",
+  authDomain: "choir-system-9745a.firebaseapp.com",
+  projectId: "choir-system-9745a",
+  storageBucket: "choir-system-9745a.firebasestorage.app",
+  messagingSenderId: "14825832420",
+  appId: "1:14825832420:web:502ea3315c8623fc57d1f1"
+};
+     
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const storage = getStorage(app);
