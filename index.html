@@ -1898,6 +1898,47 @@
             </aside>
 
             <main class="main">
+                <div class="choir-title-banner">
+    <span class="music-note-deco note-1">🎵</span>
+    <span class="music-note-deco note-2">🎶</span>
+    <span class="music-note-deco note-3">🎼</span>
+    <span class="music-note-deco note-4">🎵</span>
+    <span class="music-note-deco note-5">🎶</span>
+    <span class="music-note-deco note-6">🎼</span>
+    
+    <span class="sparkle s1"></span>
+    <span class="sparkle s2"></span>
+    <span class="sparkle s3"></span>
+    <span class="sparkle s4"></span>
+    <span class="sparkle s5"></span>
+    
+    <div class="music-wave">
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+    </div>
+    
+    <div style="position: relative; z-index: 5; display: flex; flex-direction: column; align-items: center; width: 100%;">
+        <div class="choir-title-text">
+            <span class="word">🎵</span>
+            <span class="word">CHOIR</span>
+            <span class="word">HERTIER DU CIEL</span>
+            <span class="word">🎵</span>
+        </div>
+        <div class="choir-title-subtitle" id="choirTitleSubtitle">
+            HERTIER DU CIER • Attendance System
+        </div>
+    </div>
+</div>
                 <div class="page active" id="page-dashboard">
                     <div class="page-header">
                         <div>
@@ -2612,24 +2653,111 @@
             document.getElementById('sessionDate').value = today;
         }
 
-        window.updateProfileUI = function() {
-            if (!currentUserData) return;
-            const name = currentUserData.name || '';
-            const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || '?';
-            const headerAvatar = document.getElementById('headerAvatar');
-            if (currentUserData.photo) headerAvatar.innerHTML = `<img src="${currentUserData.photo}">`;
-            else headerAvatar.textContent = initials;
-            document.getElementById('headerName').textContent = name;
-            const profileAvatarContent = document.getElementById('profileAvatarContent');
-            if (currentUserData.photo) profileAvatarContent.innerHTML = `<img src="${currentUserData.photo}">`;
-            else profileAvatarContent.textContent = initials;
-            document.getElementById('profileName').textContent = name;
-            document.getElementById('profileEmail').textContent = currentUserData.email || '';
-            document.getElementById('profileInputName').value = name;
-            document.getElementById('profileInputPhone').value = currentUserData.phone || '';
-            document.getElementById('choirName').value = currentUserData.choirName || 'Choir Imanzi';
-        };
-
+     window.updateProfileUI = function() {
+    if (!currentUserData) return;
+    
+    // ============================================
+    // 1. AMAZINA NA INITIALS
+    // ============================================
+    const name = currentUserData.name || '';
+    const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || '?';
+    
+    // ============================================
+    // 2. HEADER AVATAR
+    // ============================================
+    const headerAvatar = document.getElementById('headerAvatar');
+    if (headerAvatar) {
+        if (currentUserData.photo) {
+            headerAvatar.innerHTML = `<img src="${currentUserData.photo}">`;
+        } else {
+            headerAvatar.textContent = initials;
+        }
+    }
+    
+    // ============================================
+    // 3. HEADER NAME
+    // ============================================
+    const headerName = document.getElementById('headerName');
+    if (headerName) {
+        headerName.textContent = name;
+    }
+    
+    // ============================================
+    // 4. PROFILE AVATAR
+    // ============================================
+    const profileAvatarContent = document.getElementById('profileAvatarContent');
+    if (profileAvatarContent) {
+        if (currentUserData.photo) {
+            profileAvatarContent.innerHTML = `<img src="${currentUserData.photo}">`;
+        } else {
+            profileAvatarContent.textContent = initials;
+        }
+    }
+    
+    // ============================================
+    // 5. PROFILE INFO
+    // ============================================
+    const profileName = document.getElementById('profileName');
+    if (profileName) profileName.textContent = name;
+    
+    const profileEmail = document.getElementById('profileEmail');
+    if (profileEmail) profileEmail.textContent = currentUserData.email || '';
+    
+    const profileInputName = document.getElementById('profileInputName');
+    if (profileInputName) profileInputName.value = name;
+    
+    const profileInputPhone = document.getElementById('profileInputPhone');
+    if (profileInputPhone) profileInputPhone.value = currentUserData.phone || '';
+    
+    // ============================================
+    // 6. CHOIR NAME (Settings input)
+    // ============================================
+    const choirNameInput = document.getElementById('choirName');
+    if (choirNameInput) {
+        choirNameInput.value = currentUserData.choirName || 'Choir Imanzi';
+    }
+    
+    // ============================================
+    // 7. 🎵 DYNAMIC CHOIR TITLE (Banner)
+    // ============================================
+    const choirTitleSubtitle = document.getElementById('choirTitleSubtitle');
+    if (choirTitleSubtitle) {
+        const choirName = currentUserData.choirName || 'Choir Imanzi';
+        choirTitleSubtitle.textContent = `${choirName} • Attendance System`;
+    }
+    
+    // ============================================
+    // 8. 🎵 DYNAMIC CHOIR NAME (Big Title)
+    // ============================================
+    const choirTitleWords = document.querySelectorAll('.choir-title-text .word');
+    if (choirTitleWords.length >= 4) {
+        const choirName = currentUserData.choirName || 'Choir Imanzi';
+        const words = choirName.toUpperCase().split(' ');
+        
+        // Word 1 & 4 = 🎵 (emoji)
+        // Word 2 & 3 = Izina ry'itsinda
+        choirTitleWords[0].textContent = '🎵';
+        choirTitleWords[1].textContent = words[0] || 'CHOIR';
+        choirTitleWords[2].textContent = words[1] || 'IMANZI';
+        choirTitleWords[3].textContent = '🎵';
+    }
+    
+    // ============================================
+    // 9. 🎵 DYNAMIC CHOIR TITLE (Page Header)
+    // ============================================
+    const pageTitle = document.querySelector('.page.active .page-header h1');
+    if (pageTitle && currentUserData.choirName) {
+        // Ntabwo dushaka guhindura "Murakaza neza"
+        // Niba ushaka guhindura, hindura iyi ligne:
+        // pageTitle.textContent = `Murakaza neza, ${name}! 👋`;
+    }
+    
+    // ============================================
+    // 10. UPDATE DOCUMENT TITLE
+    // ============================================
+    const choirName = currentUserData.choirName || 'Choir Imanzi';
+    document.title = `🎵 ${choirName} - Attendance System`;
+};
         window.uploadProfilePhoto = async function(event) {
             const file = event.target.files[0];
             if (!file) return;
