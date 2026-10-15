@@ -9,28 +9,33 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary: #8b5cf6;
+            --primary: #38bdf8;
+            --primary-dark: #0284c7;
+            --primary-light: #7dd3fc;
+            --secondary: #0ea5e9;
+            --accent: #06b6d4;
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
-            --info: #06b6d4;
+            
             --bg: #f8fafc;
             --bg-card: #ffffff;
-            --text: #1e293b;
+            --text: #0f172a;
             --text-secondary: #64748b;
             --border: #e2e8f0;
-            --gradient-1: linear-gradient(135deg, #6366f1, #8b5cf6);
+            
+            --gradient-1: linear-gradient(135deg, #38bdf8, #0ea5e9);
             --gradient-2: linear-gradient(135deg, #10b981, #06b6d4);
             --gradient-3: linear-gradient(135deg, #ef4444, #f59e0b);
             --gradient-4: linear-gradient(135deg, #f59e0b, #ec4899);
+            
             --shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
             --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.12);
+            
             --radius: 16px;
             --radius-lg: 24px;
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -47,55 +52,150 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
             transition: var(--transition);
         }
 
-        body::before {
-            content: '';
-            position: fixed;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: 
-                radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.08) 0%, transparent 40%);
-            z-index: -1;
-        }
-
-        /* LOADING */
+        /* ============================================
+           LOADING SCREEN — PIANO RING
+           ============================================ */
         .loading-screen {
             position: fixed;
             inset: 0;
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #0a1929 0%, #0d2137 50%, #071827 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 10000;
             color: white;
+            transition: all 0.6s;
         }
 
-        .loading-screen.hidden { display: none; }
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(1.1);
+        }
 
-        .loading-spinner {
-            width: 60px;
-            height: 60px;
-            border: 5px solid rgba(255, 255, 255, 0.2);
-            border-top-color: white;
+        .piano-ring {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .piano-ring::before {
+            content: '';
+            position: absolute;
+            inset: 0;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
+            border: 3px solid transparent;
+            border-top-color: #38bdf8;
+            border-right-color: #0ea5e9;
+            border-bottom-color: #06b6d4;
+            border-left-color: #7dd3fc;
+            animation: spinRing 3s linear infinite;
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.6);
         }
 
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .piano-ring::after {
+            content: '';
+            position: absolute;
+            inset: 25px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: #06b6d4;
+            border-right-color: #38bdf8;
+            border-bottom-color: #0ea5e9;
+            border-left-color: #7dd3fc;
+            animation: spinRingReverse 2s linear infinite;
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
+        }
 
-        .loading-screen h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
-        .loading-screen p { font-size: 14px; opacity: 0.9; }
+        @keyframes spinRing { to { transform: rotate(360deg); } }
+        @keyframes spinRingReverse { to { transform: rotate(-360deg); } }
 
-        /* AUTH */
+        .piano-keys {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            gap: 3px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
+        }
+
+        .piano-keys .key {
+            width: 12px;
+            height: 50px;
+            background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+            border-radius: 3px;
+            animation: keyPress 1.2s ease-in-out infinite;
+        }
+
+        .piano-keys .key.black {
+            width: 8px;
+            height: 32px;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            margin: 0 -4px;
+            z-index: 2;
+        }
+
+        .piano-keys .key:nth-child(1) { animation-delay: 0s; }
+        .piano-keys .key:nth-child(2) { animation-delay: 0.1s; }
+        .piano-keys .key:nth-child(3) { animation-delay: 0.2s; }
+        .piano-keys .key:nth-child(4) { animation-delay: 0.3s; }
+        .piano-keys .key:nth-child(5) { animation-delay: 0.4s; }
+        .piano-keys .key:nth-child(6) { animation-delay: 0.5s; }
+        .piano-keys .key:nth-child(7) { animation-delay: 0.6s; }
+        .piano-keys .key:nth-child(8) { animation-delay: 0.7s; }
+
+        @keyframes keyPress {
+            0%, 100% { transform: scaleY(1); filter: brightness(1); }
+            50% { transform: scaleY(0.85); filter: brightness(1.3); box-shadow: 0 0 15px #38bdf8; }
+        }
+
+        .loading-screen h2 {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #ffffff, #7dd3fc, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% auto;
+            animation: textShine 3s ease-in-out infinite;
+        }
+
+        @keyframes textShine {
+            0%, 100% { background-position: 0% center; }
+            50% { background-position: 100% center; }
+        }
+
+        .loading-screen p {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            animation: pulseText 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseText {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* ============================================
+           AUTH SCREEN — NETWORK GLOBE BACKGROUND
+           ============================================ */
         .auth-screen {
             position: fixed;
             inset: 0;
@@ -104,138 +204,390 @@
             justify-content: center;
             z-index: 9999;
             padding: 20px;
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            overflow-y: auto;
+            overflow-x: hidden;
+            background: #0a1929;
         }
 
         .auth-screen.hidden { display: none; }
 
+        /* Network Background */
+        .network-bg {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(14, 165, 233, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.15) 0%, transparent 60%),
+                linear-gradient(135deg, #0a1929 0%, #0d2137 50%, #071827 100%);
+            z-index: 0;
+        }
+
+        /* Glowing Globe */
+        .network-globe {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.2) 0%, transparent 70%);
+            border: 2px solid rgba(56, 189, 248, 0.15);
+            box-shadow: 
+                0 0 100px rgba(56, 189, 248, 0.4) inset,
+                0 0 100px rgba(56, 189, 248, 0.3);
+            animation: globePulse 8s ease-in-out infinite;
+        }
+
+        .network-globe::before {
+            content: '';
+            position: absolute;
+            inset: 40px;
+            border-radius: 50%;
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            box-shadow: 0 0 60px rgba(6, 182, 212, 0.4) inset;
+        }
+
+        .network-globe::after {
+            content: '';
+            position: absolute;
+            inset: 100px;
+            border-radius: 50%;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            box-shadow: 0 0 40px rgba(56, 189, 248, 0.5) inset;
+        }
+
+        @keyframes globePulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+            50% { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
+        }
+
+        /* Floating Dots */
+        .network-dots {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+        }
+
+        .dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #38bdf8;
+            border-radius: 50%;
+            box-shadow: 
+                0 0 10px #38bdf8,
+                0 0 20px #38bdf8,
+                0 0 30px rgba(56, 189, 248, 0.5);
+            animation: dotFloat 6s ease-in-out infinite;
+        }
+
+        .dot::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            background: rgba(56, 189, 248, 0.4);
+            animation: dotPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes dotFloat {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0.6; }
+            25% { transform: translateY(-20px) translateX(10px); opacity: 1; }
+            50% { transform: translateY(-10px) translateX(-15px); opacity: 0.8; }
+            75% { transform: translateY(-30px) translateX(5px); opacity: 1; }
+        }
+
+        @keyframes dotPulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(2); opacity: 0; }
+        }
+
+        .dot:nth-child(1) { top: 15%; left: 10%; animation-delay: 0s; }
+        .dot:nth-child(2) { top: 25%; left: 85%; animation-delay: 0.5s; }
+        .dot:nth-child(3) { top: 45%; left: 5%; animation-delay: 1s; }
+        .dot:nth-child(4) { top: 60%; left: 92%; animation-delay: 1.5s; }
+        .dot:nth-child(5) { top: 75%; left: 15%; animation-delay: 2s; }
+        .dot:nth-child(6) { top: 85%; left: 80%; animation-delay: 2.5s; }
+        .dot:nth-child(7) { top: 10%; left: 50%; animation-delay: 3s; }
+        .dot:nth-child(8) { top: 90%; left: 45%; animation-delay: 3.5s; }
+        .dot:nth-child(9) { top: 35%; left: 30%; animation-delay: 0.3s; }
+        .dot:nth-child(10) { top: 55%; left: 70%; animation-delay: 0.8s; }
+        .dot:nth-child(11) { top: 20%; left: 65%; animation-delay: 1.3s; }
+        .dot:nth-child(12) { top: 70%; left: 40%; animation-delay: 1.8s; }
+        .dot:nth-child(13) { top: 40%; left: 55%; animation-delay: 2.3s; }
+        .dot:nth-child(14) { top: 80%; left: 25%; animation-delay: 2.8s; }
+        .dot:nth-child(15) { top: 30%; left: 75%; animation-delay: 3.3s; }
+
+        /* Particle Glow */
+        .particle-glow {
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.5), transparent 70%);
+            filter: blur(50px);
+            animation: glowFloat 12s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .particle-glow.glow-1 { top: 10%; left: 5%; }
+        .particle-glow.glow-2 { bottom: 10%; right: 5%; animation-delay: 6s; }
+
+        @keyframes glowFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+            50% { transform: translate(50px, -50px) scale(1.3); opacity: 0.8; }
+        }
+
+        /* ============================================
+           AUTH CARD
+           ============================================ */
         .auth-card {
-            background: white;
-            border-radius: var(--radius-lg);
-            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
-            padding: 40px;
-            max-width: 440px;
+            position: relative;
+            z-index: 10;
             width: 100%;
-            animation: slideUp 0.5s ease;
+            max-width: 440px;
+            padding: 40px 36px;
+            margin: auto;
+            
+            background: rgba(15, 33, 55, 0.75);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            
+            border: 1.5px solid rgba(56, 189, 248, 0.3);
+            border-radius: 28px;
+            
+            box-shadow: 
+                0 25px 70px rgba(0, 0, 0, 0.6),
+                0 0 40px rgba(56, 189, 248, 0.2),
+                0 0 0 1px rgba(56, 189, 248, 0.1) inset;
+            
+            animation: cardSlideIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        @keyframes slideUp {
-            from { transform: translateY(40px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 20%;
+            right: 20%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #38bdf8, transparent);
+            border-radius: 50%;
+            box-shadow: 0 0 20px #38bdf8;
         }
 
+        @keyframes cardSlideIn {
+            from { opacity: 0; transform: translateY(60px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* AUTH LOGO */
         .auth-logo { text-align: center; margin-bottom: 28px; }
 
         .auth-logo .icon {
             width: 80px;
             height: 80px;
-            background: var(--gradient-1);
-            color: white;
+            margin: 0 auto 16px;
+            background: linear-gradient(135deg, #38bdf8, #0ea5e9);
             border-radius: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 40px;
-            margin: 0 auto 16px;
-            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.4);
+            font-size: 38px;
+            color: white;
+            box-shadow: 
+                0 15px 40px rgba(56, 189, 248, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+            animation: logoFloat 3s ease-in-out infinite;
         }
 
-        .auth-logo h1 { font-size: 24px; font-weight: 800; color: #1e293b; margin-bottom: 6px; }
-        .auth-logo p { color: #64748b; font-size: 14px; }
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0) rotate(-3deg); }
+            50% { transform: translateY(-8px) rotate(3deg); }
+        }
 
+        .auth-logo h1 {
+            font-size: 26px;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+
+        .auth-logo p {
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 14px;
+        }
+
+        /* AUTH TABS */
         .auth-tabs {
             display: flex;
-            background: #f1f5f9;
-            border-radius: 12px;
-            padding: 4px;
-            margin-bottom: 24px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 5px;
+            margin-bottom: 22px;
+            border: 1px solid rgba(56, 189, 248, 0.15);
         }
 
         .auth-tab {
             flex: 1;
-            padding: 10px;
+            padding: 12px;
             text-align: center;
             border-radius: 10px;
             font-size: 13.5px;
-            font-weight: 600;
-            color: #64748b;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.6);
             cursor: pointer;
             transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
+
+        .auth-tab:hover { color: white; }
 
         .auth-tab.active {
-            background: white;
-            color: #6366f1;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+            color: white;
+            box-shadow: 0 8px 20px rgba(56, 189, 248, 0.5);
+            transform: scale(1.02);
         }
 
+        /* AUTH FORMS */
         .auth-form { display: none; }
-        .auth-form.active { display: block; }
+        .auth-form.active { display: block; animation: formFadeIn 0.4s ease; }
 
-        .auth-input-group { margin-bottom: 16px; position: relative; }
+        @keyframes formFadeIn {
+            from { opacity: 0; transform: translateX(-15px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* AUTH INPUTS */
+        .auth-input-group {
+            position: relative;
+            margin-bottom: 14px;
+        }
 
         .auth-input-group i {
             position: absolute;
-            left: 16px;
+            left: 18px;
             top: 50%;
             transform: translateY(-50%);
-            color: #94a3b8;
+            color: rgba(255, 255, 255, 0.6);
             font-size: 15px;
+            z-index: 2;
+            transition: all 0.3s;
         }
 
         .auth-input-group input {
             width: 100%;
-            padding: 14px 16px 14px 44px;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            background: #f8fafc;
-            color: #1e293b;
+            padding: 16px 18px 16px 48px;
+            border: 1.5px solid rgba(56, 189, 248, 0.2);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.06);
+            color: white;
             font-family: inherit;
             font-size: 14.5px;
+            font-weight: 500;
             transition: all 0.3s;
+            outline: none;
+        }
+
+        .auth-input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.45);
         }
 
         .auth-input-group input:focus {
-            outline: none;
-            border-color: #6366f1;
-            background: white;
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+            border-color: #38bdf8;
+            background: rgba(56, 189, 248, 0.1);
+            box-shadow: 
+                0 0 0 4px rgba(56, 189, 248, 0.2),
+                0 8px 25px rgba(0, 0, 0, 0.2);
         }
 
+        .auth-input-group input:focus ~ i {
+            color: #38bdf8;
+        }
+
+        /* AUTH BUTTON */
         .auth-btn {
             width: 100%;
-            padding: 15px;
-            background: var(--gradient-1);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-family: inherit;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
+            padding: 16px 24px;
             margin-top: 8px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+            color: white;
+            font-family: inherit;
+            font-size: 15.5px;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(56, 189, 248, 0.5);
         }
 
-        .auth-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4); }
-        .auth-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .auth-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.7s;
+        }
 
+        .auth-btn:hover:not(:disabled)::before { left: 100%; }
+
+        .auth-btn:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 25px 55px rgba(56, 189, 248, 0.65);
+        }
+
+        .auth-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* AUTH ERROR */
         .auth-error {
-            background: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
             padding: 12px 16px;
-            border-radius: 10px;
-            font-size: 13px;
             margin-bottom: 16px;
+            border-radius: 12px;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            border-left: 4px solid #ef4444;
+            color: #fecaca;
+            font-size: 13px;
+            font-weight: 600;
             display: none;
+            align-items: center;
+            gap: 10px;
+            animation: errorShake 0.5s ease;
         }
 
-        .auth-error.active { display: block; }
+        .auth-error.active { display: flex; }
 
+        @keyframes errorShake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-5px); }
+            80% { transform: translateX(5px); }
+        }
+
+        /* PHOTO UPLOAD */
         .auth-photo-upload {
             display: flex;
             flex-direction: column;
@@ -249,27 +601,35 @@
             width: 90px;
             height: 90px;
             border-radius: 50%;
-            background: #f1f5f9;
-            color: #94a3b8;
+            background: rgba(255, 255, 255, 0.08);
+            border: 3px dashed rgba(56, 189, 248, 0.4);
+            color: rgba(255, 255, 255, 0.6);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 30px;
-            border: 3px dashed #cbd5e1;
             overflow: hidden;
-            transition: all 0.3s;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .auth-photo-preview img { width: 100%; height: 100%; object-fit: cover; }
 
         .auth-photo-upload:hover .auth-photo-preview {
-            border-color: #6366f1;
-            color: #6366f1;
+            border-color: #38bdf8;
+            color: #38bdf8;
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.5);
         }
 
-        .auth-photo-text { font-size: 12px; color: #64748b; text-align: center; }
+        .auth-photo-text {
+            font-size: 12.5px;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 600;
+        }
 
-        /* APP */
+        /* ============================================
+           APP (Dashboard)
+           ============================================ */
         .app { display: none; }
         .app.active { display: block; }
 
@@ -428,7 +788,7 @@
         .nav-item:hover { background: var(--bg); color: var(--text); }
 
         .nav-item.active {
-            background: linear-gradient(90deg, rgba(99, 102, 241, 0.12), transparent);
+            background: linear-gradient(90deg, rgba(56, 189, 248, 0.15), transparent);
             color: var(--primary);
             font-weight: 700;
         }
@@ -496,7 +856,7 @@
         }
 
         .btn-primary { background: var(--gradient-1); color: white; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(56, 189, 248, 0.4); }
         .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
         .btn-success { background: var(--gradient-2); color: white; }
@@ -554,7 +914,7 @@
 
         /* BANNER */
         .new-attendance-banner {
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            background: linear-gradient(135deg, #38bdf8, #0ea5e9);
             border-radius: var(--radius-lg);
             padding: 32px;
             margin-bottom: 20px;
@@ -567,16 +927,7 @@
 
         .new-attendance-banner:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.4);
-        }
-
-        .new-attendance-banner::before {
-            content: '';
-            position: absolute;
-            top: -50%; right: -10%;
-            width: 300px; height: 300px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
+            box-shadow: 0 15px 40px rgba(56, 189, 248, 0.4);
         }
 
         .new-attendance-content {
@@ -629,7 +980,6 @@
 
         .section-title i { color: var(--primary); }
 
-        /* SAVED LIST */
         .saved-list { display: flex; flex-direction: column; gap: 14px; }
 
         .saved-card {
@@ -654,7 +1004,6 @@
         .saved-info { flex: 1; min-width: 200px; }
         .saved-info h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
         .saved-info h3 i { color: var(--primary); font-size: 15px; }
-
         .saved-meta { display: flex; gap: 16px; font-size: 13px; color: var(--text-secondary); flex-wrap: wrap; }
         .saved-meta span { display: flex; align-items: center; gap: 5px; }
 
@@ -689,7 +1038,6 @@
         .action-btn.delete:hover { background: var(--danger); color: white; border-color: var(--danger); }
         .action-btn.edit:hover { background: var(--warning); color: white; border-color: var(--warning); }
 
-        /* EMPTY STATE */
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -729,6 +1077,11 @@
             overflow-y: auto;
             box-shadow: var(--shadow-lg);
             animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(40px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         .modal-header {
@@ -784,12 +1137,11 @@
             outline: none;
             border-color: var(--primary);
             background: var(--bg-card);
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+            box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15);
         }
 
         .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
 
-        /* PHOTO UPLOAD */
         .photo-upload {
             display: flex;
             flex-direction: column;
@@ -803,7 +1155,7 @@
             transition: var(--transition);
         }
 
-        .photo-upload:hover { border-color: var(--primary); background: rgba(99, 102, 241, 0.05); }
+        .photo-upload:hover { border-color: var(--primary); background: rgba(56, 189, 248, 0.05); }
 
         .photo-preview {
             width: 100px;
@@ -831,8 +1183,8 @@
 
         /* ATTENDANCE TABLE */
         .attendance-info-bar {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
-            border: 2px solid rgba(99, 102, 241, 0.2);
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(14, 165, 233, 0.1));
+            border: 2px solid rgba(56, 189, 248, 0.2);
             border-radius: var(--radius);
             padding: 18px 22px;
             margin-bottom: 20px;
@@ -940,8 +1292,8 @@
             border-radius: 50px;
             font-size: 12px;
             font-weight: 700;
-            background: rgba(99, 102, 241, 0.12);
-            color: #6366f1;
+            background: rgba(56, 189, 248, 0.12);
+            color: #38bdf8;
         }
 
         .tick-btn {
@@ -992,7 +1344,7 @@
         .submit-bar .summary { font-size: 14px; font-weight: 600; }
         .submit-bar .summary strong { color: var(--success); font-size: 18px; }
 
-        /* DETAIL */
+        /* VIEW TABLE, CHART, PHOTOS, REPORTS, PROFILE, SETTINGS */
         .detail-header {
             text-align: center;
             padding-bottom: 20px;
@@ -1027,7 +1379,6 @@
         }
 
         .view-table-wrapper table { width: 100%; border-collapse: collapse; }
-
         .view-table-wrapper th {
             padding: 14px 18px;
             text-align: left;
@@ -1038,19 +1389,14 @@
             background: var(--bg);
             border-bottom: 1px solid var(--border);
         }
-
         .view-table-wrapper td {
             padding: 14px 18px;
             font-size: 14px;
             border-bottom: 1px solid var(--border);
         }
-
-        .view-table-wrapper tbody tr:last-child td { border-bottom: none; }
-
         .view-row-photo { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); }
         .view-row-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--gradient-1); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; }
 
-        /* CHART */
         .chart-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -1063,7 +1409,6 @@
         .chart-title { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
         .chart-title i { color: var(--primary); }
 
-        /* PHOTO GALLERY */
         .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 18px; }
 
         .photo-card {
@@ -1079,7 +1424,6 @@
         .photo-card .photo-info { padding: 12px 14px; }
         .photo-card .photo-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
 
-        /* TABLE */
         .table-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -1116,9 +1460,7 @@
 
         .table-card td { padding: 14px 20px; font-size: 14px; border-bottom: 1px solid var(--border); }
         .table-card tbody tr:hover { background: var(--bg); }
-        .table-card tbody tr:last-child td { border-bottom: none; }
 
-        /* SETTINGS */
         .settings-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -1138,11 +1480,10 @@
 
         .settings-card h3 i { color: var(--primary); }
 
-        /* PROFILE */
         .profile-header {
             text-align: center;
             padding: 30px;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(14, 165, 233, 0.1));
             border-radius: var(--radius);
             margin-bottom: 24px;
         }
@@ -1186,7 +1527,6 @@
         .profile-name { font-size: 24px; font-weight: 800; margin-bottom: 4px; }
         .profile-email { color: var(--text-secondary); font-size: 14px; }
 
-        /* FILTER */
         .filter-bar {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -1232,7 +1572,6 @@
 
         .search-box input:focus { outline: none; border-color: var(--primary); }
 
-        /* PERIOD TABS */
         .period-tabs {
             display: flex;
             gap: 8px;
@@ -1263,7 +1602,6 @@
             box-shadow: var(--shadow);
         }
 
-        /* QR DISPLAY */
         .qr-display {
             text-align: center;
             padding: 30px;
@@ -1282,7 +1620,6 @@
         .qr-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
         .qr-actions .btn { width: 100%; }
 
-        /* TOAST */
         .toast-container {
             position: fixed;
             top: 90px; right: 24px;
@@ -1316,7 +1653,6 @@
         .toast.show { transform: translateX(0); opacity: 1; }
         .toast.error { border-left-color: var(--danger); }
         .toast.warning { border-left-color: var(--warning); }
-        .toast.info { border-left-color: var(--info); }
 
         .toast-icon {
             width: 34px; height: 34px;
@@ -1332,9 +1668,7 @@
 
         .toast.error .toast-icon { background: rgba(239, 68, 68, 0.12); color: var(--danger); }
         .toast.warning .toast-icon { background: rgba(245, 158, 11, 0.12); color: var(--warning); }
-        .toast.info .toast-icon { background: rgba(6, 182, 212, 0.12); color: var(--info); }
 
-        /* RESPONSIVE */
         @media (max-width: 900px) {
             .menu-toggle { display: flex; }
             .sidebar {
@@ -1361,19 +1695,72 @@
             .submit-bar .btn { width: 100%; }
             .qr-actions { grid-template-columns: 1fr; }
         }
+
+        @media (max-width: 480px) {
+            .auth-card {
+                padding: 32px 24px;
+                border-radius: 24px;
+            }
+            .auth-logo .icon { width: 70px; height: 70px; font-size: 32px; }
+            .auth-logo h1 { font-size: 22px; }
+            .network-globe { width: 350px; height: 350px; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- LOADING -->
+    <!-- ============================================
+         LOADING SCREEN — PIANO RING
+         ============================================ -->
     <div class="loading-screen" id="loadingScreen">
-        <div class="loading-spinner"></div>
-        <h2>Choir Attendance System</h2>
-        <p id="loadingText">Turashakisha amakuru...</p>
+        <div class="piano-ring">
+            <div class="piano-keys">
+                <div class="key"></div>
+                <div class="key black"></div>
+                <div class="key"></div>
+                <div class="key black"></div>
+                <div class="key"></div>
+                <div class="key"></div>
+                <div class="key black"></div>
+                <div class="key"></div>
+            </div>
+        </div>
+        <h2>🎵 Choir Attendance</h2>
+        <p>Turashakisha amakuru...</p>
     </div>
 
-    <!-- AUTH -->
+    <!-- ============================================
+         AUTH SCREEN — NETWORK GLOBE BACKGROUND
+         ============================================ -->
     <div class="auth-screen hidden" id="authScreen">
+        
+        <!-- NETWORK BACKGROUND -->
+        <div class="network-bg">
+            <div class="network-globe"></div>
+            
+            <div class="particle-glow glow-1"></div>
+            <div class="particle-glow glow-2"></div>
+            
+            <div class="network-dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+
+        <!-- AUTH CARD -->
         <div class="auth-card">
             <div class="auth-logo">
                 <div class="icon"><i class="fas fa-music"></i></div>
@@ -1382,11 +1769,18 @@
             </div>
 
             <div class="auth-tabs">
-                <div class="auth-tab active" onclick="switchAuth('login', event)">Injira</div>
-                <div class="auth-tab" onclick="switchAuth('signup', event)">Iyandikishe</div>
+                <div class="auth-tab active" onclick="switchAuth('login', event)">
+                    <i class="fas fa-sign-in-alt"></i> Injira
+                </div>
+                <div class="auth-tab" onclick="switchAuth('signup', event)">
+                    <i class="fas fa-user-plus"></i> Iyandikishe
+                </div>
             </div>
 
-            <div class="auth-error" id="authError"></div>
+            <div class="auth-error" id="authError">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="authErrorText">-</span>
+            </div>
 
             <!-- LOGIN -->
             <div class="auth-form active" id="loginForm">
@@ -1399,7 +1793,8 @@
                     <input type="password" id="loginPassword" placeholder="Ijambo ry'ibanga">
                 </div>
                 <button class="auth-btn" id="loginBtn" onclick="handleLogin()">
-                    <i class="fas fa-sign-in-alt"></i> INJIRA
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>INJIRA</span>
                 </button>
             </div>
 
@@ -1409,7 +1804,7 @@
                     <div class="auth-photo-preview" id="signupPhotoPreview">
                         <i class="fas fa-camera"></i>
                     </div>
-                    <div class="auth-photo-text">Kanda hano uongeremo ifoto yawe</div>
+                    <div class="auth-photo-text">📸 Kanda hano wongeremo ifoto yawe</div>
                 </div>
                 <input type="file" id="signupPhotoInput" accept="image/*" style="display: none;" onchange="previewSignupPhoto(event)">
 
@@ -1430,15 +1825,17 @@
                     <input type="password" id="signupConfirm" placeholder="Emeza ijambo ry'ibanga">
                 </div>
                 <button class="auth-btn" id="signupBtn" onclick="handleSignup()">
-                    <i class="fas fa-user-plus"></i> IYANDIKISHE
+                    <i class="fas fa-user-plus"></i>
+                    <span>IYANDIKISHE</span>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- APP -->
+    <!-- ============================================
+         APP (Dashboard)
+         ============================================ -->
     <div class="app" id="app">
-
         <header class="header">
             <div class="header-left">
                 <button class="menu-toggle" onclick="toggleSidebar()">
@@ -1454,7 +1851,7 @@
                     <span class="dot"></span>
                     <span id="liveClock">--:--:--</span>
                 </div>
-                <button class="icon-btn" onclick="toggleTheme()" title="Theme">
+                <button class="icon-btn" onclick="toggleTheme()">
                     <i class="fas fa-moon" id="themeIcon"></i>
                 </button>
                 <div class="user-chip" onclick="switchPage('profile', document.querySelectorAll('.nav-item')[7])">
@@ -1465,56 +1862,42 @@
         </header>
 
         <div class="layout">
-
             <aside class="sidebar" id="sidebar">
                 <div class="nav-label">Menu Nyamukuru</div>
-                
                 <div class="nav-item active" onclick="switchPage('dashboard', this)">
                     <i class="fas fa-home"></i><span>Ahabanza</span>
                 </div>
-                
                 <div class="nav-item" onclick="switchPage('members', this)">
                     <i class="fas fa-users"></i><span>Abaririmbyi</span>
                     <span class="count" id="sidebarMemberCount">0</span>
                 </div>
-                
                 <div class="nav-item" onclick="switchPage('attendance', this)">
                     <i class="fas fa-calendar-check"></i><span>Ubwitabire</span>
                     <span class="count" id="sidebarSessionCount">0</span>
                 </div>
-
                 <div class="nav-label">Isesengura</div>
-                
                 <div class="nav-item" onclick="switchPage('voices', this)">
                     <i class="fas fa-microphone"></i><span>Amajwi</span>
                 </div>
-                
                 <div class="nav-item" onclick="switchPage('photos', this)">
                     <i class="fas fa-camera"></i><span>Amafoto</span>
                 </div>
-                
                 <div class="nav-item" onclick="switchPage('reports', this)">
                     <i class="fas fa-chart-line"></i><span>Raporo</span>
                 </div>
-
                 <div class="nav-label">Konti</div>
-                
                 <div class="nav-item" onclick="switchPage('profile', this)">
                     <i class="fas fa-user-circle"></i><span>Profile</span>
                 </div>
-                
                 <div class="nav-item" onclick="switchPage('settings', this)">
                     <i class="fas fa-cog"></i><span>Igenamiterere</span>
                 </div>
-
                 <div class="nav-item" onclick="handleLogout()" style="color: var(--danger);">
                     <i class="fas fa-sign-out-alt"></i><span>Sohoka</span>
                 </div>
             </aside>
 
             <main class="main">
-
-                <!-- DASHBOARD -->
                 <div class="page active" id="page-dashboard">
                     <div class="page-header">
                         <div>
@@ -1569,13 +1952,12 @@
                     <div class="section-title">
                         <i class="fas fa-folder-open"></i>
                         <span>Saved Attendances</span>
-                        <span style="margin-left: auto; font-size: 13px; color: var(--text-secondary); font-weight: 500;" id="savedCount">0</span>
+                        <span style="margin-left: auto; font-size: 13px; color: var(--text-secondary);" id="savedCount">0</span>
                     </div>
 
                     <div class="saved-list" id="savedList"></div>
                 </div>
 
-                <!-- CREATE -->
                 <div class="page" id="page-create">
                     <div class="page-header">
                         <div>
@@ -1635,7 +2017,6 @@
                     </div>
                 </div>
 
-                <!-- MEMBERS -->
                 <div class="page" id="page-members">
                     <div class="page-header">
                         <div>
@@ -1657,7 +2038,6 @@
                                 <option value="Tenor">Tenor</option>
                                 <option value="Bass">Bass</option>
                             </select>
-
                             <label>Level:</label>
                             <select class="filter-select" id="membersFilterLevel" onchange="renderMembers()">
                                 <option value="">Bose</option>
@@ -1666,7 +2046,6 @@
                                 <option value="L3">L3</option>
                                 <option value="L4">L4</option>
                             </select>
-
                             <div class="search-box">
                                 <i class="fas fa-search"></i>
                                 <input type="text" id="membersSearch" placeholder="Shakisha..." oninput="renderMembers()">
@@ -1698,7 +2077,6 @@
                     </div>
                 </div>
 
-                <!-- ATTENDANCE HISTORY -->
                 <div class="page" id="page-attendance">
                     <div class="page-header">
                         <div>
@@ -1708,24 +2086,15 @@
                     </div>
 
                     <div class="period-tabs">
-                        <div class="period-tab active" onclick="switchPeriod('all', this)">
-                            <i class="fas fa-list"></i> Byose
-                        </div>
-                        <div class="period-tab" onclick="switchPeriod('day', this)">
-                            <i class="fas fa-sun"></i> Uyu Munsi
-                        </div>
-                        <div class="period-tab" onclick="switchPeriod('week', this)">
-                            <i class="fas fa-calendar-week"></i> Iki Cyumweru
-                        </div>
-                        <div class="period-tab" onclick="switchPeriod('month', this)">
-                            <i class="fas fa-calendar-alt"></i> Uku Kwezi
-                        </div>
+                        <div class="period-tab active" onclick="switchPeriod('all', this)"><i class="fas fa-list"></i> Byose</div>
+                        <div class="period-tab" onclick="switchPeriod('day', this)"><i class="fas fa-sun"></i> Uyu Munsi</div>
+                        <div class="period-tab" onclick="switchPeriod('week', this)"><i class="fas fa-calendar-week"></i> Iki Cyumweru</div>
+                        <div class="period-tab" onclick="switchPeriod('month', this)"><i class="fas fa-calendar-alt"></i> Uku Kwezi</div>
                     </div>
 
                     <div class="saved-list" id="attendanceHistoryList"></div>
                 </div>
 
-                <!-- VOICES -->
                 <div class="page" id="page-voices">
                     <div class="page-header">
                         <div>
@@ -1767,7 +2136,6 @@
                     </div>
                 </div>
 
-                <!-- PHOTOS -->
                 <div class="page" id="page-photos">
                     <div class="page-header">
                         <div>
@@ -1778,7 +2146,6 @@
                     <div class="photo-grid" id="photoGrid"></div>
                 </div>
 
-                <!-- REPORTS -->
                 <div class="page" id="page-reports">
                     <div class="page-header">
                         <div>
@@ -1789,7 +2156,6 @@
 
                     <div class="settings-card">
                         <h3><i class="fas fa-file-alt"></i> Kora Raporo</h3>
-                        
                         <div class="form-group">
                             <label>Ubwoko bwa raporo</label>
                             <select class="form-control" id="reportType">
@@ -1798,27 +2164,18 @@
                                 <option value="monthly">🗓️ Raporo y'Ukwezi</option>
                             </select>
                         </div>
-
                         <div class="form-group">
                             <label>Kuva</label>
                             <input type="date" class="form-control" id="reportFrom">
                         </div>
-
                         <div class="form-group">
                             <label>Kugeza</label>
                             <input type="date" class="form-control" id="reportTo">
                         </div>
-
                         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                            <button class="btn btn-primary" onclick="generateReport()">
-                                <i class="fas fa-chart-line"></i> Kora Raporo
-                            </button>
-                            <button class="btn btn-danger" onclick="downloadReport()">
-                                <i class="fas fa-download"></i> Download PDF
-                            </button>
-                            <button class="btn btn-success" onclick="downloadReportExcel()">
-                                <i class="fas fa-file-excel"></i> Download Excel
-                            </button>
+                            <button class="btn btn-primary" onclick="generateReport()"><i class="fas fa-chart-line"></i> Kora Raporo</button>
+                            <button class="btn btn-danger" onclick="downloadReport()"><i class="fas fa-download"></i> PDF</button>
+                            <button class="btn btn-success" onclick="downloadReportExcel()"><i class="fas fa-file-excel"></i> Excel</button>
                         </div>
                     </div>
 
@@ -1843,16 +2200,13 @@
                     <div id="reportDetailsContainer" style="display: none;">
                         <div class="table-card">
                             <div class="table-header">
-                                <div class="table-title">
-                                    <i class="fas fa-list"></i> Amakuru yuzuye
-                                </div>
+                                <div class="table-title"><i class="fas fa-list"></i> Amakuru yuzuye</div>
                             </div>
                             <div class="table-wrapper" id="reportTableWrapper"></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- PROFILE -->
                 <div class="page" id="page-profile">
                     <div class="page-header">
                         <div>
@@ -1864,9 +2218,7 @@
                     <div class="profile-header">
                         <div class="profile-avatar" onclick="document.getElementById('profilePhotoInput').click()">
                             <div id="profileAvatarContent">?</div>
-                            <div class="camera-overlay">
-                                <i class="fas fa-camera"></i>
-                            </div>
+                            <div class="camera-overlay"><i class="fas fa-camera"></i></div>
                         </div>
                         <input type="file" id="profilePhotoInput" accept="image/*" style="display: none;" onchange="uploadProfilePhoto(event)">
                         <div class="profile-name" id="profileName">...</div>
@@ -1883,28 +2235,17 @@
                             <label>Telefone</label>
                             <input type="text" class="form-control" id="profileInputPhone" placeholder="0788123456">
                         </div>
-                        <button class="btn btn-primary" onclick="saveProfile()">
-                            <i class="fas fa-save"></i> Bika Profile
-                        </button>
+                        <button class="btn btn-primary" onclick="saveProfile()"><i class="fas fa-save"></i> Bika</button>
                     </div>
 
                     <div class="settings-card">
                         <h3><i class="fas fa-lock"></i> Hindura Ijambo ry'Ibanga</h3>
-                        <div class="form-group">
-                            <label>Ijambo ry'ibanga rya kera</label>
-                            <input type="password" class="form-control" id="oldPassword">
-                        </div>
-                        <div class="form-group">
-                            <label>Ijambo ry'ibanga rishya</label>
-                            <input type="password" class="form-control" id="newPassword">
-                        </div>
-                        <button class="btn btn-primary" onclick="changePassword()">
-                            <i class="fas fa-key"></i> Hindura
-                        </button>
+                        <div class="form-group"><label>Ijambo ry'ibanga rya kera</label><input type="password" class="form-control" id="oldPassword"></div>
+                        <div class="form-group"><label>Ijambo ry'ibanga rishya</label><input type="password" class="form-control" id="newPassword"></div>
+                        <button class="btn btn-primary" onclick="changePassword()"><i class="fas fa-key"></i> Hindura</button>
                     </div>
                 </div>
 
-                <!-- SETTINGS -->
                 <div class="page" id="page-settings">
                     <div class="page-header">
                         <div>
@@ -1915,28 +2256,16 @@
 
                     <div class="settings-card">
                         <h3><i class="fas fa-users-cog"></i> Amakuru y'Itsinda</h3>
-                        <div class="form-group">
-                            <label>Izina ry'itsinda</label>
-                            <input type="text" class="form-control" value="Choir Imanzi" id="choirName">
-                        </div>
-                        <button class="btn btn-primary" onclick="saveSettings()">
-                            <i class="fas fa-save"></i> Bika
-                        </button>
+                        <div class="form-group"><label>Izina ry'itsinda</label><input type="text" class="form-control" value="Choir Imanzi" id="choirName"></div>
+                        <button class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save"></i> Bika</button>
                     </div>
 
                     <div class="settings-card">
                         <h3><i class="fas fa-palette"></i> Ibara</h3>
-                        <button class="btn btn-outline" onclick="toggleTheme()">
-                            <i class="fas fa-adjust"></i> Dark / Light Mode
-                        </button>
+                        <button class="btn btn-outline" onclick="toggleTheme()"><i class="fas fa-adjust"></i> Dark / Light Mode</button>
                     </div>
 
-                    <div class="settings-card">
-                        <h3><i class="fas fa-database"></i> Data</h3>
-                        <button class="btn btn-outline" onclick="exportData()">
-                            <i class="fas fa-download"></i> Kura Data Yose (JSON)
-                        </button>
-                    </div>
+                   
                 </div>
 
             </main>
@@ -1948,31 +2277,14 @@
         <div class="modal">
             <div class="modal-header">
                 <h3><i class="fas fa-calendar-plus"></i> Iteraniro Rishya</h3>
-                <button class="close-btn" onclick="closeModal('createModal')">
-                    <i class="fas fa-times"></i>
-                </button>
+                <button class="close-btn" onclick="closeModal('createModal')"><i class="fas fa-times"></i></button>
             </div>
-
-            <div class="form-group">
-                <label>Izina ry'Iteraniro <span>*</span></label>
-                <input type="text" class="form-control" id="sessionName" placeholder="Iteraniro rya ...">
-            </div>
-
-            <div class="form-group">
-                <label>Itariki <span>*</span></label>
-                <input type="date" class="form-control" id="sessionDate">
-            </div>
-
-            <div class="form-group">
-                <label>Isaha <span>*</span></label>
-                <input type="time" class="form-control" id="sessionTime" value="18:00">
-            </div>
-
+            <div class="form-group"><label>Izina ry'Iteraniro <span>*</span></label><input type="text" class="form-control" id="sessionName"></div>
+            <div class="form-group"><label>Itariki <span>*</span></label><input type="date" class="form-control" id="sessionDate"></div>
+            <div class="form-group"><label>Isaha <span>*</span></label><input type="time" class="form-control" id="sessionTime" value="18:00"></div>
             <div class="modal-actions">
                 <button class="btn btn-outline" onclick="closeModal('createModal')">Hagarika</button>
-                <button class="btn btn-primary" onclick="startAttendance()">
-                    <i class="fas fa-arrow-right"></i> KOMEZA
-                </button>
+                <button class="btn btn-primary" onclick="startAttendance()"><i class="fas fa-arrow-right"></i> KOMEZA</button>
             </div>
         </div>
     </div>
@@ -1981,28 +2293,17 @@
         <div class="modal">
             <div class="modal-header">
                 <h3><i class="fas fa-qrcode"></i> QR y'Umuririmbyi Mushya</h3>
-                <button class="close-btn" onclick="closeModal('qrRegisterModal')">
-                    <i class="fas fa-times"></i>
-                </button>
+                <button class="close-btn" onclick="closeModal('qrRegisterModal')"><i class="fas fa-times"></i></button>
             </div>
-
-            <p style="margin-bottom: 20px; color: var(--text-secondary); font-size: 14px;">
-                Ha umuririmbyi mushya iyi QR code. Iyo ayiscanise, ashyirwa kuri <strong>member.html</strong> aho yiyandikisha.
-            </p>
-
+            <p style="margin-bottom: 20px; color: var(--text-secondary); font-size: 14px;">Ha umuririmbyi mushya iyi QR code. Iyo ayiscanise, ashyirwa kuri <strong>member.html</strong> aho yiyandikisha.</p>
             <div class="qr-display">
                 <div class="qr-title">Iyandikishe nk'Umuririmbyi</div>
                 <div class="qr-subtitle">Scan iyi QR ukoresheje telefone</div>
                 <div id="qr-register-code"></div>
             </div>
-
             <div class="qr-actions">
-                <button class="btn btn-primary" onclick="downloadQRRegister()">
-                    <i class="fas fa-download"></i> Download PNG
-                </button>
-                <button class="btn btn-info" onclick="copyQRRegisterLink()">
-                    <i class="fas fa-link"></i> Copy Link
-                </button>
+                <button class="btn btn-primary" onclick="downloadQRRegister()"><i class="fas fa-download"></i> Download PNG</button>
+                <button class="btn btn-info" onclick="copyQRRegisterLink()"><i class="fas fa-link"></i> Copy Link</button>
             </div>
         </div>
     </div>
@@ -2011,33 +2312,18 @@
         <div class="modal">
             <div class="modal-header">
                 <h3><i class="fas fa-user-plus"></i> Ongeraho Umuririmbyi</h3>
-                <button class="close-btn" onclick="closeModal('addMemberModal')">
-                    <i class="fas fa-times"></i>
-                </button>
+                <button class="close-btn" onclick="closeModal('addMemberModal')"><i class="fas fa-times"></i></button>
             </div>
-
             <div class="form-group">
-                <label>Ifoto y'Umuririmbyi</label>
+                <label>Ifoto</label>
                 <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
-                    <div id="photoPreviewContainer">
-                        <div class="photo-placeholder">📷</div>
-                    </div>
-                    <div class="photo-upload-text">
-                        <strong>Kanda hano uongeremo ifoto</strong>
-                        JPG, PNG (max 5MB)
-                    </div>
+                    <div id="photoPreviewContainer"><div class="photo-placeholder">📷</div></div>
+                    <div class="photo-upload-text"><strong>Kanda hano wongeremo ifoto</strong> JPG, PNG (max 5MB)</div>
                 </div>
                 <input type="file" id="photoInput" accept="image/*" style="display: none;" onchange="previewPhoto(event)">
             </div>
-
-            <div class="form-group">
-                <label>Amazina <span>*</span></label>
-                <input type="text" class="form-control" id="newName" placeholder="Uwase Marie">
-            </div>
-            <div class="form-group">
-                <label>Nimero (Student ID / Telefone) <span>*</span></label>
-                <input type="text" class="form-control" id="newNumberInput" placeholder="Urugero: 2234567890">
-            </div>
+            <div class="form-group"><label>Amazina <span>*</span></label><input type="text" class="form-control" id="newName"></div>
+            <div class="form-group"><label>Nimero (Student ID / Telefone) <span>*</span></label><input type="text" class="form-control" id="newNumberInput"></div>
             <div class="form-group">
                 <label>Level <span>*</span></label>
                 <select class="form-control" id="newLevel">
@@ -2058,12 +2344,9 @@
                     <option value="Bass">Bass</option>
                 </select>
             </div>
-
             <div class="modal-actions">
                 <button class="btn btn-outline" onclick="closeModal('addMemberModal')">Hagarika</button>
-                <button class="btn btn-primary" id="addMemberBtn" onclick="addMember()">
-                    <i class="fas fa-save"></i> Bika
-                </button>
+                <button class="btn btn-primary" id="addMemberBtn" onclick="addMember()"><i class="fas fa-save"></i> Bika</button>
             </div>
         </div>
     </div>
@@ -2072,27 +2355,19 @@
         <div class="modal">
             <div class="modal-header">
                 <h3><i class="fas fa-edit"></i> Hindura Umuririmbyi</h3>
-                <button class="close-btn" onclick="closeModal('editMemberModal')">
-                    <i class="fas fa-times"></i>
-                </button>
+                <button class="close-btn" onclick="closeModal('editMemberModal')"><i class="fas fa-times"></i></button>
             </div>
-
             <div class="form-group">
                 <label>Ifoto</label>
                 <div class="photo-upload" onclick="document.getElementById('editPhotoInput').click()">
-                    <div id="editPhotoPreviewContainer">
-                        <div class="photo-placeholder">📷</div>
-                    </div>
-                    <div class="photo-upload-text">
-                        <strong>Kanda uhindure ifoto</strong>
-                    </div>
+                    <div id="editPhotoPreviewContainer"><div class="photo-placeholder">📷</div></div>
+                    <div class="photo-upload-text"><strong>Kanda uhindure ifoto</strong></div>
                 </div>
                 <input type="file" id="editPhotoInput" accept="image/*" style="display: none;" onchange="previewEditPhoto(event)">
             </div>
-
             <input type="hidden" id="editMemberId">
             <div class="form-group"><label>Amazina</label><input type="text" class="form-control" id="editName"></div>
-            <div class="form-group"><label>Nimero (Student ID / Telefone)</label><input type="text" class="form-control" id="editNumberInput"></div>
+            <div class="form-group"><label>Nimero</label><input type="text" class="form-control" id="editNumberInput"></div>
             <div class="form-group">
                 <label>Level</label>
                 <select class="form-control" id="editLevel">
@@ -2114,9 +2389,7 @@
             </div>
             <div class="modal-actions">
                 <button class="btn btn-outline" onclick="closeModal('editMemberModal')">Hagarika</button>
-                <button class="btn btn-primary" id="saveEditBtn" onclick="saveEditMember()">
-                    <i class="fas fa-save"></i> Bika
-                </button>
+                <button class="btn btn-primary" id="saveEditBtn" onclick="saveEditMember()"><i class="fas fa-save"></i> Bika</button>
             </div>
         </div>
     </div>
@@ -2125,9 +2398,7 @@
         <div class="modal" style="max-width: 800px;">
             <div class="modal-header">
                 <h3><i class="fas fa-eye"></i> Amakuru y'Iteraniro</h3>
-                <button class="close-btn" onclick="closeModal('detailModal')">
-                    <i class="fas fa-times"></i>
-                </button>
+                <button class="close-btn" onclick="closeModal('detailModal')"><i class="fas fa-times"></i></button>
             </div>
             <div id="detailContent"></div>
         </div>
@@ -2137,9 +2408,6 @@
 
     <!-- FIREBASE + CLOUDINARY + APP -->
     <script type="module">
-        // ============================================
-        // 🔥 FIREBASE CONFIG
-        // ============================================
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
         import { 
             getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, 
@@ -2151,16 +2419,12 @@
             EmailAuthProvider, reauthenticateWithCredential
         } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 
-        // ============================================
         // ☁️ CLOUDINARY CONFIG
-        // ============================================
         const CLOUDINARY_CLOUD_NAME = "fepicrec";
         const CLOUDINARY_UPLOAD_PRESET = "attendance_image";
         const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
 
-        // ============================================
-        // FIREBASE CONFIG
-        // ============================================
+        // 🔥 FIREBASE CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyBaL44npcmLRcAX4cAo8duE-V5Sn_wbALQ",
             authDomain: "choir-system-9745a.firebaseapp.com",
@@ -2174,7 +2438,6 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // GLOBALS
         let currentUser = null;
         let currentUserData = null;
         let members = [];
@@ -2187,164 +2450,91 @@
         let currentPeriod = 'all';
         let lastReportData = null;
 
-        // ============================================
         // HELPERS
-        // ============================================
-        window.showLoading = function(text) {
-            document.getElementById('loadingText').textContent = text || 'Turashakisha...';
-            document.getElementById('loadingScreen').classList.remove('hidden');
-        };
-
-        window.hideLoading = function() {
-            document.getElementById('loadingScreen').classList.add('hidden');
-        };
-
         window.showToast = function(message, type = 'success') {
             const container = document.getElementById('toastContainer');
             const icons = { success: 'fa-check', error: 'fa-times', warning: 'fa-exclamation', info: 'fa-info' };
-            
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
-            toast.innerHTML = `
-                <div class="toast-icon"><i class="fas ${icons[type]}"></i></div>
-                <span>${message}</span>
-            `;
-            
+            toast.innerHTML = `<div class="toast-icon"><i class="fas ${icons[type]}"></i></div><span>${message}</span>`;
             container.appendChild(toast);
             setTimeout(() => toast.classList.add('show'), 10);
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 400);
-            }, 3500);
+            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 3500);
         };
 
-        window.closeModal = function(id) {
-            document.getElementById(id).classList.remove('active');
-        };
+        window.closeModal = function(id) { document.getElementById(id).classList.remove('active'); };
+        document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('active'); }));
 
-        document.querySelectorAll('.modal-overlay').forEach(modal => {
-            modal.addEventListener('click', function(e) {
-                if (e.target === this) this.classList.remove('active');
-            });
-        });
-
-        // ============================================
-        // ☁️ CLOUDINARY UPLOAD
-        // ============================================
+        // CLOUDINARY UPLOAD
         async function uploadToCloudinary(file, folder = 'choir_members') {
             const formData = new FormData();
             formData.append('file', file);
             formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
             formData.append('folder', folder);
-
-            const response = await fetch(CLOUDINARY_URL, {
-                method: 'POST',
-                body: formData
-            });
-
-            if (!response.ok) {
-                const err = await response.json();
-                throw new Error(err.error?.message || 'Upload yananiwe');
-            }
-
+            const response = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData });
+            if (!response.ok) throw new Error('Upload yananiwe');
             const data = await response.json();
             return data.secure_url;
         }
 
-        // ============================================
         // PHOTO PREVIEW
-        // ============================================
         window.previewSignupPhoto = function(event) {
             const file = event.target.files[0];
             if (!file) return;
-            if (file.size > 5 * 1024 * 1024) {
-                showToast('Ifoto ni nini cyane (max 5MB)', 'warning');
-                return;
-            }
+            if (file.size > 5 * 1024 * 1024) { showToast('Ifoto ni nini cyane', 'warning'); return; }
             signupPhotoFile = file;
             const reader = new FileReader();
-            reader.onload = (e) => {
-                document.getElementById('signupPhotoPreview').innerHTML = 
-                    `<img src="${e.target.result}">`;
-            };
+            reader.onload = (e) => { document.getElementById('signupPhotoPreview').innerHTML = `<img src="${e.target.result}">`; };
             reader.readAsDataURL(file);
         };
 
         window.previewPhoto = function(event) {
             const file = event.target.files[0];
             if (!file) return;
-            if (file.size > 5 * 1024 * 1024) {
-                showToast('Ifoto ni nini cyane', 'warning');
-                return;
-            }
+            if (file.size > 5 * 1024 * 1024) { showToast('Ifoto ni nini cyane', 'warning'); return; }
             newMemberPhoto = file;
             const reader = new FileReader();
-            reader.onload = (e) => {
-                document.getElementById('photoPreviewContainer').innerHTML = 
-                    `<img src="${e.target.result}" class="photo-preview">`;
-            };
+            reader.onload = (e) => { document.getElementById('photoPreviewContainer').innerHTML = `<img src="${e.target.result}" class="photo-preview">`; };
             reader.readAsDataURL(file);
         };
 
         window.previewEditPhoto = function(event) {
             const file = event.target.files[0];
             if (!file) return;
-            if (file.size > 5 * 1024 * 1024) {
-                showToast('Ifoto ni nini cyane', 'warning');
-                return;
-            }
+            if (file.size > 5 * 1024 * 1024) { showToast('Ifoto ni nini cyane', 'warning'); return; }
             editingPhoto = file;
             const reader = new FileReader();
-            reader.onload = (e) => {
-                document.getElementById('editPhotoPreviewContainer').innerHTML = 
-                    `<img src="${e.target.result}" class="photo-preview">`;
-            };
+            reader.onload = (e) => { document.getElementById('editPhotoPreviewContainer').innerHTML = `<img src="${e.target.result}" class="photo-preview">`; };
             reader.readAsDataURL(file);
         };
 
-        // ============================================
         // AUTH
-        // ============================================
         window.switchAuth = function(tab, event) {
             document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-            event.target.classList.add('active');
-            
+            event.target.closest('.auth-tab').classList.add('active');
             document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
             document.getElementById(tab + 'Form').classList.add('active');
-            
             document.getElementById('authError').classList.remove('active');
         };
 
         function showAuthError(msg) {
-            const el = document.getElementById('authError');
-            el.textContent = msg;
-            el.classList.add('active');
+            document.getElementById('authErrorText').textContent = msg;
+            document.getElementById('authError').classList.add('active');
         }
 
         window.handleLogin = async function() {
             const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
             const btn = document.getElementById('loginBtn');
-            
-            if (!email || !password) {
-                showAuthError('Uzuza email na ijambo ry\'ibanga');
-                return;
-            }
-            
+            if (!email || !password) { showAuthError('Uzuza email na ijambo ry\'ibanga'); return; }
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turakwinjiza...';
-            
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turakwinjiza...</span>';
             try {
                 await signInWithEmailAndPassword(auth, email, password);
             } catch (error) {
-                console.error(error);
-                let msg = 'Email cyangwa ijambo ry\'ibanga sibyo';
-                if (error.code === 'auth/user-not-found') msg = 'Konti ntabonetse';
-                if (error.code === 'auth/wrong-password') msg = 'Ijambo ry\'ibanga sibyo';
-                if (error.code === 'auth/invalid-credential') msg = 'Amakuru yinjijwe ntabwo ari yo';
-                showAuthError(msg);
+                showAuthError('Email cyangwa ijambo ry\'ibanga sibyo');
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> INJIRA';
+                btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> <span>INJIRA</span>';
             }
         };
 
@@ -2354,57 +2544,25 @@
             const password = document.getElementById('signupPassword').value;
             const confirm = document.getElementById('signupConfirm').value;
             const btn = document.getElementById('signupBtn');
-            
-            if (!name || !email || !password || !confirm) {
-                showAuthError('Uzuza ibisabwa byose');
-                return;
-            }
-            
-            if (password !== confirm) {
-                showAuthError('Amagambo y\'ibanga ntabwo ahura');
-                return;
-            }
-            
-            if (password.length < 6) {
-                showAuthError('Ijambo ry\'ibanga rigomba kuba nibura 6');
-                return;
-            }
-            
+            if (!name || !email || !password || !confirm) { showAuthError('Uzuza ibisabwa byose'); return; }
+            if (password !== confirm) { showAuthError('Amagambo y\'ibanga ntabwo ahura'); return; }
+            if (password.length < 6) { showAuthError('Ijambo ry\'ibanga rigomba kuba nibura 6'); return; }
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turakwiyandikisha...';
-            
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turakwiyandikisha...</span>';
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
-                
                 let photoURL = null;
-                if (signupPhotoFile) {
-                    // ☁️ Upload kuri Cloudinary
-                    photoURL = await uploadToCloudinary(signupPhotoFile, 'choir_profiles');
-                }
-                
+                if (signupPhotoFile) photoURL = await uploadToCloudinary(signupPhotoFile, 'choir_profiles');
                 await updateProfile(user, { displayName: name, photoURL: photoURL });
-                
                 await setDoc(doc(db, 'users', user.uid), {
-                    uid: user.uid,
-                    name: name,
-                    email: email,
-                    phone: '',
-                    photo: photoURL,
-                    choirName: 'Choir Imanzi',
-                    createdAt: serverTimestamp()
+                    uid: user.uid, name, email, phone: '', photo: photoURL, choirName: 'Choir Imanzi', createdAt: serverTimestamp()
                 });
-                
                 showToast('✅ Wakiriwe!', 'success');
             } catch (error) {
-                console.error(error);
-                let msg = 'Ikibazo cyabaye. Ongera ugerageze';
-                if (error.code === 'auth/email-already-in-use') msg = 'Email isanzwe ikoreshwa';
-                if (error.code === 'auth/invalid-email') msg = 'Email ntariyo';
-                if (error.code === 'auth/weak-password') msg = 'Ijambo ry\'ibanga ni ribi cyane';
-                showAuthError(msg);
+                showAuthError(error.code === 'auth/email-already-in-use' ? 'Email isanzwe ikoreshwa' : 'Ikibazo cyabaye');
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-user-plus"></i> IYANDIKISHE';
+                btn.innerHTML = '<i class="fas fa-user-plus"></i> <span>IYANDIKISHE</span>';
             }
         };
 
@@ -2413,35 +2571,18 @@
             await signOut(auth);
         };
 
-        // ============================================
         // AUTH STATE
-        // ============================================
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
-                
                 try {
                     const userDoc = await getDoc(doc(db, 'users', user.uid));
-                    if (userDoc.exists()) {
-                        currentUserData = userDoc.data();
-                    } else {
-                        currentUserData = {
-                            uid: user.uid,
-                            name: user.displayName || user.email,
-                            email: user.email,
-                            phone: '',
-                            photo: user.photoURL,
-                            choirName: 'Choir Imanzi'
-                        };
-                        await setDoc(doc(db, 'users', user.uid), {
-                            ...currentUserData,
-                            createdAt: serverTimestamp()
-                        });
+                    if (userDoc.exists()) currentUserData = userDoc.data();
+                    else {
+                        currentUserData = { uid: user.uid, name: user.displayName || user.email, email: user.email, phone: '', photo: user.photoURL, choirName: 'Choir Imanzi' };
+                        await setDoc(doc(db, 'users', user.uid), { ...currentUserData, createdAt: serverTimestamp() });
                     }
-                } catch (e) {
-                    console.error(e);
-                }
-                
+                } catch(e) { console.error(e); }
                 await loadMembers();
                 await loadSessions();
                 enterApp();
@@ -2455,44 +2596,33 @@
         function showAuthScreen() {
             document.getElementById('authScreen').classList.remove('hidden');
             document.getElementById('app').classList.remove('active');
-            hideLoading();
+            setTimeout(() => { document.getElementById('loadingScreen').classList.add('hidden'); }, 1000);
         }
 
         function enterApp() {
             document.getElementById('authScreen').classList.add('hidden');
             document.getElementById('app').classList.add('active');
-            hideLoading();
-            
+            setTimeout(() => { document.getElementById('loadingScreen').classList.add('hidden'); }, 800);
             updateProfileUI();
             renderDashboard();
             renderMembers();
             renderAttendancePage();
             renderPhotosPage();
-            
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('sessionDate').value = today;
         }
 
         window.updateProfileUI = function() {
             if (!currentUserData) return;
-            
             const name = currentUserData.name || '';
             const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || '?';
-            
             const headerAvatar = document.getElementById('headerAvatar');
-            if (currentUserData.photo) {
-                headerAvatar.innerHTML = `<img src="${currentUserData.photo}">`;
-            } else {
-                headerAvatar.textContent = initials;
-            }
+            if (currentUserData.photo) headerAvatar.innerHTML = `<img src="${currentUserData.photo}">`;
+            else headerAvatar.textContent = initials;
             document.getElementById('headerName').textContent = name;
-            
             const profileAvatarContent = document.getElementById('profileAvatarContent');
-            if (currentUserData.photo) {
-                profileAvatarContent.innerHTML = `<img src="${currentUserData.photo}">`;
-            } else {
-                profileAvatarContent.textContent = initials;
-            }
+            if (currentUserData.photo) profileAvatarContent.innerHTML = `<img src="${currentUserData.photo}">`;
+            else profileAvatarContent.textContent = initials;
             document.getElementById('profileName').textContent = name;
             document.getElementById('profileEmail').textContent = currentUserData.email || '';
             document.getElementById('profileInputName').value = name;
@@ -2500,115 +2630,62 @@
             document.getElementById('choirName').value = currentUserData.choirName || 'Choir Imanzi';
         };
 
-        // ============================================
-        // ☁️ UPLOAD PROFILE PHOTO (Cloudinary)
-        // ============================================
         window.uploadProfilePhoto = async function(event) {
             const file = event.target.files[0];
             if (!file) return;
-            
-            if (file.size > 5 * 1024 * 1024) {
-                showToast('Ifoto ni nini cyane (max 5MB)', 'warning');
-                return;
-            }
-            
+            if (file.size > 5 * 1024 * 1024) { showToast('Ifoto ni nini cyane', 'warning'); return; }
             try {
-                showLoading('Turazamura ifoto...');
-                
-                // ☁️ Upload kuri Cloudinary
                 const photoURL = await uploadToCloudinary(file, 'choir_profiles');
-                
                 await updateDoc(doc(db, 'users', currentUser.uid), { photo: photoURL });
                 currentUserData.photo = photoURL;
-                
                 await updateProfile(currentUser, { photoURL });
-                
-                hideLoading();
                 updateProfileUI();
                 showToast('✅ Ifoto yahinduwe', 'success');
-            } catch (error) {
-                hideLoading();
-                console.error(error);
-                showToast('❌ ' + error.message, 'error');
-            }
+            } catch (error) { showToast('❌ ' + error.message, 'error'); }
         };
 
         window.saveProfile = async function() {
             const name = document.getElementById('profileInputName').value.trim();
             const phone = document.getElementById('profileInputPhone').value.trim();
             const choirName = document.getElementById('choirName').value.trim();
-            
-            if (!name) {
-                showToast('Amazina ntashobora kuba ubusa', 'warning');
-                return;
-            }
-            
+            if (!name) { showToast('Amazina ntashobora kuba ubusa', 'warning'); return; }
             try {
                 await updateDoc(doc(db, 'users', currentUser.uid), { name, phone, choirName });
-                currentUserData.name = name;
-                currentUserData.phone = phone;
-                currentUserData.choirName = choirName;
-                
+                currentUserData.name = name; currentUserData.phone = phone; currentUserData.choirName = choirName;
                 await updateProfile(currentUser, { displayName: name });
-                
                 updateProfileUI();
                 showToast('✅ Profile yabitswe', 'success');
-            } catch (error) {
-                showToast('❌ ' + error.message, 'error');
-            }
+            } catch (error) { showToast('❌ ' + error.message, 'error'); }
         };
 
         window.changePassword = async function() {
             const oldPwd = document.getElementById('oldPassword').value;
             const newPwd = document.getElementById('newPassword').value;
-            
-            if (!oldPwd || !newPwd) {
-                showToast('Uzuza amagambo y\'ibanga yose', 'warning');
-                return;
-            }
-            
-            if (newPwd.length < 6) {
-                showToast('Ijambo ry\'ibanga rigomba kuba nibura 6', 'warning');
-                return;
-            }
-            
+            if (!oldPwd || !newPwd) { showToast('Uzuza amagambo y\'ibanga yose', 'warning'); return; }
+            if (newPwd.length < 6) { showToast('Ijambo ry\'ibanga rigomba kuba nibura 6', 'warning'); return; }
             try {
-                const credential = EmailAuthProvider.credential(currentUser.email, oldPwd);
-                await reauthenticateWithCredential(currentUser, credential);
+                const cred = EmailAuthProvider.credential(currentUser.email, oldPwd);
+                await reauthenticateWithCredential(currentUser, cred);
                 await updatePassword(currentUser, newPwd);
-                
                 document.getElementById('oldPassword').value = '';
                 document.getElementById('newPassword').value = '';
                 showToast('✅ Ijambo ry\'ibanga ryahinduwe', 'success');
-            } catch (error) {
-                let msg = 'Ikibazo';
-                if (error.code === 'auth/wrong-password') msg = 'Ijambo ry\'ibanga rya kera sibyo';
-                showToast('❌ ' + msg, 'error');
-            }
+            } catch (error) { showToast('❌ Ijambo ry\'ibanga rya kera sibyo', 'error'); }
         };
 
-        // ============================================
         // LOAD DATA
-        // ============================================
         async function loadMembers() {
             try {
                 const q = query(collection(db, 'members'), orderBy('registeredAt', 'desc'));
                 const snap = await getDocs(q);
                 members = [];
-                snap.forEach(d => {
-                    members.push({ id: d.id, ...d.data() });
-                });
+                snap.forEach(d => members.push({ id: d.id, ...d.data() }));
             } catch (e) {
-                console.error('Load members error:', e);
                 try {
                     const snap = await getDocs(collection(db, 'members'));
                     members = [];
-                    snap.forEach(d => {
-                        members.push({ id: d.id, ...d.data() });
-                    });
-                } catch (e2) {
-                    members = [];
-                }
+                    snap.forEach(d => members.push({ id: d.id, ...d.data() }));
+                } catch (e2) { members = []; }
             }
         }
 
@@ -2617,47 +2694,31 @@
                 const q = query(collection(db, 'sessions'), orderBy('date', 'desc'));
                 const snap = await getDocs(q);
                 sessions = [];
-                snap.forEach(d => {
-                    sessions.push({ id: d.id, ...d.data() });
-                });
-            } catch (e) {
-                console.error('Load sessions error:', e);
-                sessions = [];
-            }
+                snap.forEach(d => sessions.push({ id: d.id, ...d.data() }));
+            } catch (e) { sessions = []; }
         }
 
-        // ============================================
-        // SIDEBAR / PAGE
-        // ============================================
-        window.toggleSidebar = function() {
-            document.getElementById('sidebar').classList.toggle('open');
-        };
+        // NAV
+        window.toggleSidebar = function() { document.getElementById('sidebar').classList.toggle('open'); };
 
         window.switchPage = function(page, element) {
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             if (element) element.classList.add('active');
-            
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById('page-' + page).classList.add('active');
-            
             if (page === 'members') renderMembers();
             if (page === 'attendance') renderAttendancePage();
             if (page === 'voices') renderVoicesPage();
             if (page === 'photos') renderPhotosPage();
             if (page === 'reports') initReportsPage();
             if (page === 'profile') updateProfileUI();
-            
-            if (window.innerWidth <= 900) {
-                document.getElementById('sidebar').classList.remove('open');
-            }
-            
+            if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
         window.toggleTheme = function() {
             const html = document.documentElement;
             const icon = document.getElementById('themeIcon');
-            
             if (html.getAttribute('data-theme') === 'dark') {
                 html.removeAttribute('data-theme');
                 icon.className = 'fas fa-moon';
@@ -2675,148 +2736,84 @@
             const el = document.getElementById('liveClock');
             if (el) el.textContent = `${h}:${m}:${s}`;
         }
-
         setInterval(updateClock, 1000);
         updateClock();
 
-        // ============================================
         // DASHBOARD
-        // ============================================
         window.renderDashboard = function() {
             document.getElementById('statTotalMembers').textContent = members.length;
             document.getElementById('statTotalSessions').textContent = sessions.length;
-            
             let totalPct = 0;
-            sessions.forEach(s => {
-                const pct = members.length > 0 ? ((s.presentMembers?.length || 0) / members.length) * 100 : 0;
-                totalPct += pct;
-            });
+            sessions.forEach(s => { totalPct += members.length > 0 ? ((s.presentMembers?.length || 0) / members.length) * 100 : 0; });
             const avgPct = sessions.length > 0 ? Math.round(totalPct / sessions.length) : 0;
             document.getElementById('statAvgPercent').textContent = avgPct + '%';
-            
             let absent = 0;
-            if (sessions.length > 0) {
-                const last = sessions[0];
-                absent = members.length - (last.presentMembers?.length || 0);
-            }
+            if (sessions.length > 0) absent = members.length - (sessions[0].presentMembers?.length || 0);
             document.getElementById('statAbsentToday').textContent = absent;
-            
             document.getElementById('sidebarMemberCount').textContent = members.length;
             document.getElementById('sidebarSessionCount').textContent = sessions.length;
-            
             renderSavedList();
         };
 
         function renderSavedList() {
             const list = document.getElementById('savedList');
             document.getElementById('savedCount').textContent = sessions.length;
-            
             if (sessions.length === 0) {
-                list.innerHTML = `
-                    <div class="empty-state">
-                        <div class="icon"><i class="fas fa-folder-open"></i></div>
-                        <h3>Nta attendance irahari</h3>
-                        <p>Kanda "Kora Attendance Nshya" utangire</p>
-                    </div>
-                `;
+                list.innerHTML = `<div class="empty-state"><div class="icon"><i class="fas fa-folder-open"></i></div><h3>Nta attendance irahari</h3><p>Kanda "Kora Attendance Nshya" utangire</p></div>`;
                 return;
             }
-            
             list.innerHTML = sessions.map(s => {
                 const present = s.presentMembers?.length || 0;
                 const total = members.length;
                 const pct = total > 0 ? Math.round((present / total) * 100) : 0;
-                
-                return `
-                    <div class="saved-card">
-                        <div class="saved-info">
-                            <h3><i class="fas fa-calendar-check"></i> ${s.name}</h3>
-                            <div class="saved-meta">
-                                <span><i class="fas fa-calendar"></i> ${formatDate(s.date)}</span>
-                                <span><i class="fas fa-clock"></i> ${s.time}</span>
-                                <span><i class="fas fa-users"></i> ${present} / ${total}</span>
-                            </div>
-                        </div>
-                        <div class="saved-percent">
-                            <i class="fas fa-chart-line"></i> ${pct}%
-                        </div>
-                        <div class="saved-actions">
-                            <button class="action-btn view" onclick="viewSession('${s.id}')" title="Reba">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="action-btn pdf" onclick="exportPDF('${s.id}')" title="PDF">
-                                <i class="fas fa-file-pdf"></i>
-                            </button>
-                            <button class="action-btn delete" onclick="deleteSession('${s.id}')" title="Siba">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                return `<div class="saved-card">
+                    <div class="saved-info">
+                        <h3><i class="fas fa-calendar-check"></i> ${s.name}</h3>
+                        <div class="saved-meta">
+                            <span><i class="fas fa-calendar"></i> ${formatDate(s.date)}</span>
+                            <span><i class="fas fa-clock"></i> ${s.time}</span>
+                            <span><i class="fas fa-users"></i> ${present} / ${total}</span>
                         </div>
                     </div>
-                `;
+                    <div class="saved-percent"><i class="fas fa-chart-line"></i> ${pct}%</div>
+                    <div class="saved-actions">
+                        <button class="action-btn view" onclick="viewSession('${s.id}')"><i class="fas fa-eye"></i></button>
+                        <button class="action-btn pdf" onclick="exportPDF('${s.id}')"><i class="fas fa-file-pdf"></i></button>
+                        <button class="action-btn delete" onclick="deleteSession('${s.id}')"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>`;
             }).join('');
         }
 
-        // ============================================
         // QR
-        // ============================================
         window.openQRRegisterModal = function() {
             const baseUrl = window.location.href.replace('index.html', '').replace(/\/$/, '');
             const registerUrl = baseUrl + '/member.html';
-            
             document.getElementById('qr-register-code').innerHTML = '';
-            
-            new QRCode(document.getElementById('qr-register-code'), {
-                text: registerUrl,
-                width: 240,
-                height: 240,
-                colorDark: '#1e293b',
-                colorLight: '#ffffff',
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            
+            new QRCode(document.getElementById('qr-register-code'), { text: registerUrl, width: 240, height: 240 });
             document.getElementById('qr-register-code').dataset.url = registerUrl;
             document.getElementById('qrRegisterModal').classList.add('active');
         };
-
         window.downloadQRRegister = function() {
-            const container = document.getElementById('qr-register-code');
-            const canvas = container.querySelector('canvas');
-            const img = container.querySelector('img');
+            const c = document.getElementById('qr-register-code');
+            const canvas = c.querySelector('canvas'); const img = c.querySelector('img');
             const url = canvas ? canvas.toDataURL('image/png') : img?.src;
-            
             if (!url) return;
-            
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `QR-Register-${Date.now()}.png`;
-            a.click();
+            const a = document.createElement('a'); a.href = url; a.download = `QR-${Date.now()}.png`; a.click();
             showToast('📥 QR yakuwe', 'success');
         };
-
         window.copyQRRegisterLink = function() {
-            const container = document.getElementById('qr-register-code');
-            navigator.clipboard.writeText(container.dataset.url);
+            navigator.clipboard.writeText(document.getElementById('qr-register-code').dataset.url);
             showToast('📋 Link yakopiwe', 'success');
         };
 
-        // ============================================
         // CREATE ATTENDANCE
-        // ============================================
         window.openCreateModal = function() {
-            if (members.length === 0) {
-                showToast('Banza wongereho abaririmbyi', 'warning');
-                return;
-            }
-            
+            if (members.length === 0) { showToast('Banza wongereho abaririmbyi', 'warning'); return; }
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('sessionDate').value = today;
-            
             const d = new Date();
-            const day = String(d.getDate()).padStart(2, '0');
-            const month = String(d.getMonth() + 1).padStart(2, '0');
-            const year = d.getFullYear();
-            document.getElementById('sessionName').value = `Iteraniro rya ${day}/${month}/${year}`;
-            
+            document.getElementById('sessionName').value = `Iteraniro rya ${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
             document.getElementById('createModal').classList.add('active');
         };
 
@@ -2824,26 +2821,14 @@
             const name = document.getElementById('sessionName').value.trim();
             const date = document.getElementById('sessionDate').value;
             const time = document.getElementById('sessionTime').value;
-            
-            if (!name || !date || !time) {
-                showToast('Uzuza izina, itariki, na isaha', 'warning');
-                return;
-            }
-            
+            if (!name || !date || !time) { showToast('Uzuza izina, itariki, na isaha', 'warning'); return; }
             currentSession = { name, date, time };
             currentTickList = [];
-            
             closeModal('createModal');
-            
             document.getElementById('currentSessionName').textContent = name;
-            document.getElementById('currentSessionMeta').innerHTML = `
-                <i class="fas fa-calendar"></i> ${formatDate(date)} &nbsp;|&nbsp; 
-                <i class="fas fa-clock"></i> ${time}
-            `;
-            
+            document.getElementById('currentSessionMeta').innerHTML = `<i class="fas fa-calendar"></i> ${formatDate(date)} | <i class="fas fa-clock"></i> ${time}`;
             renderMembersForAttendance();
             updateCounter();
-            
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById('page-create').classList.add('active');
@@ -2852,60 +2837,33 @@
 
         function renderMembersForAttendance() {
             const tbody = document.getElementById('membersTableBody');
-            
-            tbody.innerHTML = members.map((m, index) => {
+            tbody.innerHTML = members.map((m, i) => {
                 const initials = m.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-                const photoHtml = m.photo 
-                    ? `<img src="${m.photo}" class="row-photo" onerror="this.outerHTML='<div class=\\'row-avatar\\'>${initials}</div>'">`
-                    : `<div class="row-avatar">${initials}</div>`;
-                
+                const photoHtml = m.photo ? `<img src="${m.photo}" class="row-photo" onerror="this.outerHTML='<div class=\\'row-avatar\\'>${initials}</div>'">` : `<div class="row-avatar">${initials}</div>`;
                 const isChecked = currentTickList.some(t => t.id === m.id);
-                
-                return `
-                    <tr onclick="toggleMember('${m.id}', this)" data-member-id="${m.id}">
-                        <td><strong>${index + 1}</strong></td>
-                        <td>
-                            <div class="member-cell-row">
-                                ${photoHtml}
-                                <div class="row-info">
-                                    <div class="name">${m.name}</div>
-                                    <div class="id">${m.memberId || ''}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td><strong>${m.number || '-'}</strong></td>
-                        <td><span class="level-badge"><i class="fas fa-graduation-cap"></i> ${m.level || '-'}</span></td>
-                        <td>
-                            <span class="voice-badge ${(m.voice || '').toLowerCase()}">
-                                <i class="fas fa-microphone"></i> ${m.voice}
-                            </span>
-                        </td>
-                        <td style="text-align: center;">
-                            <button class="tick-btn ${isChecked ? 'checked' : ''}" onclick="event.stopPropagation(); toggleMember('${m.id}', this.closest('tr'))">
-                                <i class="fas fa-check"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
+                return `<tr onclick="toggleMember('${m.id}', this)" data-member-id="${m.id}">
+                    <td><strong>${i + 1}</strong></td>
+                    <td><div class="member-cell-row">${photoHtml}<div class="row-info"><div class="name">${m.name}</div><div class="id">${m.memberId || ''}</div></div></div></td>
+                    <td><strong>${m.number || '-'}</strong></td>
+                    <td><span class="level-badge"><i class="fas fa-graduation-cap"></i> ${m.level || '-'}</span></td>
+                    <td><span class="voice-badge ${(m.voice || '').toLowerCase()}"><i class="fas fa-microphone"></i> ${m.voice}</span></td>
+                    <td style="text-align: center;"><button class="tick-btn ${isChecked ? 'checked' : ''}" onclick="event.stopPropagation(); toggleMember('${m.id}', this.closest('tr'))"><i class="fas fa-check"></i></button></td>
+                </tr>`;
             }).join('');
         }
 
         window.toggleMember = function(memberId, row) {
-            const index = currentTickList.findIndex(t => t.id === memberId);
-            const tickBtn = row.querySelector('.tick-btn');
-            
-            if (index === -1) {
+            const i = currentTickList.findIndex(t => t.id === memberId);
+            const btn = row.querySelector('.tick-btn');
+            if (i === -1) {
                 const now = new Date();
-                const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
-                currentTickList.push({ id: memberId, time: time });
-                tickBtn.classList.add('checked');
-                row.classList.add('checked');
+                const time = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+                currentTickList.push({ id: memberId, time });
+                btn.classList.add('checked'); row.classList.add('checked');
             } else {
-                currentTickList.splice(index, 1);
-                tickBtn.classList.remove('checked');
-                row.classList.remove('checked');
+                currentTickList.splice(i, 1);
+                btn.classList.remove('checked'); row.classList.remove('checked');
             }
-            
             updateCounter();
         };
 
@@ -2925,178 +2883,87 @@
         };
 
         window.submitAttendance = async function() {
-            if (!currentSession) return;
-            
-            if (currentTickList.length === 0) {
-                showToast('Nta muntu waje', 'warning');
-                return;
-            }
-            
+            if (!currentSession || currentTickList.length === 0) { showToast('Nta muntu waje', 'warning'); return; }
             const btn = document.getElementById('submitBtn');
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turabika...';
-            
             try {
                 await addDoc(collection(db, 'sessions'), {
-                    name: currentSession.name,
-                    date: currentSession.date,
-                    time: currentSession.time,
+                    name: currentSession.name, date: currentSession.date, time: currentSession.time,
                     presentMembers: currentTickList.map(t => ({ id: t.id, time: t.time })),
                     totalPresent: currentTickList.length,
-                    createdAt: serverTimestamp(),
-                    createdBy: currentUser.uid
+                    createdAt: serverTimestamp(), createdBy: currentUser.uid
                 });
-                
                 confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
                 showToast(`✅ ${currentSession.name} ryabitswe!`, 'success');
-                
                 await loadSessions();
-                
-                currentSession = null;
-                currentTickList = [];
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-check"></i> SUBMIT';
-                
+                currentSession = null; currentTickList = [];
+                btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> SUBMIT';
                 setTimeout(() => {
                     document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
                     document.querySelector('.nav-item').classList.add('active');
                     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
                     document.getElementById('page-dashboard').classList.add('active');
                     renderDashboard();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
                 }, 800);
             } catch (error) {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-check"></i> SUBMIT';
+                btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> SUBMIT';
                 showToast('❌ ' + error.message, 'error');
             }
         };
 
         window.cancelCreate = function() {
-            if (currentTickList.length > 0) {
-                if (!confirm('Ufite abaje batabitswe. Urabyemeza?')) return;
-            }
-            currentSession = null;
-            currentTickList = [];
-            
+            if (currentTickList.length > 0 && !confirm('Ufite abaje batabitswe. Urabyemeza?')) return;
+            currentSession = null; currentTickList = [];
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             document.querySelector('.nav-item').classList.add('active');
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById('page-dashboard').classList.add('active');
         };
 
-        // ============================================
         // VIEW SESSION
-        // ============================================
         window.viewSession = function(id) {
-            const session = sessions.find(s => s.id === id);
-            if (!session) return;
-            
-            const present = session.presentMembers?.length || 0;
+            const s = sessions.find(x => x.id === id);
+            if (!s) return;
+            const present = s.presentMembers?.length || 0;
             const total = members.length;
-            const absent = total - present;
             const pct = total > 0 ? Math.round((present / total) * 100) : 0;
-            
-            const rows = (session.presentMembers || []).map((item, i) => {
+            const rows = (s.presentMembers || []).map((item, i) => {
                 const m = members.find(x => x.id === item.id);
                 if (!m) return '';
                 const initials = m.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-                const photoHtml = m.photo 
-                    ? `<img src="${m.photo}" class="view-row-photo" onerror="this.outerHTML='<div class=\\'view-row-avatar\\'>${initials}</div>'">`
-                    : `<div class="view-row-avatar">${initials}</div>`;
-                
-                return `
-                    <tr>
-                        <td><strong>${i + 1}</strong></td>
-                        <td>
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                ${photoHtml}
-                                <div>
-                                    <div style="font-weight: 600;">${m.name}</div>
-                                    <div style="font-size: 12px; color: var(--text-secondary);">${m.memberId || ''}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td><strong>${m.number || '-'}</strong></td>
-                        <td><span class="level-badge"><i class="fas fa-graduation-cap"></i> ${m.level || '-'}</span></td>
-                        <td>
-                            <span class="voice-badge ${(m.voice || '').toLowerCase()}">
-                                <i class="fas fa-microphone"></i> ${m.voice}
-                            </span>
-                        </td>
-                        <td style="text-align: center;">
-                            <span style="font-weight: 700; color: var(--success);">
-                                <i class="fas fa-clock"></i> ${item.time}
-                            </span>
-                        </td>
-                    </tr>
-                `;
+                const photoHtml = m.photo ? `<img src="${m.photo}" class="view-row-photo" onerror="this.outerHTML='<div class=\\'view-row-avatar\\'>${initials}</div>'">` : `<div class="view-row-avatar">${initials}</div>`;
+                return `<tr><td><strong>${i+1}</strong></td><td><div style="display:flex;align-items:center;gap:12px;">${photoHtml}<div><div style="font-weight:600;">${m.name}</div><div style="font-size:12px;color:var(--text-secondary);">${m.memberId || ''}</div></div></div></td><td><strong>${m.number || '-'}</strong></td><td><span class="level-badge"><i class="fas fa-graduation-cap"></i> ${m.level || '-'}</span></td><td><span class="voice-badge ${(m.voice||'').toLowerCase()}"><i class="fas fa-microphone"></i> ${m.voice}</span></td><td style="text-align:center;"><span style="font-weight:700;color:var(--success);"><i class="fas fa-clock"></i> ${item.time}</span></td></tr>`;
             }).join('');
-            
             document.getElementById('detailContent').innerHTML = `
-                <div class="detail-header">
-                    <h2>${session.name}</h2>
-                    <p><i class="fas fa-calendar"></i> ${formatDate(session.date)} &nbsp;|&nbsp; <i class="fas fa-clock"></i> ${session.time}</p>
-                </div>
-                
+                <div class="detail-header"><h2>${s.name}</h2><p><i class="fas fa-calendar"></i> ${formatDate(s.date)} | <i class="fas fa-clock"></i> ${s.time}</p></div>
                 <div class="detail-stats">
                     <div class="detail-stat blue"><div class="value">${total}</div><div class="label">Bose</div></div>
                     <div class="detail-stat green"><div class="value">${present}</div><div class="label">Baje</div></div>
-                    <div class="detail-stat red"><div class="value">${absent}</div><div class="label">Bataje</div></div>
+                    <div class="detail-stat red"><div class="value">${total - present}</div><div class="label">Bataje</div></div>
                 </div>
-                
-                <h4 style="margin-bottom: 12px; font-size: 15px;">
-                    <i class="fas fa-check-circle" style="color: var(--success);"></i> 
-                    Abaje (${present}) — ${pct}%
-                </h4>
-                
-                <div class="view-table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width: 50px;">#</th>
-                                <th>Umuririmbyi</th>
-                                <th>Nimero (ID)</th>
-                                <th>Level</th>
-                                <th>Ijwi</th>
-                                <th style="text-align: center;">Isaha Yaje</th>
-                            </tr>
-                        </thead>
-                        <tbody>${rows}</tbody>
-                    </table>
-                </div>
-                
+                <h4 style="margin-bottom:12px;font-size:15px;"><i class="fas fa-check-circle" style="color:var(--success);"></i> Abaje (${present}) — ${pct}%</h4>
+                <div class="view-table-wrapper"><table><thead><tr><th style="width:50px;">#</th><th>Umuririmbyi</th><th>Nimero</th><th>Level</th><th>Ijwi</th><th style="text-align:center;">Isaha</th></tr></thead><tbody>${rows}</tbody></table></div>
                 <div class="modal-actions">
-                    <button class="btn btn-danger" onclick="exportPDF('${session.id}')">
-                        <i class="fas fa-file-pdf"></i> Kura PDF
-                    </button>
+                    <button class="btn btn-danger" onclick="exportPDF('${s.id}')"><i class="fas fa-file-pdf"></i> PDF</button>
                     <button class="btn btn-outline" onclick="closeModal('detailModal')">Funga</button>
-                </div>
-            `;
-            
+                </div>`;
             document.getElementById('detailModal').classList.add('active');
         };
 
         window.deleteSession = async function(id) {
-            const session = sessions.find(s => s.id === id);
-            if (!session) return;
-            
-            if (!confirm(`Urabyemeza ko ushaka gusiba "${session.name}"?`)) return;
-            
+            const s = sessions.find(x => x.id === id);
+            if (!s || !confirm(`Urabyemeza gusiba "${s.name}"?`)) return;
             try {
                 await deleteDoc(doc(db, 'sessions', id));
-                showToast('🗑️ Iteraniro ryasibwe', 'warning');
+                showToast('🗑️ Ryasibwe', 'warning');
                 await loadSessions();
                 renderDashboard();
                 renderAttendancePage();
-            } catch (error) {
-                showToast('❌ ' + error.message, 'error');
-            }
+            } catch (error) { showToast('❌ ' + error.message, 'error'); }
         };
 
-        // ============================================
-        // PERIOD FILTER
-        // ============================================
+        // PERIOD
         window.switchPeriod = function(period, element) {
             document.querySelectorAll('.period-tab').forEach(t => t.classList.remove('active'));
             element.classList.add('active');
@@ -3107,125 +2974,59 @@
         function filterByPeriod(list) {
             const now = new Date();
             const today = now.toISOString().split('T')[0];
-            
             if (currentPeriod === 'day') return list.filter(s => s.date === today);
-            if (currentPeriod === 'week') {
-                const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-                return list.filter(s => s.date >= weekAgo);
-            }
-            if (currentPeriod === 'month') {
-                const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-                return list.filter(s => s.date >= monthAgo);
-            }
+            if (currentPeriod === 'week') return list.filter(s => s.date >= new Date(now.getTime() - 7*24*60*60*1000).toISOString().split('T')[0]);
+            if (currentPeriod === 'month') return list.filter(s => s.date >= new Date(now.getTime() - 30*24*60*60*1000).toISOString().split('T')[0]);
             return list;
         }
 
         window.renderAttendancePage = function() {
             const list = document.getElementById('attendanceHistoryList');
             const filtered = filterByPeriod(sessions);
-            
             if (filtered.length === 0) {
-                list.innerHTML = `
-                    <div class="empty-state">
-                        <div class="icon"><i class="fas fa-calendar-times"></i></div>
-                        <h3>Nta mateka arahari</h3>
-                        <p>Kora attendance mbere</p>
-                    </div>
-                `;
+                list.innerHTML = `<div class="empty-state"><div class="icon"><i class="fas fa-calendar-times"></i></div><h3>Nta mateka</h3></div>`;
                 return;
             }
-            
             list.innerHTML = filtered.map(s => {
                 const present = s.presentMembers?.length || 0;
                 const total = members.length;
                 const pct = total > 0 ? Math.round((present / total) * 100) : 0;
-                
-                return `
-                    <div class="saved-card">
-                        <div class="saved-info">
-                            <h3><i class="fas fa-calendar-check"></i> ${s.name}</h3>
-                            <div class="saved-meta">
-                                <span><i class="fas fa-calendar"></i> ${formatDate(s.date)}</span>
-                                <span><i class="fas fa-clock"></i> ${s.time}</span>
-                                <span><i class="fas fa-users"></i> ${present} / ${total}</span>
-                            </div>
-                        </div>
-                        <div class="saved-percent">${pct}%</div>
-                        <div class="saved-actions">
-                            <button class="action-btn view" onclick="viewSession('${s.id}')" title="Reba">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="action-btn pdf" onclick="exportPDF('${s.id}')" title="PDF">
-                                <i class="fas fa-file-pdf"></i>
-                            </button>
-                            <button class="action-btn delete" onclick="deleteSession('${s.id}')" title="Siba">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
+                return `<div class="saved-card">
+                    <div class="saved-info"><h3><i class="fas fa-calendar-check"></i> ${s.name}</h3>
+                        <div class="saved-meta"><span><i class="fas fa-calendar"></i> ${formatDate(s.date)}</span><span><i class="fas fa-clock"></i> ${s.time}</span><span><i class="fas fa-users"></i> ${present} / ${total}</span></div>
                     </div>
-                `;
+                    <div class="saved-percent">${pct}%</div>
+                    <div class="saved-actions">
+                        <button class="action-btn view" onclick="viewSession('${s.id}')"><i class="fas fa-eye"></i></button>
+                        <button class="action-btn pdf" onclick="exportPDF('${s.id}')"><i class="fas fa-file-pdf"></i></button>
+                        <button class="action-btn delete" onclick="deleteSession('${s.id}')"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>`;
             }).join('');
         };
 
-        // ============================================
         // MEMBERS
-        // ============================================
         window.renderMembers = function() {
-            const voiceFilter = document.getElementById('membersFilterVoice')?.value || '';
-            const levelFilter = document.getElementById('membersFilterLevel')?.value || '';
-            const searchTerm = document.getElementById('membersSearch')?.value.toLowerCase().trim() || '';
+            const vf = document.getElementById('membersFilterVoice')?.value || '';
+            const lf = document.getElementById('membersFilterLevel')?.value || '';
+            const st = document.getElementById('membersSearch')?.value.toLowerCase().trim() || '';
             const tbody = document.getElementById('membersBody');
-            
             let list = [...members];
-            if (voiceFilter) list = list.filter(m => m.voice === voiceFilter);
-            if (levelFilter) list = list.filter(m => m.level === levelFilter);
-            if (searchTerm) {
-                list = list.filter(m => 
-                    (m.name || '').toLowerCase().includes(searchTerm) ||
-                    (m.number || '').toLowerCase().includes(searchTerm) ||
-                    (m.memberId || '').toLowerCase().includes(searchTerm)
-                );
-            }
-            
+            if (vf) list = list.filter(m => m.voice === vf);
+            if (lf) list = list.filter(m => m.level === lf);
+            if (st) list = list.filter(m => (m.name||'').toLowerCase().includes(st) || (m.number||'').toLowerCase().includes(st) || (m.memberId||'').toLowerCase().includes(st));
             document.getElementById('membersCount').textContent = list.length;
             tbody.innerHTML = '';
-            
-            if (list.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--text-secondary);">Nta muririmbyi ubonetse</td></tr>`;
-                return;
-            }
-            
+            if (list.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-secondary);">Nta muririmbyi</td></tr>`; return; }
             list.forEach(m => {
                 const initials = m.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-                const photoHtml = m.photo 
-                    ? `<img src="${m.photo}" class="row-photo" onerror="this.outerHTML='<div class=\\'row-avatar\\'>${initials}</div>'">`
-                    : `<div class="row-avatar">${initials}</div>`;
-                
+                const photoHtml = m.photo ? `<img src="${m.photo}" class="row-photo" onerror="this.outerHTML='<div class=\\'row-avatar\\'>${initials}</div>'">` : `<div class="row-avatar">${initials}</div>`;
                 const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>
-                        <div class="member-cell-row">
-                            ${photoHtml}
-                            <div class="row-info">
-                                <div class="name">${m.name}</div>
-                                <div class="id">${m.memberId || ''}</div>
-                            </div>
-                        </div>
-                    </td>
+                row.innerHTML = `<td><div class="member-cell-row">${photoHtml}<div class="row-info"><div class="name">${m.name}</div><div class="id">${m.memberId || ''}</div></div></div></td>
                     <td><strong>${m.number || '-'}</strong></td>
                     <td><span class="level-badge"><i class="fas fa-graduation-cap"></i> ${m.level || '-'}</span></td>
-                    <td><span class="voice-badge ${(m.voice || '').toLowerCase()}"><i class="fas fa-microphone"></i> ${m.voice}</span></td>
-                    <td>
-                        <div style="display: flex; gap: 6px;">
-                            <button class="action-btn edit" onclick="openEditMember('${m.id}')" title="Hindura">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="action-btn delete" onclick="deleteMember('${m.id}')" title="Siba">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                `;
+                    <td><span class="voice-badge ${(m.voice||'').toLowerCase()}"><i class="fas fa-microphone"></i> ${m.voice}</span></td>
+                    <td><div style="display:flex;gap:6px;"><button class="action-btn edit" onclick="openEditMember('${m.id}')"><i class="fas fa-edit"></i></button><button class="action-btn delete" onclick="deleteMember('${m.id}')"><i class="fas fa-trash"></i></button></div></td>`;
                 tbody.appendChild(row);
             });
         };
@@ -3246,71 +3047,32 @@
             const number = document.getElementById('newNumberInput').value.trim();
             const level = document.getElementById('newLevel').value;
             const voice = document.getElementById('newVoice').value;
-            
-            if (!name || !number || !level || !voice) {
-                showToast('Uzuza amazina, nimero, level, na ijwi', 'warning');
-                return;
-            }
-            
+            if (!name || !number || !level || !voice) { showToast('Uzuza byose', 'warning'); return; }
             const btn = document.getElementById('addMemberBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turabika...';
-            
+            btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
             try {
                 let photoURL = null;
-                if (newMemberPhoto) {
-                    // ☁️ Upload kuri Cloudinary
-                    photoURL = await uploadToCloudinary(newMemberPhoto, 'choir_members');
-                }
-                
+                if (newMemberPhoto) photoURL = await uploadToCloudinary(newMemberPhoto);
                 const memberId = `CH-${String(members.length + 1).padStart(3, '0')}`;
-                
-                await addDoc(collection(db, 'members'), {
-                    name, 
-                    number,
-                    level,
-                    voice,
-                    memberId,
-                    photo: photoURL,
-                    photoSource: 'cloudinary',
-                    status: 'active',
-                    registeredAt: serverTimestamp(),
-                    createdAt: serverTimestamp(),
-                    createdBy: currentUser.uid
-                });
-                
+                await addDoc(collection(db, 'members'), { name, number, level, voice, memberId, photo: photoURL, photoSource: 'cloudinary', status: 'active', registeredAt: serverTimestamp(), createdAt: serverTimestamp(), createdBy: currentUser.uid });
                 showToast(`✅ ${name} yongeweho!`, 'success');
-                
                 closeModal('addMemberModal');
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-save"></i> Bika';
-                
-                await loadMembers();
-                renderMembers();
-                renderDashboard();
-            } catch (error) {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-save"></i> Bika';
-                showToast('❌ ' + error.message, 'error');
-            }
+                btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Bika';
+                await loadMembers(); renderMembers(); renderDashboard();
+            } catch (error) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Bika'; showToast('❌ ' + error.message, 'error'); }
         };
 
         window.openEditMember = function(id) {
             const m = members.find(x => x.id === id);
             if (!m) return;
-            
             editingPhoto = null;
             document.getElementById('editMemberId').value = m.id;
             document.getElementById('editName').value = m.name;
             document.getElementById('editNumberInput').value = m.number || '';
             document.getElementById('editLevel').value = m.level || '';
             document.getElementById('editVoice').value = m.voice;
-            
             const initials = m.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-            document.getElementById('editPhotoPreviewContainer').innerHTML = m.photo 
-                ? `<img src="${m.photo}" class="photo-preview" onerror="this.outerHTML='<div class=\\'photo-placeholder\\'>${initials}</div>'">`
-                : `<div class="photo-placeholder">${initials}</div>`;
-            
+            document.getElementById('editPhotoPreviewContainer').innerHTML = m.photo ? `<img src="${m.photo}" class="photo-preview" onerror="this.outerHTML='<div class=\\'photo-placeholder\\'>${initials}</div>'">` : `<div class="photo-placeholder">${initials}</div>`;
             document.getElementById('editMemberModal').classList.add('active');
         };
 
@@ -3318,139 +3080,64 @@
             const id = document.getElementById('editMemberId').value;
             const m = members.find(x => x.id === id);
             if (!m) return;
-            
             const name = document.getElementById('editName').value.trim();
             const number = document.getElementById('editNumberInput').value.trim();
             const level = document.getElementById('editLevel').value;
             const voice = document.getElementById('editVoice').value;
-            
             const btn = document.getElementById('saveEditBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turabika...';
-            
+            btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
             try {
                 let photoURL = m.photo;
-                
-                if (editingPhoto) {
-                    // ☁️ Upload kuri Cloudinary
-                    photoURL = await uploadToCloudinary(editingPhoto, 'choir_members');
-                }
-                
-                await updateDoc(doc(db, 'members', id), {
-                    name, number, level, voice, photo: photoURL
-                });
-                
+                if (editingPhoto) photoURL = await uploadToCloudinary(editingPhoto);
+                await updateDoc(doc(db, 'members', id), { name, number, level, voice, photo: photoURL });
                 showToast(`✅ ${name} yahinduwe`, 'success');
                 closeModal('editMemberModal');
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-save"></i> Bika';
-                
-                await loadMembers();
-                renderMembers();
+                btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Bika';
+                await loadMembers(); renderMembers();
                 editingPhoto = null;
-            } catch (error) {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-save"></i> Bika';
-                showToast('❌ ' + error.message, 'error');
-            }
+            } catch (error) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Bika'; showToast('❌ ' + error.message, 'error'); }
         };
 
         window.deleteMember = async function(id) {
             const m = members.find(x => x.id === id);
-            if (!m) return;
-            
-            if (!confirm(`Urabyemeza ko ushaka gusiba ${m.name}?`)) return;
-            
+            if (!m || !confirm(`Urabyemeza gusiba ${m.name}?`)) return;
             try {
                 await deleteDoc(doc(db, 'members', id));
                 showToast('🗑️ Yasibwe', 'warning');
-                await loadMembers();
-                renderMembers();
-                renderDashboard();
-            } catch (error) {
-                showToast('❌ ' + error.message, 'error');
-            }
+                await loadMembers(); renderMembers(); renderDashboard();
+            } catch (error) { showToast('❌ ' + error.message, 'error'); }
         };
 
-        // ============================================
         // VOICES
-        // ============================================
         let voiceChartInstance = null;
-
         window.renderVoicesPage = function() {
             const voices = { Soprano: 0, Alto: 0, Tenor: 0, Bass: 0 };
-            members.forEach(m => {
-                if (voices[m.voice] !== undefined) voices[m.voice]++;
-            });
-            
+            members.forEach(m => { if (voices[m.voice] !== undefined) voices[m.voice]++; });
             document.getElementById('voiceStatSoprano').textContent = voices.Soprano;
             document.getElementById('voiceStatAlto').textContent = voices.Alto;
             document.getElementById('voiceStatTenor').textContent = voices.Tenor;
             document.getElementById('voiceStatBass').textContent = voices.Bass;
-            
             const ctx = document.getElementById('voiceChart').getContext('2d');
             if (voiceChartInstance) voiceChartInstance.destroy();
-            
             voiceChartInstance = new Chart(ctx, {
                 type: 'bar',
-                data: {
-                    labels: ['Soprano', 'Alto', 'Tenor', 'Bass'],
-                    datasets: [{
-                        label: 'Umubare w\'Abaririmbyi',
-                        data: [voices.Soprano, voices.Alto, voices.Tenor, voices.Bass],
-                        backgroundColor: [
-                            'rgba(236, 72, 153, 0.8)',
-                            'rgba(6, 182, 212, 0.8)',
-                            'rgba(245, 158, 11, 0.8)',
-                            'rgba(16, 185, 129, 0.8)'
-                        ],
-                        borderColor: ['#ec4899', '#06b6d4', '#f59e0b', '#10b981'],
-                        borderWidth: 2,
-                        borderRadius: 12,
-                        barThickness: 60
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
-                }
+                data: { labels: ['Soprano','Alto','Tenor','Bass'], datasets: [{ label: 'Abaririmbyi', data: [voices.Soprano, voices.Alto, voices.Tenor, voices.Bass], backgroundColor: ['rgba(236,72,153,0.8)','rgba(6,182,212,0.8)','rgba(245,158,11,0.8)','rgba(16,185,129,0.8)'], borderWidth: 2, borderRadius: 12, barThickness: 60 }] },
+                options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
             });
         };
 
-        // ============================================
         // PHOTOS
-        // ============================================
         window.renderPhotosPage = function() {
             const grid = document.getElementById('photoGrid');
-            const withPhotos = members.filter(m => m.photo);
-            
-            if (withPhotos.length === 0) {
-                grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--text-secondary);">
-                    <i class="fas fa-camera" style="font-size: 60px; opacity: 0.3; display: block; margin-bottom: 16px;"></i>
-                    <h3>Nta mafoto</h3></div>`;
-                return;
-            }
-            
-            grid.innerHTML = withPhotos.map(m => `
-                <div class="photo-card">
-                    <img src="${m.photo}" onerror="this.src='https://via.placeholder.com/300x300?text=No+Image'">
-                    <div class="photo-info">
-                        <div class="photo-name">${m.name}</div>
-                        <span class="level-badge" style="font-size: 10.5px;">
-                            <i class="fas fa-graduation-cap"></i> ${m.level || '-'}
-                        </span>
-                    </div>
-                </div>
-            `).join('');
+            const wp = members.filter(m => m.photo);
+            if (wp.length === 0) { grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-secondary);"><i class="fas fa-camera" style="font-size:60px;opacity:0.3;display:block;margin-bottom:16px;"></i><h3>Nta mafoto</h3></div>`; return; }
+            grid.innerHTML = wp.map(m => `<div class="photo-card"><img src="${m.photo}" onerror="this.src='https://via.placeholder.com/300x300?text=No+Image'"><div class="photo-info"><div class="photo-name">${m.name}</div><span class="level-badge" style="font-size:10.5px;"><i class="fas fa-graduation-cap"></i> ${m.level || '-'}</span></div></div>`).join('');
         };
 
-        // ============================================
         // REPORTS
-        // ============================================
         window.initReportsPage = function() {
             const today = new Date().toISOString().split('T')[0];
-            const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            const weekAgo = new Date(Date.now() - 7*24*60*60*1000).toISOString().split('T')[0];
             if (!document.getElementById('reportFrom').value) document.getElementById('reportFrom').value = weekAgo;
             if (!document.getElementById('reportTo').value) document.getElementById('reportTo').value = today;
         };
@@ -3458,310 +3145,103 @@
         window.generateReport = function() {
             document.getElementById('reportStats').style.display = 'grid';
             document.getElementById('reportDetailsContainer').style.display = 'block';
-            
             const from = document.getElementById('reportFrom').value;
             const to = document.getElementById('reportTo').value;
-            
             const filtered = sessions.filter(s => s.date >= from && s.date <= to);
-            
             let totalPct = 0;
             const memberCount = {};
-            
             filtered.forEach(s => {
-                const pct = members.length > 0 ? ((s.presentMembers?.length || 0) / members.length) * 100 : 0;
-                totalPct += pct;
-                (s.presentMembers || []).forEach(pm => {
-                    memberCount[pm.id] = (memberCount[pm.id] || 0) + 1;
-                });
+                totalPct += members.length > 0 ? ((s.presentMembers?.length || 0) / members.length) * 100 : 0;
+                (s.presentMembers || []).forEach(pm => { memberCount[pm.id] = (memberCount[pm.id] || 0) + 1; });
             });
-            
             const avgPct = filtered.length > 0 ? Math.round(totalPct / filtered.length) : 0;
-            
-            let topMember = '-';
-            let topCount = 0;
-            Object.keys(memberCount).forEach(mid => {
-                if (memberCount[mid] > topCount) {
-                    topCount = memberCount[mid];
-                    const m = members.find(x => x.id === mid);
-                    if (m) topMember = m.name;
-                }
-            });
-            
+            let topMember = '-'; let topCount = 0;
+            Object.keys(memberCount).forEach(mid => { if (memberCount[mid] > topCount) { topCount = memberCount[mid]; const m = members.find(x => x.id === mid); if (m) topMember = m.name; } });
             document.getElementById('reportDays').textContent = filtered.length;
             document.getElementById('reportAvg').textContent = avgPct + '%';
             document.getElementById('reportTop').textContent = topMember;
-            
             lastReportData = { from, to, filtered, memberCount, avgPct, topMember };
-            
             const rows = members.map(m => {
                 const count = memberCount[m.id] || 0;
                 const pct = filtered.length > 0 ? Math.round((count / filtered.length) * 100) : 0;
-                
-                return `
-                    <tr>
-                        <td><strong>${m.name}</strong></td>
-                        <td>${m.number || '-'}</td>
-                        <td><span class="level-badge">${m.level || '-'}</span></td>
-                        <td><span class="voice-badge ${(m.voice || '').toLowerCase()}">${m.voice}</span></td>
-                        <td><strong>${count}</strong> / ${filtered.length}</td>
-                        <td><strong style="color: ${pct >= 70 ? 'var(--success)' : pct >= 40 ? 'var(--warning)' : 'var(--danger)'};">${pct}%</strong></td>
-                    </tr>
-                `;
+                return `<tr><td><strong>${m.name}</strong></td><td>${m.number || '-'}</td><td><span class="level-badge">${m.level || '-'}</span></td><td><span class="voice-badge ${(m.voice||'').toLowerCase()}">${m.voice}</span></td><td><strong>${count}</strong> / ${filtered.length}</td><td><strong style="color:${pct >= 70 ? 'var(--success)' : pct >= 40 ? 'var(--warning)' : 'var(--danger)'};">${pct}%</strong></td></tr>`;
             }).join('');
-            
-            document.getElementById('reportTableWrapper').innerHTML = `
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Umuririmbyi</th>
-                            <th>Nimero (ID)</th>
-                            <th>Level</th>
-                            <th>Ijwi</th>
-                            <th>Yaje</th>
-                            <th>Ubwitabire</th>
-                        </tr>
-                    </thead>
-                    <tbody>${rows}</tbody>
-                </table>
-            `;
-            
+            document.getElementById('reportTableWrapper').innerHTML = `<table><thead><tr><th>Umuririmbyi</th><th>Nimero</th><th>Level</th><th>Ijwi</th><th>Yaje</th><th>%</th></tr></thead><tbody>${rows}</tbody></table>`;
             showToast('✅ Raporo yakozwe', 'success');
         };
 
         window.downloadReport = function() {
-            if (!lastReportData) {
-                showToast('Kora raporo mbere', 'warning');
-                return;
-            }
-            
+            if (!lastReportData) { showToast('Kora raporo mbere', 'warning'); return; }
             const { from, to, filtered, memberCount, avgPct, topMember } = lastReportData;
-            
-            const rows = members.map(m => {
-                const count = memberCount[m.id] || 0;
-                const pct = filtered.length > 0 ? Math.round((count / filtered.length) * 100) : 0;
-                return `
-                    <tr>
-                        <td><strong>${m.name}</strong></td>
-                        <td>${m.number || '-'}</td>
-                        <td>${m.level || '-'}</td>
-                        <td>${m.voice}</td>
-                        <td>${count} / ${filtered.length}</td>
-                        <td><strong>${pct}%</strong></td>
-                    </tr>
-                `;
-            }).join('');
-            
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Raporo ${from} - ${to}</title>
-                    <style>
-                        * { margin: 0; padding: 0; box-sizing: border-box; }
-                        body { font-family: 'Inter', Arial, sans-serif; padding: 40px; color: #1e293b; }
-                        .header { text-align: center; padding-bottom: 20px; border-bottom: 3px solid #6366f1; margin-bottom: 30px; }
-                        .header h1 { font-size: 28px; color: #6366f1; margin-bottom: 8px; }
-                        .header p { color: #64748b; font-size: 14px; }
-                        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 30px; }
-                        .stat { background: #f8fafc; border-radius: 12px; padding: 18px; text-align: center; border: 1px solid #e2e8f0; }
-                        .stat .value { font-size: 28px; font-weight: 800; margin-bottom: 4px; }
-                        .stat .label { font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600; }
-                        .stat.blue .value { color: #6366f1; }
-                        .stat.green .value { color: #10b981; }
-                        .stat.purple .value { color: #8b5cf6; }
-                        h2 { font-size: 17px; margin-bottom: 15px; }
-                        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-                        th { background: #6366f1; color: white; padding: 12px; text-align: left; font-size: 12px; text-transform: uppercase; }
-                        td { padding: 12px; border-bottom: 1px solid #e2e8f0; font-size: 13px; }
-                        tr:nth-child(even) td { background: #f8fafc; }
-                        .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 12px; color: #64748b; }
-                    </style>
-                </head>
-                <body>
-                    <div class="header">
-                        <h1>🎵 RAPORO Y'UBWITABIRE</h1>
-                        <p>Kuva ${formatDate(from)} kugeza ${formatDate(to)}</p>
-                    </div>
-                    <div class="stats">
-                        <div class="stat blue"><div class="value">${filtered.length}</div><div class="label">Iteraniro</div></div>
-                        <div class="stat green"><div class="value">${avgPct}%</div><div class="label">Ubwitabire</div></div>
-                        <div class="stat purple"><div class="value" style="font-size: 16px;">${topMember}</div><div class="label">Waje Cyane</div></div>
-                    </div>
-                    <h2>📊 Amakuru y'Abaririmbyi Bose</h2>
-                    <table>
-                        <thead><tr><th>Umuririmbyi</th><th>Nimero (ID)</th><th>Level</th><th>Ijwi</th><th>Yaje</th><th>%</th></tr></thead>
-                        <tbody>${rows}</tbody>
-                    </table>
-                    <div class="footer">Icyorezo: ${new Date().toLocaleString('rw-RW')} | Choir Attendance System</div>
-                    <script>window.onload = function() { window.print(); }<\/script>
-                </body>
-                </html>
-            `);
-            printWindow.document.close();
+            const rows = members.map(m => { const c = memberCount[m.id] || 0; const pct = filtered.length > 0 ? Math.round((c / filtered.length) * 100) : 0; return `<tr><td><strong>${m.name}</strong></td><td>${m.number || '-'}</td><td>${m.level || '-'}</td><td>${m.voice}</td><td>${c} / ${filtered.length}</td><td><strong>${pct}%</strong></td></tr>`; }).join('');
+            const w = window.open('', '_blank');
+            w.document.write(`<!DOCTYPE html><html><head><title>Raporo</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif;padding:40px;color:#1e293b}.header{text-align:center;padding-bottom:20px;border-bottom:3px solid #38bdf8;margin-bottom:30px}.header h1{font-size:28px;color:#38bdf8;margin-bottom:8px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-bottom:30px}.stat{background:#f8fafc;border-radius:12px;padding:18px;text-align:center;border:1px solid #e2e8f0}.stat .value{font-size:28px;font-weight:800;margin-bottom:4px}.stat .label{font-size:12px;color:#64748b;text-transform:uppercase;font-weight:600}.stat.blue .value{color:#38bdf8}.stat.green .value{color:#10b981}.stat.purple .value{color:#8b5cf6}h2{font-size:17px;margin-bottom:15px}table{width:100%;border-collapse:collapse;margin-bottom:20px}th{background:#38bdf8;color:white;padding:12px;text-align:left;font-size:12px;text-transform:uppercase}td{padding:12px;border-bottom:1px solid #e2e8f0;font-size:13px}tr:nth-child(even) td{background:#f8fafc}.footer{margin-top:40px;padding-top:20px;border-top:1px solid #e2e8f0;text-align:center;font-size:12px;color:#64748b}</style></head><body>
+                <div class="header"><h1>🎵 RAPORO Y'UBWITABIRE</h1><p>Kuva ${formatDate(from)} kugeza ${formatDate(to)}</p></div>
+                <div class="stats"><div class="stat blue"><div class="value">${filtered.length}</div><div class="label">Iteraniro</div></div><div class="stat green"><div class="value">${avgPct}%</div><div class="label">Ubwitabire</div></div><div class="stat purple"><div class="value" style="font-size:16px;">${topMember}</div><div class="label">Waje Cyane</div></div></div>
+                <h2>📊 Amakuru y'Abaririmbyi Bose</h2>
+                <table><thead><tr><th>Umuririmbyi</th><th>Nimero</th><th>Level</th><th>Ijwi</th><th>Yaje</th><th>%</th></tr></thead><tbody>${rows}</tbody></table>
+                <div class="footer">Icyorezo: ${new Date().toLocaleString('rw-RW')} | Choir Attendance</div>
+                <script>window.onload = function() { window.print(); }<\/script>
+                </body></html>`);
+            w.document.close();
             showToast('📄 PDF irakorwa...', 'info');
         };
 
         window.downloadReportExcel = function() {
-            if (!lastReportData) {
-                showToast('Kora raporo mbere', 'warning');
-                return;
-            }
-            
+            if (!lastReportData) { showToast('Kora raporo mbere', 'warning'); return; }
             const { from, to, filtered, memberCount, avgPct, topMember } = lastReportData;
-            
             let csv = 'RAPORO Y\'UBWITABIRE\n';
             csv += `Kuva: ${formatDate(from)} - Kugeza: ${formatDate(to)}\n\n`;
-            csv += `Iteraniro: ${filtered.length}\n`;
-            csv += `Ubwitabire Rusange: ${avgPct}%\n`;
-            csv += `Waje Cyane: ${topMember}\n\n`;
-            csv += 'Umuririmbyi,Nimero (ID),Level,Ijwi,Yaje,Ubwitabire\n';
-            
-            members.forEach(m => {
-                const count = memberCount[m.id] || 0;
-                const pct = filtered.length > 0 ? Math.round((count / filtered.length) * 100) : 0;
-                csv += `"${m.name}","${m.number || ''}","${m.level || ''}","${m.voice}",${count}/${filtered.length},${pct}%\n`;
-            });
-            
+            csv += `Iteraniro: ${filtered.length}\nUbwitabire: ${avgPct}%\nWaje Cyane: ${topMember}\n\n`;
+            csv += 'Umuririmbyi,Nimero,Level,Ijwi,Yaje,Ubwitabire\n';
+            members.forEach(m => { const c = memberCount[m.id] || 0; const pct = filtered.length > 0 ? Math.round((c / filtered.length) * 100) : 0; csv += `"${m.name}","${m.number||''}","${m.level||''}","${m.voice}",${c}/${filtered.length},${pct}%\n`; });
             const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `raporo-${from}-${to}.csv`;
-            a.click();
+            const a = document.createElement('a'); a.href = url; a.download = `raporo-${from}-${to}.csv`; a.click();
             showToast('📊 Excel yakuwe', 'success');
         };
 
-        // ============================================
         // PDF EXPORT
-        // ============================================
         window.exportPDF = function(id) {
-            const session = sessions.find(s => s.id === id);
-            if (!session) return;
-            
-            const present = session.presentMembers?.length || 0;
+            const s = sessions.find(x => x.id === id);
+            if (!s) return;
+            const present = s.presentMembers?.length || 0;
             const total = members.length;
             const pct = total > 0 ? Math.round((present / total) * 100) : 0;
-            
-            const rows = (session.presentMembers || []).map((item, i) => {
-                const m = members.find(x => x.id === item.id);
-                if (!m) return '';
-                return `
-                    <tr>
-                        <td><strong>${i + 1}</strong></td>
-                        <td><strong>${m.name}</strong></td>
-                        <td>${m.number || '-'}</td>
-                        <td>${m.level || '-'}</td>
-                        <td>${m.voice}</td>
-                        <td><strong style="color: #10b981;">${item.time}</strong></td>
-                    </tr>
-                `;
-            }).join('');
-            
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>${session.name}</title>
-                    <style>
-                        * { margin: 0; padding: 0; box-sizing: border-box; }
-                        body { font-family: 'Inter', Arial, sans-serif; padding: 40px; color: #1e293b; background: white; }
-                        .header { text-align: center; padding-bottom: 20px; border-bottom: 3px solid #6366f1; margin-bottom: 30px; }
-                        .header h1 { font-size: 28px; color: #6366f1; margin-bottom: 8px; }
-                        .header h2 { font-size: 20px; color: #1e293b; margin-bottom: 6px; }
-                        .header p { color: #64748b; font-size: 14px; }
-                        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 30px; }
-                        .stat { background: #f8fafc; border-radius: 12px; padding: 18px; text-align: center; border: 1px solid #e2e8f0; }
-                        .stat .value { font-size: 28px; font-weight: 800; margin-bottom: 4px; }
-                        .stat .label { font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600; }
-                        .stat.blue .value { color: #6366f1; }
-                        .stat.green .value { color: #10b981; }
-                        .stat.red .value { color: #ef4444; }
-                        h2.section-title { font-size: 17px; margin-bottom: 15px; }
-                        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-                        th { background: #6366f1; color: white; padding: 14px 16px; text-align: left; font-size: 12px; text-transform: uppercase; }
-                        td { padding: 14px 16px; border-bottom: 1px solid #e2e8f0; font-size: 13px; }
-                        tbody tr:nth-child(even) td { background: #f8fafc; }
-                        .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 12px; color: #64748b; }
-                        .signature { margin-top: 60px; display: flex; justify-content: space-between; }
-                        .signature .line { border-top: 1px solid #1e293b; width: 250px; margin-top: 50px; padding-top: 6px; font-size: 12px; text-align: center; }
-                    </style>
-                </head>
-                <body>
-                    <div class="header">
-                        <h1>🎵 CHOIR ATTENDANCE</h1>
-                        <h2>${session.name}</h2>
-                        <p>📅 ${formatDate(session.date)} &nbsp;|&nbsp; 🕐 ${session.time}</p>
-                    </div>
-                    <div class="stats">
-                        <div class="stat blue"><div class="value">${total}</div><div class="label">Bose</div></div>
-                        <div class="stat green"><div class="value">${present}</div><div class="label">Baje</div></div>
-                        <div class="stat red"><div class="value">${total - present}</div><div class="label">Bataje</div></div>
-                    </div>
-                    <h2 class="section-title">✅ Urutonde rw'Abaje (${present}) — ${pct}%</h2>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width: 50px;">#</th>
-                                <th>Amazina</th>
-                                <th>Nimero (ID)</th>
-                                <th>Level</th>
-                                <th>Ijwi</th>
-                                <th style="width: 100px;">Isaha Yaje</th>
-                            </tr>
-                        </thead>
-                        <tbody>${rows}</tbody>
-                    </table>
-                    <div class="signature">
-                        <div class="line">Umukono wa Secretary</div>
-                        <div class="line">Itariki</div>
-                    </div>
-                    <div class="footer">Icyorezo: ${new Date().toLocaleString('rw-RW')} | Choir Attendance System</div>
-                    <script>window.onload = function() { window.print(); }<\/script>
-                </body>
-                </html>
-            `);
-            printWindow.document.close();
+            const rows = (s.presentMembers || []).map((item, i) => { const m = members.find(x => x.id === item.id); if (!m) return ''; return `<tr><td><strong>${i+1}</strong></td><td><strong>${m.name}</strong></td><td>${m.number || '-'}</td><td>${m.level || '-'}</td><td>${m.voice}</td><td><strong style="color:#10b981;">${item.time}</strong></td></tr>`; }).join('');
+            const w = window.open('', '_blank');
+            w.document.write(`<!DOCTYPE html><html><head><title>${s.name}</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif;padding:40px;color:#1e293b}.header{text-align:center;padding-bottom:20px;border-bottom:3px solid #38bdf8;margin-bottom:30px}.header h1{font-size:28px;color:#38bdf8;margin-bottom:8px}.header h2{font-size:20px;color:#1e293b;margin-bottom:6px}.header p{color:#64748b;font-size:14px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-bottom:30px}.stat{background:#f8fafc;border-radius:12px;padding:18px;text-align:center;border:1px solid #e2e8f0}.stat .value{font-size:28px;font-weight:800;margin-bottom:4px}.stat .label{font-size:12px;color:#64748b;text-transform:uppercase;font-weight:600}.stat.blue .value{color:#38bdf8}.stat.green .value{color:#10b981}.stat.red .value{color:#ef4444}h2.section-title{font-size:17px;margin-bottom:15px}table{width:100%;border-collapse:collapse;margin-bottom:20px}th{background:#38bdf8;color:white;padding:14px 16px;text-align:left;font-size:12px;text-transform:uppercase}td{padding:14px 16px;border-bottom:1px solid #e2e8f0;font-size:13px}tr:nth-child(even) td{background:#f8fafc}.footer{margin-top:40px;padding-top:20px;border-top:1px solid #e2e8f0;text-align:center;font-size:12px;color:#64748b}.signature{margin-top:60px;display:flex;justify-content:space-between}.signature .line{border-top:1px solid #1e293b;width:250px;margin-top:50px;padding-top:6px;font-size:12px;text-align:center}</style></head><body>
+                <div class="header"><h1>🎵 CHOIR ATTENDANCE</h1><h2>${s.name}</h2><p>📅 ${formatDate(s.date)} | 🕐 ${s.time}</p></div>
+                <div class="stats"><div class="stat blue"><div class="value">${total}</div><div class="label">Bose</div></div><div class="stat green"><div class="value">${present}</div><div class="label">Baje</div></div><div class="stat red"><div class="value">${total - present}</div><div class="label">Bataje</div></div></div>
+                <h2 class="section-title">✅ Abaje (${present}) — ${pct}%</h2>
+                <table><thead><tr><th style="width:50px;">#</th><th>Amazina</th><th>Nimero</th><th>Level</th><th>Ijwi</th><th>Isaha</th></tr></thead><tbody>${rows}</tbody></table>
+                <div class="signature"><div class="line">Umukono wa Secretary</div><div class="line">Itariki</div></div>
+                <div class="footer">Icyorezo: ${new Date().toLocaleString('rw-RW')} | Choir Attendance</div>
+                <script>window.onload = function() { window.print(); }<\/script>
+                </body></html>`);
+            w.document.close();
             showToast('📄 PDF irakorwa...', 'info');
         };
 
-        // ============================================
         // SETTINGS
-        // ============================================
         window.saveSettings = async function() {
             const choirName = document.getElementById('choirName').value.trim();
-            
-            try {
-                await updateDoc(doc(db, 'users', currentUser.uid), { choirName });
-                currentUserData.choirName = choirName;
-                showToast('✅ Igenamiterere ryabitswe', 'success');
-            } catch (error) {
-                showToast('❌ ' + error.message, 'error');
-            }
+            try { await updateDoc(doc(db, 'users', currentUser.uid), { choirName }); currentUserData.choirName = choirName; showToast('✅ Byabitswe', 'success'); }
+            catch (error) { showToast('❌ ' + error.message, 'error'); }
         };
 
         window.exportData = function() {
             const data = { members, sessions, exported: new Date().toISOString() };
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `choir-data-${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
-            showToast('✅ Data yakuwe', 'success');
+            const a = document.createElement('a'); a.href = url; a.download = `choir-data-${new Date().toISOString().split('T')[0]}.json`; a.click();
+            showToast('✅ byagenze neza', 'success');
         };
 
-        // ============================================
-        // HELPERS
-        // ============================================
-        window.formatDate = function(dateStr) {
-            if (!dateStr) return '-';
-            const d = new Date(dateStr);
-            const day = String(d.getDate()).padStart(2, '0');
-            const month = String(d.getMonth() + 1).padStart(2, '0');
-            const year = d.getFullYear();
-            return `${day}/${month}/${year}`;
+        window.formatDate = function(d) {
+            if (!d) return '-';
+            const dt = new Date(d);
+            return `${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}/${dt.getFullYear()}`;
         };
     </script>
 
