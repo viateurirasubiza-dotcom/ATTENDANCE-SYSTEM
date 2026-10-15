@@ -2135,7 +2135,7 @@
 
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- FIREBASE + APP -->
+    <!-- FIREBASE + CLOUDINARY + APP -->
     <script type="module">
         // ============================================
         // 🔥 FIREBASE CONFIG
@@ -2150,23 +2150,29 @@
             signOut, onAuthStateChanged, updateProfile, updatePassword, 
             EmailAuthProvider, reauthenticateWithCredential
         } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-        import { 
-            getStorage, ref, uploadBytes, getDownloadURL 
-        } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js";
 
-        // ⚠️ HINDUA IZI — IMWE na member.html
-            const firebaseConfig = {
-  apiKey: "AIzaSyBaL44npcmLRcAX4cAo8duE-V5Sn_wbALQ",
-  authDomain: "choir-system-9745a.firebaseapp.com",
-  projectId: "choir-system-9745a",
-  storageBucket: "choir-system-9745a.firebasestorage.app",
-  messagingSenderId: "14825832420",
-  appId: "1:14825832420:web:502ea3315c8623fc57d1f1"
-};
+        // ============================================
+        // ☁️ CLOUDINARY CONFIG
+        // ============================================
+        const CLOUDINARY_CLOUD_NAME = "fepicrec";
+        const CLOUDINARY_UPLOAD_PRESET = "attendance_image";
+        const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
+
+        // ============================================
+        // FIREBASE CONFIG
+        // ============================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyBaL44npcmLRcAX4cAo8duE-V5Sn_wbALQ",
+            authDomain: "choir-system-9745a.firebaseapp.com",
+            projectId: "choir-system-9745a",
+            storageBucket: "choir-system-9745a.firebasestorage.app",
+            messagingSenderId: "14825832420",
+            appId: "1:14825832420:web:502ea3315c8623fc57d1f1"
+        };
+
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-        const storage = getStorage(app);
 
         // GLOBALS
         let currentUser = null;
@@ -2181,7 +2187,9 @@
         let currentPeriod = 'all';
         let lastReportData = null;
 
+        // ============================================
         // HELPERS
+        // ============================================
         window.showLoading = function(text) {
             document.getElementById('loadingText').textContent = text || 'Turashakisha...';
             document.getElementById('loadingScreen').classList.remove('hidden');
@@ -2220,7 +2228,32 @@
             });
         });
 
+        // ============================================
+        // ☁️ CLOUDINARY UPLOAD
+        // ============================================
+        async function uploadToCloudinary(file, folder = 'choir_members') {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+            formData.append('folder', folder);
+
+            const response = await fetch(CLOUDINARY_URL, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.error?.message || 'Upload yananiwe');
+            }
+
+            const data = await response.json();
+            return data.secure_url;
+        }
+
+        // ============================================
         // PHOTO PREVIEW
+        // ============================================
         window.previewSignupPhoto = function(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -2269,7 +2302,9 @@
             reader.readAsDataURL(file);
         };
 
+        // ============================================
         // AUTH
+        // ============================================
         window.switchAuth = function(tab, event) {
             document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
             event.target.classList.add('active');
@@ -2344,9 +2379,8 @@
                 
                 let photoURL = null;
                 if (signupPhotoFile) {
-                    const storageRef = ref(storage, `users/${user.uid}/profile.jpg`);
-                    await uploadBytes(storageRef, signupPhotoFile);
-                    photoURL = await getDownloadURL(storageRef);
+                    // ☁️ Upload kuri Cloudinary
+                    photoURL = await uploadToCloudinary(signupPhotoFile, 'choir_profiles');
                 }
                 
                 await updateProfile(user, { displayName: name, photoURL: photoURL });
@@ -2379,7 +2413,9 @@
             await signOut(auth);
         };
 
+        // ============================================
         // AUTH STATE
+        // ============================================
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
@@ -2464,7 +2500,9 @@
             document.getElementById('choirName').value = currentUserData.choirName || 'Choir Imanzi';
         };
 
-        // PROFILE PHOTO UPLOAD
+        // ============================================
+        // ☁️ UPLOAD PROFILE PHOTO (Cloudinary)
+        // ============================================
         window.uploadProfilePhoto = async function(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -2477,9 +2515,8 @@
             try {
                 showLoading('Turazamura ifoto...');
                 
-                const storageRef = ref(storage, `users/${currentUser.uid}/profile.jpg`);
-                await uploadBytes(storageRef, file);
-                const photoURL = await getDownloadURL(storageRef);
+                // ☁️ Upload kuri Cloudinary
+                const photoURL = await uploadToCloudinary(file, 'choir_profiles');
                 
                 await updateDoc(doc(db, 'users', currentUser.uid), { photo: photoURL });
                 currentUserData.photo = photoURL;
@@ -2550,7 +2587,9 @@
             }
         };
 
+        // ============================================
         // LOAD DATA
+        // ============================================
         async function loadMembers() {
             try {
                 const q = query(collection(db, 'members'), orderBy('registeredAt', 'desc'));
@@ -2561,7 +2600,15 @@
                 });
             } catch (e) {
                 console.error('Load members error:', e);
-                members = [];
+                try {
+                    const snap = await getDocs(collection(db, 'members'));
+                    members = [];
+                    snap.forEach(d => {
+                        members.push({ id: d.id, ...d.data() });
+                    });
+                } catch (e2) {
+                    members = [];
+                }
             }
         }
 
@@ -2579,7 +2626,9 @@
             }
         }
 
+        // ============================================
         // SIDEBAR / PAGE
+        // ============================================
         window.toggleSidebar = function() {
             document.getElementById('sidebar').classList.toggle('open');
         };
@@ -2630,14 +2679,16 @@
         setInterval(updateClock, 1000);
         updateClock();
 
+        // ============================================
         // DASHBOARD
+        // ============================================
         window.renderDashboard = function() {
             document.getElementById('statTotalMembers').textContent = members.length;
             document.getElementById('statTotalSessions').textContent = sessions.length;
             
             let totalPct = 0;
             sessions.forEach(s => {
-                const pct = members.length > 0 ? (s.presentMembers.length / members.length) * 100 : 0;
+                const pct = members.length > 0 ? ((s.presentMembers?.length || 0) / members.length) * 100 : 0;
                 totalPct += pct;
             });
             const avgPct = sessions.length > 0 ? Math.round(totalPct / sessions.length) : 0;
@@ -2646,7 +2697,7 @@
             let absent = 0;
             if (sessions.length > 0) {
                 const last = sessions[0];
-                absent = members.length - last.presentMembers.length;
+                absent = members.length - (last.presentMembers?.length || 0);
             }
             document.getElementById('statAbsentToday').textContent = absent;
             
@@ -2672,7 +2723,7 @@
             }
             
             list.innerHTML = sessions.map(s => {
-                const present = s.presentMembers.length;
+                const present = s.presentMembers?.length || 0;
                 const total = members.length;
                 const pct = total > 0 ? Math.round((present / total) * 100) : 0;
                 
@@ -2705,7 +2756,9 @@
             }).join('');
         }
 
+        // ============================================
         // QR
+        // ============================================
         window.openQRRegisterModal = function() {
             const baseUrl = window.location.href.replace('index.html', '').replace(/\/$/, '');
             const registerUrl = baseUrl + '/member.html';
@@ -2746,7 +2799,9 @@
             showToast('📋 Link yakopiwe', 'success');
         };
 
+        // ============================================
         // CREATE ATTENDANCE
+        // ============================================
         window.openCreateModal = function() {
             if (members.length === 0) {
                 showToast('Banza wongereho abaririmbyi', 'warning');
@@ -2821,7 +2876,7 @@
                         <td><strong>${m.number || '-'}</strong></td>
                         <td><span class="level-badge"><i class="fas fa-graduation-cap"></i> ${m.level || '-'}</span></td>
                         <td>
-                            <span class="voice-badge ${m.voice.toLowerCase()}">
+                            <span class="voice-badge ${(m.voice || '').toLowerCase()}">
                                 <i class="fas fa-microphone"></i> ${m.voice}
                             </span>
                         </td>
@@ -2930,17 +2985,19 @@
             document.getElementById('page-dashboard').classList.add('active');
         };
 
+        // ============================================
         // VIEW SESSION
+        // ============================================
         window.viewSession = function(id) {
             const session = sessions.find(s => s.id === id);
             if (!session) return;
             
-            const present = session.presentMembers.length;
+            const present = session.presentMembers?.length || 0;
             const total = members.length;
             const absent = total - present;
             const pct = total > 0 ? Math.round((present / total) * 100) : 0;
             
-            const rows = session.presentMembers.map((item, i) => {
+            const rows = (session.presentMembers || []).map((item, i) => {
                 const m = members.find(x => x.id === item.id);
                 if (!m) return '';
                 const initials = m.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
@@ -2963,7 +3020,7 @@
                         <td><strong>${m.number || '-'}</strong></td>
                         <td><span class="level-badge"><i class="fas fa-graduation-cap"></i> ${m.level || '-'}</span></td>
                         <td>
-                            <span class="voice-badge ${m.voice.toLowerCase()}">
+                            <span class="voice-badge ${(m.voice || '').toLowerCase()}">
                                 <i class="fas fa-microphone"></i> ${m.voice}
                             </span>
                         </td>
@@ -3037,7 +3094,9 @@
             }
         };
 
+        // ============================================
         // PERIOD FILTER
+        // ============================================
         window.switchPeriod = function(period, element) {
             document.querySelectorAll('.period-tab').forEach(t => t.classList.remove('active'));
             element.classList.add('active');
@@ -3077,7 +3136,7 @@
             }
             
             list.innerHTML = filtered.map(s => {
-                const present = s.presentMembers.length;
+                const present = s.presentMembers?.length || 0;
                 const total = members.length;
                 const pct = total > 0 ? Math.round((present / total) * 100) : 0;
                 
@@ -3108,7 +3167,9 @@
             }).join('');
         };
 
+        // ============================================
         // MEMBERS
+        // ============================================
         window.renderMembers = function() {
             const voiceFilter = document.getElementById('membersFilterVoice')?.value || '';
             const levelFilter = document.getElementById('membersFilterLevel')?.value || '';
@@ -3120,7 +3181,7 @@
             if (levelFilter) list = list.filter(m => m.level === levelFilter);
             if (searchTerm) {
                 list = list.filter(m => 
-                    m.name.toLowerCase().includes(searchTerm) ||
+                    (m.name || '').toLowerCase().includes(searchTerm) ||
                     (m.number || '').toLowerCase().includes(searchTerm) ||
                     (m.memberId || '').toLowerCase().includes(searchTerm)
                 );
@@ -3153,7 +3214,7 @@
                     </td>
                     <td><strong>${m.number || '-'}</strong></td>
                     <td><span class="level-badge"><i class="fas fa-graduation-cap"></i> ${m.level || '-'}</span></td>
-                    <td><span class="voice-badge ${m.voice.toLowerCase()}"><i class="fas fa-microphone"></i> ${m.voice}</span></td>
+                    <td><span class="voice-badge ${(m.voice || '').toLowerCase()}"><i class="fas fa-microphone"></i> ${m.voice}</span></td>
                     <td>
                         <div style="display: flex; gap: 6px;">
                             <button class="action-btn edit" onclick="openEditMember('${m.id}')" title="Hindura">
@@ -3198,21 +3259,22 @@
             try {
                 let photoURL = null;
                 if (newMemberPhoto) {
-                    const storageRef = ref(storage, `members/${Date.now()}.jpg`);
-                    await uploadBytes(storageRef, newMemberPhoto);
-                    photoURL = await getDownloadURL(storageRef);
+                    // ☁️ Upload kuri Cloudinary
+                    photoURL = await uploadToCloudinary(newMemberPhoto, 'choir_members');
                 }
                 
-                // Generate member ID
                 const memberId = `CH-${String(members.length + 1).padStart(3, '0')}`;
                 
                 await addDoc(collection(db, 'members'), {
                     name, 
-                    number,           // ← Nimero (Student ID)
-                    level,            // ← Level L1-L4
+                    number,
+                    level,
                     voice,
-                    memberId,         // ← Auto ID
+                    memberId,
                     photo: photoURL,
+                    photoSource: 'cloudinary',
+                    status: 'active',
+                    registeredAt: serverTimestamp(),
                     createdAt: serverTimestamp(),
                     createdBy: currentUser.uid
                 });
@@ -3270,9 +3332,8 @@
                 let photoURL = m.photo;
                 
                 if (editingPhoto) {
-                    const storageRef = ref(storage, `members/${Date.now()}.jpg`);
-                    await uploadBytes(storageRef, editingPhoto);
-                    photoURL = await getDownloadURL(storageRef);
+                    // ☁️ Upload kuri Cloudinary
+                    photoURL = await uploadToCloudinary(editingPhoto, 'choir_members');
                 }
                 
                 await updateDoc(doc(db, 'members', id), {
@@ -3311,12 +3372,16 @@
             }
         };
 
+        // ============================================
         // VOICES
+        // ============================================
         let voiceChartInstance = null;
 
         window.renderVoicesPage = function() {
             const voices = { Soprano: 0, Alto: 0, Tenor: 0, Bass: 0 };
-            members.forEach(m => voices[m.voice] = (voices[m.voice] || 0) + 1);
+            members.forEach(m => {
+                if (voices[m.voice] !== undefined) voices[m.voice]++;
+            });
             
             document.getElementById('voiceStatSoprano').textContent = voices.Soprano;
             document.getElementById('voiceStatAlto').textContent = voices.Alto;
@@ -3353,7 +3418,9 @@
             });
         };
 
+        // ============================================
         // PHOTOS
+        // ============================================
         window.renderPhotosPage = function() {
             const grid = document.getElementById('photoGrid');
             const withPhotos = members.filter(m => m.photo);
@@ -3378,7 +3445,9 @@
             `).join('');
         };
 
+        // ============================================
         // REPORTS
+        // ============================================
         window.initReportsPage = function() {
             const today = new Date().toISOString().split('T')[0];
             const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
@@ -3399,9 +3468,9 @@
             const memberCount = {};
             
             filtered.forEach(s => {
-                const pct = members.length > 0 ? (s.presentMembers.length / members.length) * 100 : 0;
+                const pct = members.length > 0 ? ((s.presentMembers?.length || 0) / members.length) * 100 : 0;
                 totalPct += pct;
-                s.presentMembers.forEach(pm => {
+                (s.presentMembers || []).forEach(pm => {
                     memberCount[pm.id] = (memberCount[pm.id] || 0) + 1;
                 });
             });
@@ -3433,7 +3502,7 @@
                         <td><strong>${m.name}</strong></td>
                         <td>${m.number || '-'}</td>
                         <td><span class="level-badge">${m.level || '-'}</span></td>
-                        <td><span class="voice-badge ${m.voice.toLowerCase()}">${m.voice}</span></td>
+                        <td><span class="voice-badge ${(m.voice || '').toLowerCase()}">${m.voice}</span></td>
                         <td><strong>${count}</strong> / ${filtered.length}</td>
                         <td><strong style="color: ${pct >= 70 ? 'var(--success)' : pct >= 40 ? 'var(--warning)' : 'var(--danger)'};">${pct}%</strong></td>
                     </tr>
@@ -3563,16 +3632,18 @@
             showToast('📊 Excel yakuwe', 'success');
         };
 
+        // ============================================
         // PDF EXPORT
+        // ============================================
         window.exportPDF = function(id) {
             const session = sessions.find(s => s.id === id);
             if (!session) return;
             
-            const present = session.presentMembers.length;
+            const present = session.presentMembers?.length || 0;
             const total = members.length;
             const pct = total > 0 ? Math.round((present / total) * 100) : 0;
             
-            const rows = session.presentMembers.map((item, i) => {
+            const rows = (session.presentMembers || []).map((item, i) => {
                 const m = members.find(x => x.id === item.id);
                 if (!m) return '';
                 return `
@@ -3655,7 +3726,9 @@
             showToast('📄 PDF irakorwa...', 'info');
         };
 
+        // ============================================
         // SETTINGS
+        // ============================================
         window.saveSettings = async function() {
             const choirName = document.getElementById('choirName').value.trim();
             
@@ -3679,7 +3752,9 @@
             showToast('✅ Data yakuwe', 'success');
         };
 
+        // ============================================
         // HELPERS
+        // ============================================
         window.formatDate = function(dateStr) {
             if (!dateStr) return '-';
             const d = new Date(dateStr);
