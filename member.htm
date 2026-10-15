@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#6366f1">
+    <title>🎵 Kwiyandikisha mu Choir</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.0/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg: #f8fafc;
+            --bg-card: #ffffff;
+            --text: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --gradient-1: linear-gradient(135deg, #6366f1, #8b5cf6);
+            --gradient-2: linear-gradient(135deg, #10b981, #06b6d4);
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.12);
+            --radius: 16px;
+            --radius-lg: 24px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        .container {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+            padding: 32px;
+            max-width: 480px;
+            width: 100%;
+            animation: slideUp 0.5s ease;
+            position: relative;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(40px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* LOADING */
+        .loading-screen {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            color: white;
+            transition: opacity 0.5s;
+        }
+
+        .loading-screen.hidden { opacity: 0; pointer-events: none; }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255, 255, 255, 0.2);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .loading-screen h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+        .loading-screen p { font-size: 14px; opacity: 0.9; }
+
+        /* HEADER */
+        .header { text-align: center; margin-bottom: 24px; }
+
+        .header .icon {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-1);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin: 0 auto 16px;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3); }
+            50% { box-shadow: 0 15px 40px rgba(99, 102, 241, 0.5); }
+        }
+
+        .header h1 { font-size: 24px; font-weight: 800; margin-bottom: 6px; }
+        .header p { color: var(--text-secondary); font-size: 14px; }
+
+        /* FORM */
+        .form-group { margin-bottom: 16px; }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        .form-group label span { color: var(--danger); }
+
+        .form-control {
+            width: 100%;
+            padding: 15px 18px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            background: var(--bg);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+        }
+
+        select.form-control {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2364748b' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 18px center;
+            padding-right: 45px;
+        }
+
+        /* LEVEL SELECTOR (BUTTONS) */
+        .level-selector {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .level-btn {
+            padding: 14px 8px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            background: var(--bg);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .level-btn:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .level-btn.selected {
+            background: var(--gradient-1);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.35);
+            transform: translateY(-2px);
+        }
+
+        /* PHOTO UPLOAD */
+        .photo-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding: 24px;
+            border: 2px dashed var(--border);
+            border-radius: 16px;
+            background: var(--bg);
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .photo-upload:hover { border-color: var(--primary); background: rgba(99, 102, 241, 0.05); }
+        .photo-upload:active { transform: scale(0.98); }
+
+        .photo-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .photo-placeholder {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .photo-upload-text { font-size: 13px; color: var(--text-secondary); text-align: center; }
+        .photo-upload-text strong { display: block; color: var(--primary); margin-bottom: 4px; font-size: 14px; font-weight: 700; }
+
+        /* BUTTON */
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary { 
+            background: var(--gradient-1); 
+            color: white;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover:not(:disabled) { 
+            transform: translateY(-2px); 
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.5); 
+        }
+
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        /* ERROR */
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            padding: 14px 16px;
+            border-radius: 12px;
+            font-size: 13.5px;
+            margin-bottom: 16px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            border-left: 4px solid var(--danger);
+            animation: shake 0.4s ease;
+        }
+
+        .error-message.active { display: flex; }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
+        /* SUCCESS */
+        .success-screen { display: none; text-align: center; padding: 20px 0; }
+        .success-screen.active { display: block; animation: scaleIn 0.5s ease; }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .success-icon {
+            width: 110px;
+            height: 110px;
+            background: var(--gradient-2);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 55px;
+            margin: 0 auto 20px;
+            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.4);
+            animation: bounceIn 0.7s ease;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .success-screen h2 { font-size: 26px; font-weight: 800; margin-bottom: 8px; }
+        .success-screen p { color: var(--text-secondary); font-size: 14.5px; margin-bottom: 24px; }
+
+        .member-card {
+            background: var(--bg);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            text-align: left;
+            border: 1px solid var(--border);
+        }
+
+        .member-photo {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            box-shadow: var(--shadow);
+            flex-shrink: 0;
+        }
+
+        .member-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 22px;
+            border: 3px solid white;
+            box-shadow: var(--shadow);
+            flex-shrink: 0;
+        }
+
+        .member-info { flex: 1; min-width: 0; }
+        .member-name { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+        .member-details { font-size: 13px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 4px; }
+        .member-details span { display: flex; align-items: center; gap: 6px; }
+
+        .info-box {
+            background: rgba(99, 102, 241, 0.1);
+            padding: 16px;
+            border-radius: 14px;
+            font-size: 13.5px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-align: left;
+            border-left: 4px solid var(--primary);
+        }
+
+        .info-box i { font-size: 20px; }
+
+        /* RESPONSIVE */
+        @media (max-width: 480px) {
+            body { padding: 12px; }
+            .container { padding: 24px 20px; }
+            .header .icon { width: 70px; height: 70px; font-size: 30px; }
+            .header h1 { font-size: 22px; }
+            .photo-preview, .photo-placeholder { width: 100px; height: 100px; font-size: 36px; }
+            .success-icon { width: 90px; height: 90px; font-size: 44px; }
+            .success-screen h2 { font-size: 22px; }
+            .level-btn { padding: 12px 6px; font-size: 14px; }
+        }
+
+        .fa-spin { animation: spin 1s linear infinite; }
+    </style>
+</head>
+<body>
+
+    <!-- LOADING -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="spinner"></div>
+        <h2>🎵 Choir Attendance</h2>
+        <p>Turashakisha amakuru...</p>
+    </div>
+
+    <div class="container" id="mainContainer">
+        
+        <!-- FORM -->
+        <div id="formScreen" style="display: none;">
+            <div class="header">
+                <div class="icon"><i class="fas fa-music"></i></div>
+                <h1>Iyandikishe</h1>
+                <p>Injira mu itsinda ry'abaririmbyi</p>
+            </div>
+
+            <div class="error-message" id="errorMsg">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="errorText">-</span>
+            </div>
+
+            <!-- IFOTO -->
+            <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
+                <div id="photoPreviewContainer">
+                    <div class="photo-placeholder">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                </div>
+                <div class="photo-upload-text">
+                    <strong>Kanda hano uongeremo ifoto</strong>
+                    JPG, PNG (max 5MB)
+                </div>
+            </div>
+            <input type="file" id="photoInput" accept="image/*" capture="user" style="display: none;" onchange="previewPhoto(event)">
+
+            <!-- AMAZINA -->
+            <div class="form-group">
+                <label>Amazina yuzuye <span>*</span></label>
+                <input 
+                    type="text" 
+                    class="form-control" 
+                    id="regName" 
+                    placeholder="Uwase Marie"
+                    autocomplete="name"
+                    maxlength="60"
+                >
+            </div>
+
+            <!-- NIMERO -->
+            <div class="form-group">
+                <label>Nimero yawe (Student ID cyangwa Telefone) <span>*</span></label>
+                <input 
+                    type="text" 
+                    class="form-control" 
+                    id="regNumber" 
+                    placeholder="Urugero: 2234567890 cyangwa 0788..."
+                    maxlength="20"
+                >
+            </div>
+
+            <!-- LEVEL -->
+            <div class="form-group">
+                <label>Level yawe (University) <span>*</span></label>
+                <div class="level-selector" id="levelSelector">
+                    <button type="button" class="level-btn" onclick="selectLevel('L1', this)">L1</button>
+                    <button type="button" class="level-btn" onclick="selectLevel('L2', this)">L2</button>
+                    <button type="button" class="level-btn" onclick="selectLevel('L3', this)">L3</button>
+                    <button type="button" class="level-btn" onclick="selectLevel('L4', this)">L4</button>
+                </div>
+                <input type="hidden" id="regLevel" value="">
+            </div>
+
+            <!-- IJWI -->
+            <div class="form-group">
+                <label>Ijwi ryawe <span>*</span></label>
+                <select class="form-control" id="regVoice">
+                    <option value="">-- Hitamo ijwi ryawe --</option>
+                    <option value="Soprano">🎵 Soprano</option>
+                    <option value="Alto">🎵 Alto</option>
+                    <option value="Tenor">🎵 Tenor</option>
+                    <option value="Bass">🎵 Bass</option>
+                </select>
+            </div>
+
+            <!-- SUBMIT -->
+            <button class="btn btn-primary" id="submitBtn" onclick="submitRegistration()">
+                <i class="fas fa-check"></i>
+                <span>IYANDIKISHE</span>
+            </button>
+        </div>
+
+        <!-- SUCCESS -->
+        <div class="success-screen" id="successScreen">
+            <div class="success-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <h2>Wakiriwe! 🎉</h2>
+            <p>Wiyandikishije neza. Secretary azakwemeza vuba.</p>
+
+            <div class="member-card" id="successMemberCard"></div>
+
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                <span>Nimero yawe yoherejwe kwa Secretary. Azakwemeza vuba.</span>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // ============================================
+        // 🔥 FIREBASE CONFIG — SHYIRAMO YAWE HANO
+        // ============================================
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+        import { 
+            getFirestore, collection, addDoc, getDocs, serverTimestamp 
+        } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+        import { 
+            getStorage, ref, uploadBytes, getDownloadURL 
+        } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js";
+
+        // ⚠️ HINDUA IZI — Ziri muri Firebase Console yawe
+        const firebaseConfig = {
+            apiKey: "SHYIRAMO_API_KEY_YAWE",
+            authDomain: "SHYIRAMO.firebaseapp.com",
+            projectId: "SHYIRAMO_PROJECT_ID",
+            storageBucket: "SHYIRAMO.appspot.com",
+            messagingSenderId: "SHYIRAMO_SENDER_ID",
+            appId: "SHYIRAMO_APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        let photoFile = null;
+        let selectedLevel = null;
+
+        // ============================================
+        // INIT
+        // ============================================
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hidden');
+                document.getElementById('formScreen').style.display = 'block';
+            }, 800);
+        });
+
+        // ============================================
+        // LEVEL SELECTOR
+        // ============================================
+        window.selectLevel = function(level, btn) {
+            selectedLevel = level;
+            document.getElementById('regLevel').value = level;
+            
+            // Hindura buttons
+            document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+        };
+
+        // ============================================
+        // PHOTO PREVIEW
+        // ============================================
+        window.previewPhoto = function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (file.size > 5 * 1024 * 1024) {
+                showError('Ifoto ni nini cyane (max 5MB)');
+                event.target.value = '';
+                return;
+            }
+            
+            if (!file.type.startsWith('image/')) {
+                showError('Hitamo ifoto gusa (JPG, PNG)');
+                event.target.value = '';
+                return;
+            }
+            
+            photoFile = file;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('photoPreviewContainer').innerHTML = 
+                    `<img src="${e.target.result}" class="photo-preview" alt="Preview">`;
+            };
+            reader.readAsDataURL(file);
+        };
+
+        // ============================================
+        // ERROR
+        // ============================================
+        function showError(msg) {
+            const el = document.getElementById('errorMsg');
+            document.getElementById('errorText').textContent = msg;
+            el.classList.add('active');
+            
+            el.style.animation = 'none';
+            setTimeout(() => { el.style.animation = 'shake 0.4s ease'; }, 10);
+            
+            setTimeout(() => el.classList.remove('active'), 5000);
+        }
+
+        // ============================================
+        // SUBMIT REGISTRATION
+        // ============================================
+        window.submitRegistration = async function() {
+            const name = document.getElementById('regName').value.trim();
+            const number = document.getElementById('regNumber').value.trim();
+            const level = document.getElementById('regLevel').value;
+            const voice = document.getElementById('regVoice').value;
+            const btn = document.getElementById('submitBtn');
+            
+            // Validation
+            if (!name || !voice) {
+                showError('Uzuza amazina na ijwi');
+                return;
+            }
+            
+            if (name.length < 3) {
+                showError('Amazina agomba kuba nibura 3');
+                return;
+            }
+            
+            if (!number) {
+                showError('Shyiramo nimero yawe (Student ID cyangwa telefone)');
+                return;
+            }
+            
+            if (number.length < 5) {
+                showError('Nimero ni ngufi cyane');
+                return;
+            }
+            
+            if (!level) {
+                showError('Hitamo level yawe (L1 - L4)');
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turabika...</span>';
+            
+            try {
+                // 1. Upload photo kuri Firebase Storage
+                let photoURL = null;
+                if (photoFile) {
+                    const timestamp = Date.now();
+                    const safeName = name.replace(/[^a-zA-Z0-9]/g, '_');
+                    const fileName = `members/${timestamp}_${safeName}.jpg`;
+                    const storageRef = ref(storage, fileName);
+                    
+                    await uploadBytes(storageRef, photoFile);
+                    photoURL = await getDownloadURL(storageRef);
+                }
+                
+                // 2. Generate member number
+                let memberNumber;
+                try {
+                    const membersSnap = await getDocs(collection(db, 'members'));
+                    const nextNum = membersSnap.size + 1;
+                    memberNumber = `CH-${String(nextNum).padStart(3, '0')}`;
+                } catch (e) {
+                    memberNumber = `CH-${Date.now().toString().slice(-3)}`;
+                }
+                
+                // 3. Bika muri Firestore — DORE DATA YOSE
+                await addDoc(collection(db, 'members'), {
+                    name: name,
+                    number: number,              // ← Nimero (Student ID cyangwa phone)
+                    level: level,                // ← Level (L1-L4)
+                    voice: voice,
+                    memberId: memberNumber,      // ← Auto-generated
+                    photo: photoURL,
+                    status: 'pending',
+                    registeredAt: serverTimestamp(),
+                    registeredVia: 'qr-code'
+                });
+                
+                // 4. Confetti!
+                confetti({
+                    particleCount: 180,
+                    spread: 90,
+                    origin: { y: 0.6 },
+                    colors: ['#6366f1', '#8b5cf6', '#10b981', '#f59e0b']
+                });
+                
+                // 5. Success screen
+                document.getElementById('formScreen').style.display = 'none';
+                
+                const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                const photoHtml = photoURL 
+                    ? `<img src="${photoURL}" class="member-photo" alt="${name}">`
+                    : `<div class="member-avatar">${initials}</div>`;
+                
+                document.getElementById('successMemberCard').innerHTML = `
+                    ${photoHtml}
+                    <div class="member-info">
+                        <div class="member-name">${name}</div>
+                        <div class="member-details">
+                            <span><i class="fas fa-hashtag"></i> ${memberNumber}</span>
+                            <span><i class="fas fa-id-card"></i> ${number}</span>
+                            <span><i class="fas fa-graduation-cap"></i> ${level}</span>
+                            <span><i class="fas fa-microphone"></i> ${voice}</span>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('successScreen').classList.add('active');
+                
+                if (navigator.vibrate) {
+                    navigator.vibrate([100, 50, 100]);
+                }
+                
+            } catch (error) {
+                console.error('Registration error:', error);
+                
+                let errorMsg = 'Ikibazo cyabaye. Ongera ugerageze.';
+                
+                if (error.code === 'storage/unauthorized') {
+                    errorMsg = 'Ntibyemewe kohereza ifoto. Reba Firebase Storage rules.';
+                } else if (error.code === 'permission-denied') {
+                    errorMsg = 'Ntibyemewe kwandika muri database.';
+                } else if (error.message) {
+                    errorMsg = error.message;
+                }
+                
+                showError(errorMsg);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check"></i> <span>IYANDIKISHE</span>';
+            }
+        };
+
+        // Enter key navigation
+        document.getElementById('regName').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('regNumber').focus();
+        });
+        
+        document.getElementById('regNumber').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('regVoice').focus();
+        });
+    </script>
+
+</body>
+</html>
