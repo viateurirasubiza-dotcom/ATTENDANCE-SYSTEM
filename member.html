@@ -76,7 +76,6 @@
             50% { background-position: 100% 50%; }
         }
 
-        /* ANIMATED BLOBS */
         body::before,
         body::after {
             content: '';
@@ -116,7 +115,6 @@
             50% { transform: translate(-100px, -50px) scale(1.1); }
         }
 
-        /* LOADING SCREEN */
         .loading-screen {
             position: fixed;
             inset: 0;
@@ -182,7 +180,6 @@
             50% { opacity: 1; }
         }
 
-        /* MAIN CONTAINER */
         .container {
             background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(30px);
@@ -210,7 +207,6 @@
             }
         }
 
-        /* HEADER */
         .header { 
             text-align: center; 
             margin-bottom: 32px; 
@@ -277,7 +273,6 @@
             font-weight: 500;
         }
 
-        /* FORM */
         .form-group { 
             margin-bottom: 20px; 
             animation: fadeInUp 0.5s ease backwards;
@@ -352,7 +347,6 @@
             padding-right: 50px;
         }
 
-        /* LEVEL SELECTOR */
         .level-selector {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -406,7 +400,6 @@
             opacity: 1;
         }
 
-        /* PHOTO UPLOAD */
         .photo-upload {
             display: flex;
             flex-direction: column;
@@ -525,7 +518,6 @@
             letter-spacing: -0.3px;
         }
 
-        /* SUBMIT BUTTON */
         .btn {
             width: 100%;
             padding: 18px 24px;
@@ -582,7 +574,6 @@
             transform: none;
         }
 
-        /* ERROR */
         .error-message {
             background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
             color: var(--danger);
@@ -613,7 +604,6 @@
             flex-shrink: 0;
         }
 
-        /* CHOICE MODAL */
         .choice-modal {
             position: fixed;
             inset: 0;
@@ -788,7 +778,6 @@
             transform: translateY(-2px);
         }
 
-        /* SUCCESS SCREEN */
         .success-screen { 
             display: none; 
             text-align: center; 
@@ -951,7 +940,6 @@
             flex-shrink: 0;
         }
 
-        /* RESPONSIVE */
         @media (max-width: 480px) {
             body { 
                 padding: 12px; 
@@ -1005,7 +993,6 @@
             }
         }
 
-        /* UTILITY */
         .fa-spin { animation: spin 1s linear infinite; }
 
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -1059,7 +1046,6 @@
                 </div>
             </div>
 
-            <!-- INPUTS HIDDEN -->
             <input type="file" id="cameraInput" accept="image/*" capture="user" style="display: none;" onchange="handlePhotoSelected(event)">
             <input type="file" id="galleryInput" accept="image/*" style="display: none;" onchange="handlePhotoSelected(event)">
 
@@ -1077,6 +1063,38 @@
                     placeholder="Uwase Marie"
                     autocomplete="name"
                     maxlength="60"
+                >
+            </div>
+
+            <!-- EMAIL — NGOMBA! -->
+            <div class="form-group">
+                <label>
+                    <i class="fas fa-envelope"></i>
+                    Email yawe
+                    <span>*</span>
+                </label>
+                <input 
+                    type="email" 
+                    class="form-control" 
+                    id="regEmail" 
+                    placeholder="uwase@gmail.com"
+                    autocomplete="email"
+                >
+            </div>
+
+            <!-- PASSWORD — NGOMBA! -->
+            <div class="form-group">
+                <label>
+                    <i class="fas fa-lock"></i>
+                    Ijambo ry'ibanga
+                    <span>*</span>
+                </label>
+                <input 
+                    type="password" 
+                    class="form-control" 
+                    id="regPassword" 
+                    placeholder="Nibura 6 (uzayikoresha kwinjira)"
+                    minlength="6"
                 >
             </div>
 
@@ -1147,7 +1165,7 @@
 
             <div class="info-box">
                 <i class="fas fa-info-circle"></i>
-                <span>Nimero yawe yoherejwe kwa Secretary. Azakwemeza vuba.</span>
+                <span>Uzajya winjira na <strong>email</strong> na <strong>ijambo ry'ibanga</strong> wakoresheje. Tegereza ko Secretary akwemeza.</span>
             </div>
         </div>
     </div>
@@ -1178,12 +1196,15 @@
 
     <script type="module">
         // ============================================
-        // 🔥 FIREBASE IMPORTS
+        // 🔥 FIREBASE IMPORTS — ONGERAHO AUTH!
         // ============================================
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
         import { 
             getFirestore, collection, addDoc, getDocs, serverTimestamp 
         } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+        import { 
+            getAuth, createUserWithEmailAndPassword, signOut, updateProfile 
+        } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 
         // ============================================
         // 🔥 FIREBASE CONFIG
@@ -1199,6 +1220,7 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);   // ⬅️ NGOMBA!
 
         // ============================================
         // ☁️ CLOUDINARY CONFIG
@@ -1326,65 +1348,91 @@
         }
 
         // ============================================
-        // SUBMIT REGISTRATION
+        // SUBMIT REGISTRATION — YAKOSOWE
         // ============================================
         window.submitRegistration = async function() {
             const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim().toLowerCase();
+            const password = document.getElementById('regPassword').value;
             const number = document.getElementById('regNumber').value.trim();
             const level = document.getElementById('regLevel').value;
             const voice = document.getElementById('regVoice').value;
             const btn = document.getElementById('submitBtn');
             
-            // Validation
-            if (!name || !voice) {
-                showError('Uzuza amazina na ijwi');
-                return;
-            }
+            // ===== VALIDATION =====
+            if (!name) { showError('Shyiramo amazina yawe'); return; }
+            if (name.length < 3) { showError('Amazina agomba kuba nibura 3'); return; }
             
-            if (name.length < 3) {
-                showError('Amazina agomba kuba nibura 3');
-                return;
-            }
+            if (!email) { showError('Shyiramo email yawe'); return; }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('Email ntariyo'); return; }
             
-            if (!number) {
-                showError('Shyiramo nimero yawe (Student ID cyangwa telefone)');
-                return;
-            }
+            if (!password) { showError('Shyiramo ijambo ry\'ibanga'); return; }
+            if (password.length < 6) { showError('Ijambo ry\'ibanga rigomba kuba nibura 6'); return; }
             
-            if (number.length < 5) {
-                showError('Nimero ni ngufi cyane');
-                return;
-            }
+            if (!number) { showError('Shyiramo nimero yawe'); return; }
+            if (number.length < 5) { showError('Nimero ni ngufi cyane'); return; }
             
-            if (!level) {
-                showError('Hitamo level yawe (L1 - L4)');
-                return;
-            }
+            if (!level) { showError('Hitamo level yawe (L1 - L4)'); return; }
+            if (!voice) { showError('Hitamo ijwi ryawe'); return; }
             
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turabika...</span>';
             
             try {
-                // 1. Upload photo kuri Cloudinary
+                // ============================================
+                // 1. Reba niba email isanzwe muri members
+                // ============================================
+                const existingMember = await getDocs(collection(db, 'members'));
+                let emailExists = false;
+                existingMember.forEach(d => {
+                    if (d.data().email === email) emailExists = true;
+                });
+                
+                if (emailExists) {
+                    showError('Email isanzwe ikoreshwa');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-check-circle"></i> <span>IYANDIKISHE</span>';
+                    return;
+                }
+                
+                // ============================================
+                // 2. Upload photo kuri Cloudinary
+                // ============================================
                 let photoURL = null;
                 if (photoFile) {
                     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turazamura ifoto...</span>';
                     photoURL = await uploadToCloudinary(photoFile);
                 }
                 
-                // 2. Generate member number
+                // ============================================
+                // 3. KORA ACCOUNT MURI FIREBASE AUTH — NGOMBA!
+                // ============================================
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turakora account...</span>';
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                console.log('✅ Auth user created:', user.uid);
+                
+                // Update profile
+                await updateProfile(user, { displayName: name, photoURL: photoURL });
+                
+                // ============================================
+                // 4. Member number
+                // ============================================
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turabika...</span>';
                 let memberNumber;
                 try {
                     const membersSnap = await getDocs(collection(db, 'members'));
-                    const nextNum = membersSnap.size + 1;
-                    memberNumber = `CH-${String(nextNum).padStart(3, '0')}`;
+                    memberNumber = `CH-${String(membersSnap.size + 1).padStart(3, '0')}`;
                 } catch (e) {
                     memberNumber = `CH-${Date.now().toString().slice(-3)}`;
                 }
                 
-                // 3. Bika muri Firestore
+                // ============================================
+                // 5. Bika muri Firestore — NA UID + EMAIL!
+                // ============================================
                 await addDoc(collection(db, 'members'), {
+                    uid: user.uid,                    // ⬅️ NGOMBA!
+                    email: email,                     // ⬅️ NGOMBA!
                     name: name,
                     number: number,
                     level: level,
@@ -1392,14 +1440,21 @@
                     memberId: memberNumber,
                     photo: photoURL,
                     photoSource: 'cloudinary',
-                    status: 'pending',
+                    status: 'pending',                // ⬅️ TEGEREZA KWEMEZWA
                     role: 'member',
                     registeredAt: serverTimestamp(),
                     createdAt: serverTimestamp(),
                     registeredVia: 'qr-code'
                 });
                 
-                // 4. Confetti!
+                // ============================================
+                // 6. SOHOKA MURI AUTH — kugira ngo ataremewe atinjire
+                // ============================================
+                await signOut(auth);
+                
+                // ============================================
+                // 7. Confetti + Success screen
+                // ============================================
                 confetti({
                     particleCount: 200,
                     spread: 100,
@@ -1407,7 +1462,6 @@
                     colors: ['#6366f1', '#8b5cf6', '#10b981', '#f59e0b', '#ec4899']
                 });
                 
-                // 5. Success screen
                 document.getElementById('formScreen').style.display = 'none';
                 
                 const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
@@ -1421,6 +1475,7 @@
                         <div class="member-name">${name}</div>
                         <div class="member-details">
                             <span><i class="fas fa-hashtag"></i> ${memberNumber}</span>
+                            <span><i class="fas fa-envelope"></i> ${email}</span>
                             <span><i class="fas fa-id-card"></i> ${number}</span>
                             <span><i class="fas fa-graduation-cap"></i> ${level}</span>
                             <span><i class="fas fa-microphone"></i> ${voice}</span>
@@ -1439,10 +1494,16 @@
                 
                 let errorMsg = 'Ikibazo cyabaye. Ongera ugerageze.';
                 
-                if (error.message.includes('preset')) {
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMsg = 'Email isanzwe ikoreshwa. Koresha indi cyangwa winjire.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMsg = 'Email ntariyo';
+                } else if (error.code === 'auth/weak-password') {
+                    errorMsg = 'Ijambo ry\'ibanga ni ngufi cyane (nibura 6)';
+                } else if (error.code === 'auth/network-request-failed') {
+                    errorMsg = 'Interineti ntiboneka';
+                } else if (error.message?.includes('preset')) {
                     errorMsg = 'Upload preset ntariyo. Reba Cloudinary settings.';
-                } else if (error.message.includes('cloud_name')) {
-                    errorMsg = 'Cloud name ntariyo. Reba Cloudinary settings.';
                 } else if (error.message) {
                     errorMsg = error.message;
                 }
@@ -1462,6 +1523,14 @@
 
         // Enter key navigation
         document.getElementById('regName').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('regEmail').focus();
+        });
+        
+        document.getElementById('regEmail').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('regPassword').focus();
+        });
+        
+        document.getElementById('regPassword').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') document.getElementById('regNumber').focus();
         });
         
