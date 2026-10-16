@@ -1,0 +1,26 @@
+# Query: Choir Attendance
+# ContextLines: 1
+
+5 results - 2 files
+
+index.html:
+  3659      
+  3660:     if (loadingTitleEl) loadingTitleEl.textContent = '🎵 HCFC CHOIR';
+  3661      if (loadingTextEl) loadingTextEl.textContent = 'Turashakisha amakuru...';
+
+  6128          <div class="footer">
+  6129:             Icyorezo: ${new Date().toLocaleString('rw-RW')} | Choir Attendance System
+  6130          </div>
+
+  6269          <div class="header">
+  6270:             <h1>🎵 HCFC CHOIR</h1>
+  6271              <h2>${s.name}</h2>
+
+  6317          <div class="footer">
+  6318:             powered by: ${new Date().toLocaleString('rw-RW')} | HCFC CHOIR
+  6319          </div>
+
+member.html:
+  1237          </div>
+  1238:         <h2>🎵 HCFC CHOIR</h2>
+  1239          <p>Turashakisha amakuru...</p>
