@@ -9,7 +9,7 @@ index.html:
   3661      if (loadingTextEl) loadingTextEl.textContent = 'Turashakisha amakuru...';
 
   6128          <div class="footer">
-  6129:             Icyorezo: ${new Date().toLocaleString('rw-RW')} | Choir Attendance System
+  6129:             powered by: ${new Date().toLocaleString('rw-RW')} |  HCFC CHOIR
   6130          </div>
 
   6269          <div class="header">
