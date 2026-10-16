@@ -19,6 +19,7 @@
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
+            --purple: #8b5cf6;
             --pink: #ec4899;
             --cyan: #06b6d4;
             
@@ -37,7 +38,6 @@
             --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
             --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.15);
-            --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.4);
             
             --radius-sm: 12px;
             --radius: 16px;
@@ -347,20 +347,21 @@
             padding-right: 50px;
         }
 
+        /* LEVEL SELECTOR — GRID 6x1 */
         .level-selector {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
         }
 
         .level-btn {
-            padding: 16px 8px;
+            padding: 14px 4px;
             border: 2px solid var(--border);
             border-radius: var(--radius);
             background: #f8fafc;
             color: var(--text);
             font-family: inherit;
-            font-size: 16px;
+            font-size: 13px;
             font-weight: 800;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -381,6 +382,13 @@
         .level-btn span {
             position: relative;
             z-index: 1;
+            display: block;
+        }
+
+        .level-btn .level-icon {
+            display: block;
+            font-size: 18px;
+            margin-bottom: 4px;
         }
 
         .level-btn:hover {
@@ -398,6 +406,15 @@
 
         .level-btn.selected::before {
             opacity: 1;
+        }
+
+        .level-btn.special-btn.selected {
+            background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+            box-shadow: 0 12px 30px rgba(139, 92, 246, 0.4);
+        }
+
+        .level-btn.special-btn:hover {
+            border-color: #8b5cf6;
         }
 
         .photo-upload {
@@ -978,8 +995,12 @@
             .success-screen h2 { font-size: 26px; }
 
             .level-btn { 
-                padding: 14px 6px; 
-                font-size: 15px; 
+                padding: 12px 2px; 
+                font-size: 11px; 
+            }
+
+            .level-btn .level-icon {
+                font-size: 16px;
             }
 
             .choice-option {
@@ -1051,92 +1072,63 @@
 
             <!-- AMAZINA -->
             <div class="form-group">
-                <label>
-                    <i class="fas fa-user"></i>
-                    Amazina yuzuye
-                    <span>*</span>
-                </label>
-                <input 
-                    type="text" 
-                    class="form-control" 
-                    id="regName" 
-                    placeholder="Uwase Marie"
-                    autocomplete="name"
-                    maxlength="60"
-                >
+                <label><i class="fas fa-user"></i> Amazina yuzuye <span>*</span></label>
+                <input type="text" class="form-control" id="regName" placeholder="Uwase Marie" autocomplete="name" maxlength="60">
             </div>
 
-            <!-- EMAIL — NGOMBA! -->
+            <!-- EMAIL -->
             <div class="form-group">
-                <label>
-                    <i class="fas fa-envelope"></i>
-                    Email yawe
-                    <span>*</span>
-                </label>
-                <input 
-                    type="email" 
-                    class="form-control" 
-                    id="regEmail" 
-                    placeholder="uwase@gmail.com"
-                    autocomplete="email"
-                >
+                <label><i class="fas fa-envelope"></i> Email yawe <span>*</span></label>
+                <input type="email" class="form-control" id="regEmail" placeholder="uwase@gmail.com" autocomplete="email">
             </div>
 
-            <!-- PASSWORD — NGOMBA! -->
+            <!-- PASSWORD -->
             <div class="form-group">
-                <label>
-                    <i class="fas fa-lock"></i>
-                    Ijambo ry'ibanga
-                    <span>*</span>
-                </label>
-                <input 
-                    type="password" 
-                    class="form-control" 
-                    id="regPassword" 
-                    placeholder="Nibura 6 (uzayikoresha kwinjira)"
-                    minlength="6"
-                >
+                <label><i class="fas fa-lock"></i> Ijambo ry'ibanga <span>*</span></label>
+                <input type="password" class="form-control" id="regPassword" placeholder="Nibura 6 (uzayikoresha kwinjira)" minlength="6">
             </div>
 
             <!-- NIMERO -->
             <div class="form-group">
-                <label>
-                    <i class="fas fa-id-card"></i>
-                    Nimero (Student ID cyangwa Telefone)
-                    <span>*</span>
-                </label>
-                <input 
-                    type="text" 
-                    class="form-control" 
-                    id="regNumber" 
-                    placeholder="2234567890 cyangwa 0788..."
-                    maxlength="20"
-                >
+                <label><i class="fas fa-id-card"></i> Nimero (Student ID cyangwa Telefone) <span>*</span></label>
+                <input type="text" class="form-control" id="regNumber" placeholder="2234567890 cyangwa 0788..." maxlength="20">
             </div>
 
             <!-- LEVEL -->
             <div class="form-group">
-                <label>
-                    <i class="fas fa-graduation-cap"></i>
-                    Level yawe (University)
-                    <span>*</span>
-                </label>
+                <label><i class="fas fa-graduation-cap"></i> Level yawe <span>*</span></label>
                 <div class="level-selector" id="levelSelector">
-                    <button type="button" class="level-btn" onclick="selectLevel('L1', this)"><span>L1</span></button>
-                    <button type="button" class="level-btn" onclick="selectLevel('L2', this)"><span>L2</span></button>
-                    <button type="button" class="level-btn" onclick="selectLevel('L3', this)"><span>L3</span></button>
-                    <button type="button" class="level-btn" onclick="selectLevel('L4', this)"><span>L4</span></button>
+                    <button type="button" class="level-btn" onclick="selectLevel('L1', this)">
+                        <span class="level-icon">🎓</span>
+                        <span>L1</span>
+                    </button>
+                    <button type="button" class="level-btn" onclick="selectLevel('L2', this)">
+                        <span class="level-icon">🎓</span>
+                        <span>L2</span>
+                    </button>
+                    <button type="button" class="level-btn" onclick="selectLevel('L3', this)">
+                        <span class="level-icon">🎓</span>
+                        <span>L3</span>
+                    </button>
+                    <button type="button" class="level-btn" onclick="selectLevel('L4', this)">
+                        <span class="level-icon">🎓</span>
+                        <span>L4</span>
+                    </button>
+                    <button type="button" class="level-btn" onclick="selectLevel('L5', this)">
+                        <span class="level-icon">🎓</span>
+                        <span>L5</span>
+                    </button>
+                    <button type="button" class="level-btn special-btn" onclick="selectLevel('Special', this)">
+                        <span class="level-icon">⭐</span>
+                        <span>Special</span>
+                    </button>
                 </div>
                 <input type="hidden" id="regLevel" value="">
             </div>
 
             <!-- IJWI -->
             <div class="form-group">
-                <label>
-                    <i class="fas fa-microphone"></i>
-                    Ijwi ryawe
-                    <span>*</span>
-                </label>
+                <label><i class="fas fa-microphone"></i> Ijwi ryawe <span>*</span></label>
                 <select class="form-control" id="regVoice">
                     <option value="">-- Hitamo ijwi ryawe --</option>
                     <option value="Soprano">🎵 Soprano</option>
@@ -1196,7 +1188,7 @@
 
     <script type="module">
         // ============================================
-        // 🔥 FIREBASE IMPORTS — ONGERAHO AUTH!
+        // FIREBASE IMPORTS
         // ============================================
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
         import { 
@@ -1207,7 +1199,7 @@
         } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 
         // ============================================
-        // 🔥 FIREBASE CONFIG
+        // FIREBASE CONFIG
         // ============================================
         const firebaseConfig = {
             apiKey: "AIzaSyBaL44npcmLRcAX4cAo8duE-V5Sn_wbALQ",
@@ -1220,10 +1212,10 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const auth = getAuth(app);   // ⬅️ NGOMBA!
+        const auth = getAuth(app);
 
         // ============================================
-        // ☁️ CLOUDINARY CONFIG
+        // CLOUDINARY CONFIG
         // ============================================
         const CLOUDINARY_CLOUD_NAME = "fepicrec";
         const CLOUDINARY_UPLOAD_PRESET = "attendance_image";
@@ -1256,7 +1248,7 @@
         };
 
         // ============================================
-        // 📸 PHOTO CHOICE
+        // PHOTO CHOICE
         // ============================================
         window.openPhotoChoice = function() {
             document.getElementById('photoChoiceModal').classList.add('active');
@@ -1325,7 +1317,7 @@
         }
 
         // ============================================
-        // ☁️ UPLOAD KURI CLOUDINARY
+        // UPLOAD KURI CLOUDINARY
         // ============================================
         async function uploadToCloudinary(file) {
             const formData = new FormData();
@@ -1348,149 +1340,172 @@
         }
 
         // ============================================
-        // SUBMIT REGISTRATION — YAKOSOWE
+        // SUBMIT REGISTRATION
         // ============================================
         window.submitRegistration = async function() {
-    const name = document.getElementById('regName').value.trim();
-    const email = document.getElementById('regEmail').value.trim().toLowerCase();
-    const password = document.getElementById('regPassword').value;
-    const number = document.getElementById('regNumber').value.trim();
-    const level = document.getElementById('regLevel').value;
-    const voice = document.getElementById('regVoice').value;
-    const btn = document.getElementById('submitBtn');
-    
-    // ===== VALIDATION =====
-    if (!name) { showError('Shyiramo amazina yawe'); return; }
-    if (name.length < 3) { showError('Amazina agomba kuba nibura 3'); return; }
-    
-    if (!email) { showError('Shyiramo email yawe'); return; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('Email ntariyo'); return; }
-    
-    if (!password) { showError('Shyiramo ijambo ry\'ibanga'); return; }
-    if (password.length < 6) { showError('Ijambo ry\'ibanga rigomba kuba nibura 6'); return; }
-    
-    if (!number) { showError('Shyiramo nimero yawe'); return; }
-    if (number.length < 5) { showError('Nimero ni ngufi cyane'); return; }
-    
-    if (!level) { showError('Hitamo level yawe (L1 - L4)'); return; }
-    if (!voice) { showError('Hitamo ijwi ryawe'); return; }
-    
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turabika...</span>';
-    
-    try {
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim().toLowerCase();
+            const password = document.getElementById('regPassword').value;
+            const number = document.getElementById('regNumber').value.trim();
+            const level = document.getElementById('regLevel').value;
+            const voice = document.getElementById('regVoice').value;
+            const btn = document.getElementById('submitBtn');
+            
+            // ===== VALIDATION =====
+            if (!name) { showError('Shyiramo amazina yawe'); return; }
+            if (name.length < 3) { showError('Amazina agomba kuba nibura 3'); return; }
+            
+            if (!email) { showError('Shyiramo email yawe'); return; }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('Email ntariyo'); return; }
+            
+            if (!password) { showError('Shyiramo ijambo ry\'ibanga'); return; }
+            if (password.length < 6) { showError('Ijambo ry\'ibanga rigomba kuba nibura 6'); return; }
+            
+            if (!number) { showError('Shyiramo nimero yawe'); return; }
+            if (number.length < 5) { showError('Nimero ni ngufi cyane'); return; }
+            
+            if (!level) { showError('Hitamo level yawe'); return; }
+            if (!voice) { showError('Hitamo ijwi ryawe'); return; }
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turabika...</span>';
+            
+            try {
+                // ============================================
+                // 1. Upload photo kuri Cloudinary
+                // ============================================
+                let photoURL = null;
+                if (photoFile) {
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turazamura ifoto...</span>';
+                    photoURL = await uploadToCloudinary(photoFile);
+                }
+                
+                // ============================================
+                // 2. Kora account muri Firebase Auth
+                // ============================================
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turakora account...</span>';
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                // Update profile
+                await updateProfile(user, { displayName: name, photoURL: photoURL });
+                
+                // ============================================
+                // 3. Bika muri Firestore
+                // ============================================
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turabika...</span>';
+                const memberNumber = `CH-${Date.now().toString().slice(-4)}`;
+                
+                await addDoc(collection(db, 'members'), {
+                    uid: user.uid,
+                    email: email,
+                    name: name,
+                    number: number,
+                    level: level,
+                    voice: voice,
+                    memberId: memberNumber,
+                    photo: photoURL,
+                    photoSource: 'cloudinary',
+                    status: 'pending',
+                    role: 'member',
+                    registeredAt: serverTimestamp(),
+                    createdAt: serverTimestamp(),
+                    registeredVia: 'qr-code'
+                });
+                
+                // ============================================
+                // 4. SOHOKA muri Auth
+                // ============================================
+                await signOut(auth);
+                
+                // ============================================
+                // 5. Confetti + Success screen
+                // ============================================
+                confetti({
+                    particleCount: 200,
+                    spread: 100,
+                    origin: { y: 0.6 },
+                    colors: ['#6366f1', '#8b5cf6', '#10b981', '#f59e0b', '#ec4899']
+                });
+                
+                document.getElementById('formScreen').style.display = 'none';
+                
+                const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                const photoHtml = photoURL 
+                    ? `<img src="${photoURL}" class="member-photo" alt="${name}">`
+                    : `<div class="member-avatar">${initials}</div>`;
+                const levelIcon = level === 'Special' ? '⭐' : '🎓';
+                
+                document.getElementById('successMemberCard').innerHTML = `
+                    ${photoHtml}
+                    <div class="member-info">
+                        <div class="member-name">${name}</div>
+                        <div class="member-details">
+                            <span><i class="fas fa-hashtag"></i> ${memberNumber}</span>
+                            <span><i class="fas fa-envelope"></i> ${email}</span>
+                            <span><i class="fas fa-id-card"></i> ${number}</span>
+                            <span><i class="fas fa-graduation-cap"></i> ${levelIcon} ${level}</span>
+                            <span><i class="fas fa-microphone"></i> ${voice}</span>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('successScreen').classList.add('active');
+                
+                if (navigator.vibrate) {
+                    navigator.vibrate([100, 50, 100, 50, 200]);
+                }
+                
+            } catch (error) {
+                console.error('Registration error:', error);
+                
+                let errorMsg = 'Ikibazo cyabaye. Ongera ugerageze.';
+                
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMsg = 'Email isanzwe ikoreshwa. Koresha indi cyangwa winjire.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMsg = 'Email ntariyo';
+                } else if (error.code === 'auth/weak-password') {
+                    errorMsg = 'Ijambo ry\'ibanga ni ngufi cyane (nibura 6)';
+                } else if (error.code === 'auth/network-request-failed') {
+                    errorMsg = 'Interineti ntiboneka';
+                } else if (error.code === 'permission-denied') {
+                    errorMsg = 'Nta ruhushya. Reba Firestore Rules.';
+                } else if (error.message) {
+                    errorMsg = error.message;
+                }
+                
+                showError(errorMsg);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> <span>IYANDIKISHE</span>';
+            }
+        };
+
         // ============================================
-        // 1. Upload photo kuri Cloudinary
+        // OVERLAY CLICK
         // ============================================
-        let photoURL = null;
-        if (photoFile) {
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turazamura ifoto...</span>';
-            photoURL = await uploadToCloudinary(photoFile);
-        }
-        
+        document.getElementById('photoChoiceModal').addEventListener('click', function(e) {
+            if (e.target === this) closePhotoChoice();
+        });
+
         // ============================================
-        // 2. KORA ACCOUNT MURI FIREBASE AUTH — NGOMBA!
+        // ENTER KEY NAVIGATION
         // ============================================
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turakora account...</span>';
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        console.log('✅ Auth user created:', user.uid);
-        
-        // Update profile
-        await updateProfile(user, { displayName: name, photoURL: photoURL });
-        
-        // ============================================
-        // 3. Generate member number — RANDOM (nta getDocs!)
-        // ============================================
-        const memberNumber = `CH-${Date.now().toString().slice(-4)}`;
-        
-        // ============================================
-        // 4. Bika muri Firestore — NA UID + EMAIL!
-        // ============================================
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turabika...</span>';
-        await addDoc(collection(db, 'members'), {
-            uid: user.uid,
-            email: email,
-            name: name,
-            number: number,
-            level: level,
-            voice: voice,
-            memberId: memberNumber,
-            photo: photoURL,
-            photoSource: 'cloudinary',
-            status: 'pending',
-            role: 'member',
-            registeredAt: serverTimestamp(),
-            createdAt: serverTimestamp(),
-            registeredVia: 'qr-code'
+        document.getElementById('regName').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('regEmail').focus();
         });
         
-        // ============================================
-        // 5. SOHOKA MURI AUTH — kugira ngo ataremewe atinjire
-        // ============================================
-        await signOut(auth);
-        
-        // ============================================
-        // 6. Confetti + Success screen
-        // ============================================
-        confetti({
-            particleCount: 200,
-            spread: 100,
-            origin: { y: 0.6 },
-            colors: ['#6366f1', '#8b5cf6', '#10b981', '#f59e0b', '#ec4899']
+        document.getElementById('regEmail').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('regPassword').focus();
         });
         
-        document.getElementById('formScreen').style.display = 'none';
+        document.getElementById('regPassword').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('regNumber').focus();
+        });
         
-        const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-        const photoHtml = photoURL 
-            ? `<img src="${photoURL}" class="member-photo" alt="${name}">`
-            : `<div class="member-avatar">${initials}</div>`;
-        
-        document.getElementById('successMemberCard').innerHTML = `
-            ${photoHtml}
-            <div class="member-info">
-                <div class="member-name">${name}</div>
-                <div class="member-details">
-                    <span><i class="fas fa-hashtag"></i> ${memberNumber}</span>
-                    <span><i class="fas fa-envelope"></i> ${email}</span>
-                    <span><i class="fas fa-id-card"></i> ${number}</span>
-                    <span><i class="fas fa-graduation-cap"></i> ${level}</span>
-                    <span><i class="fas fa-microphone"></i> ${voice}</span>
-                </div>
-            </div>
-        `;
-        
-        document.getElementById('successScreen').classList.add('active');
-        
-        if (navigator.vibrate) {
-            navigator.vibrate([100, 50, 100, 50, 200]);
-        }
-        
-    } catch (error) {
-        console.error('Registration error:', error);
-        
-        let errorMsg = 'Ikibazo cyabaye. Ongera ugerageze.';
-        
-        if (error.code === 'auth/email-already-in-use') {
-            errorMsg = 'Email isanzwe ikoreshwa. Koresha indi cyangwa winjire.';
-        } else if (error.code === 'auth/invalid-email') {
-            errorMsg = 'Email ntariyo';
-        } else if (error.code === 'auth/weak-password') {
-            errorMsg = 'Ijambo ry\'ibanga ni ngufi cyane (nibura 6)';
-        } else if (error.code === 'auth/network-request-failed') {
-            errorMsg = 'Interineti ntiboneka';
-        } else if (error.code === 'permission-denied') {
-            errorMsg = 'Nta ruhushya rwo kwandika. Reba Firestore Rules.';
-        } else if (error.message) {
-            errorMsg = error.message;
-        }
-        
-        showError(errorMsg);
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-check-circle"></i> <span>IYANDIKISHE</span>';
-    }
-};
+        document.getElementById('regNumber').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('regVoice').focus();
+        });
     </script>
 
 </body>
