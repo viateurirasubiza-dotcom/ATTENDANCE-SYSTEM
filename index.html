@@ -3630,14 +3630,59 @@ window.handleLogout = async function() {
 // ============================================
 // AUTH STATE
 // ============================================
+// ============================================
+// AUTH STATE OBSERVER — NA LOADING STATE
+// ============================================
 onAuthStateChanged(auth, async (user) => {
+    // ============================================
+    // 1. EREKANA LOADING STATE
+    // ============================================
+    const loadingScreen = document.getElementById('loadingScreen');
+    const authScreen = document.getElementById('authScreen');
+    const app = document.getElementById('app');
+    
+    // Erekana loading igihe cose turimo gukora
+    loadingScreen.classList.remove('hidden');
+    
+    // Hisha auth screen na app (niba byari biraboneka)
+    if (authScreen) authScreen.classList.add('hidden');
+    if (app) app.classList.remove('active');
+    
+    // ============================================
+    // 2. UPDATE LOADING TEXT
+    // ============================================
+    const loadingTextEl = loadingScreen.querySelector('p');
+    const loadingTitleEl = loadingScreen.querySelector('h2');
+    
+    if (loadingTitleEl) loadingTitleEl.textContent = '🎵 Choir Attendance';
+    if (loadingTextEl) loadingTextEl.textContent = 'Turashakisha amakuru...';
+    
+    // ============================================
+    // 3. REBA NIBA UMUKORESHA ARIHO
+    // ============================================
     if (user) {
         currentUser = user;
+        console.log('🔐 User signed in:', user.email);
+        
+        // Update loading text
+        if (loadingTextEl) loadingTextEl.textContent = 'Turakwinjiza...';
+        
         try {
+            // ============================================
+            // 3A. Reba niba ari Admin (muri 'users')
+            // ============================================
+            if (loadingTextEl) loadingTextEl.textContent = 'Turakureba...';
+            
             const userDoc = await getDoc(doc(db, 'users', user.uid));
             if (userDoc.exists()) {
                 currentUserData = userDoc.data();
+                console.log('✅ Admin/User found:', currentUserData.role);
             } else {
+                // ============================================
+                // 3B. Ntabonetse muri 'users' — Reba niba ari Member
+                // ============================================
+                if (loadingTextEl) loadingTextEl.textContent = 'Turakureba muri abaririmbyi...';
+                
                 const membersSnap = await getDocs(
                     query(collection(db, 'members'), where('uid', '==', user.uid))
                 );
@@ -3645,16 +3690,42 @@ onAuthStateChanged(auth, async (user) => {
                 membersSnap.forEach(d => memberData = { id: d.id, ...d.data() });
                 
                 if (memberData) {
+                    // ============================================
+                    // 3B-1. MEMBER YABONETSE — Reba status
+                    // ============================================
                     if (memberData.status === 'pending') {
-                        alert('⏳ Konti yawe ntiraremezwa. Tegereza Admin.');
+                        console.log('⏳ Member pending:', memberData.name);
+                        
+                        // Hisha loading, ereka auth screen
+                        loadingScreen.classList.add('hidden');
+                        showAuthScreen();
+                        
+                        setTimeout(() => {
+                            showAuthError('⏳ Konti yawe ntiraremezwa. Tegereza Admin akwemeze mbere yo kwinjira. Ushobora kongera kugerageza nyuma.');
+                        }, 300);
+                        
                         await signOut(auth);
                         return;
                     }
+                    
                     if (memberData.status === 'rejected') {
-                        alert('❌ Konti yawe yanzwe.');
+                        console.log('❌ Member rejected:', memberData.name);
+                        
+                        loadingScreen.classList.add('hidden');
+                        showAuthScreen();
+                        
+                        setTimeout(() => {
+                            showAuthError('❌ Konti yawe yanzwe. Vugana n\'Admin cyangwa Secretary wa Choir.');
+                        }, 300);
+                        
                         await signOut(auth);
                         return;
                     }
+                    
+                    // ============================================
+                    // 3B-2. MEMBER YEMEWE (status: 'active')
+                    // ============================================
+                    console.log('✅ Member active:', memberData.name);
                     currentUserData = {
                         uid: user.uid,
                         name: memberData.name,
@@ -3666,39 +3737,96 @@ onAuthStateChanged(auth, async (user) => {
                         choirName: 'Choir Imanzi'
                     };
                 } else {
+                    // ============================================
+                    // 3C. NTABONETSE NTA NA HAMWE — Admin nshya
+                    // ============================================
+                    console.log('🆕 New user — creating Admin profile');
+                    if (loadingTextEl) loadingTextEl.textContent = 'Turakora konti ya Admin...';
+                    
+                    const usersSnap = await getDocs(collection(db, 'users'));
+                    const isFirstAdmin = usersSnap.empty;
+                    
                     currentUserData = {
                         uid: user.uid,
                         name: user.displayName || user.email,
                         email: user.email,
                         phone: '',
                         photo: user.photoURL,
-                        role: 'admin',
+                        role: isFirstAdmin ? 'super_admin' : 'admin',
                         canApproveMembers: true,
                         canManageUniform: true,
                         canManageLyrics: true,
                         canManageAttendance: true,
                         choirName: 'Choir Imanzi'
                     };
+                    
                     await setDoc(doc(db, 'users', user.uid), {
                         ...currentUserData,
                         createdAt: serverTimestamp()
                     });
+                    console.log('✅ Admin profile created:', currentUserData.role);
                 }
             }
-        } catch(e) { console.error(e); }
+        } catch(e) { 
+            console.error('❌ Auth state error:', e);
+            
+            loadingScreen.classList.add('hidden');
+            showAuthScreen();
+            setTimeout(() => {
+                showAuthError('❌ Ikibazo cyabaye. Ongera ugerageze.');
+            }, 300);
+            return;
+        }
+        
+        // ============================================
+        // 4. LOAD DATA YOSE
+        // ============================================
+        console.log('📦 Loading data...');
+        if (loadingTextEl) loadingTextEl.textContent = 'Turazana amakuru...';
         
         await loadMembers();
+        if (loadingTextEl) loadingTextEl.textContent = 'Turazana amateraniro...';
         await loadSessions();
+        
+        if (loadingTextEl) loadingTextEl.textContent = 'Turazana uniform...';
         await loadUniforms();
         await loadUniformAssignments();
+        
+        if (loadingTextEl) loadingTextEl.textContent = 'Turazana lyrics...';
         await loadLyrics();
+        
+        if (loadingTextEl) loadingTextEl.textContent = 'Turazana abakoresha...';
         await loadUsers();
+        
+        if (loadingTextEl) loadingTextEl.textContent = 'Turazana amatangazo...';
         await loadAnnouncements();
+        
         await loadAdminInvitations();
+        console.log('✅ All data loaded');
+        
+        // ============================================
+        // 5. ENTER APP
+        // ============================================
+        if (loadingTextEl) loadingTextEl.textContent = 'Turakwinjiza...';
+        
+        // Tegereza gato kugira ngo loading screen iboneke neza
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
         enterApp();
+        
     } else {
+        // ============================================
+        // 6. UMUKORESHA YASOHOTSE
+        // ============================================
+        console.log('🚪 User signed out');
         currentUser = null;
         currentUserData = null;
+        
+        // Tegereza gato kugira ngo loading iboneke
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Hisha loading, ereka auth screen
+        loadingScreen.classList.add('hidden');
         showAuthScreen();
     }
 });
