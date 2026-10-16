@@ -621,6 +621,206 @@
             flex-shrink: 0;
         }
 
+        /* ============================================
+           ANIMATED CHOIR TITLE BANNER
+           ============================================ */
+        .choir-title-banner {
+            position: relative;
+            width: 100%;
+            padding: 28px 16px;
+            margin-bottom: 24px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+            background-size: 200% 200%;
+            animation: gradientMove 6s ease infinite;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 130px;
+        }
+
+        @keyframes gradientMove {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .choir-title-banner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .choir-title-banner::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle, rgba(255, 255, 255, 0.1) 2px, transparent 2px),
+                radial-gradient(circle, rgba(255, 255, 255, 0.08) 3px, transparent 3px),
+                radial-gradient(circle, rgba(255, 255, 255, 0.06) 2px, transparent 2px);
+            background-size: 50px 50px, 80px 80px, 100px 100px;
+            background-position: 0 0, 20px 20px, 40px 40px;
+            animation: bubblesMove 20s linear infinite;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        @keyframes bubblesMove {
+            from { transform: translate(0, 0); }
+            to { transform: translate(50px, 50px); }
+        }
+
+        .choir-title-text {
+            position: relative;
+            z-index: 5;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            color: white;
+            text-align: center;
+            line-height: 1.2;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.25), 0 0 30px rgba(255, 255, 255, 0.3);
+            animation: titleFloat 3s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px 12px;
+            max-width: 100%;
+            padding: 0 8px;
+        }
+
+        .choir-title-text .word {
+            display: inline-block;
+            animation: wordBounce 2s ease-in-out infinite;
+        }
+
+        .choir-title-text .word:nth-child(1) { animation-delay: 0s; }
+        .choir-title-text .word:nth-child(2) { animation-delay: 0.2s; }
+        .choir-title-text .word:nth-child(3) { animation-delay: 0.4s; }
+        .choir-title-text .word:nth-child(4) { animation-delay: 0.6s; }
+        .choir-title-text .word:nth-child(5) { animation-delay: 0.8s; }
+        .choir-title-text .word:nth-child(6) { animation-delay: 1s; }
+
+        @keyframes titleFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        @keyframes wordBounce {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-4px) rotate(-1deg); }
+            75% { transform: translateY(-4px) rotate(1deg); }
+        }
+
+        .music-note-deco {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 22px;
+            animation: noteFloat 4s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 3;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        .music-note-deco.note-1 { top: 15%; left: 6%; animation-delay: 0s; font-size: 24px; }
+        .music-note-deco.note-2 { top: 65%; right: 8%; animation-delay: 1s; font-size: 20px; }
+        .music-note-deco.note-3 { top: 12%; right: 12%; animation-delay: 2s; font-size: 18px; }
+        .music-note-deco.note-4 { bottom: 12%; left: 10%; animation-delay: 1.5s; font-size: 22px; }
+        .music-note-deco.note-5 { top: 45%; left: 4%; animation-delay: 2.5s; font-size: 18px; }
+        .music-note-deco.note-6 { bottom: 20%; right: 6%; animation-delay: 0.5s; font-size: 20px; }
+
+        @keyframes noteFloat {
+            0%, 100% { transform: translateY(0) rotate(-10deg) scale(1); opacity: 0.6; }
+            25% { transform: translateY(-15px) rotate(10deg) scale(1.1); opacity: 1; }
+            50% { transform: translateY(-25px) rotate(-5deg) scale(1); opacity: 0.9; }
+            75% { transform: translateY(-10px) rotate(15deg) scale(1.05); opacity: 1; }
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px white, 0 0 20px white;
+            animation: sparkleAnim 2s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 4;
+        }
+        .sparkle.s1 { top: 15%; left: 25%; animation-delay: 0s; }
+        .sparkle.s2 { top: 30%; right: 30%; animation-delay: 0.5s; }
+        .sparkle.s3 { bottom: 25%; left: 40%; animation-delay: 1s; }
+        .sparkle.s4 { top: 20%; right: 45%; animation-delay: 1.5s; }
+        .sparkle.s5 { bottom: 15%; right: 20%; animation-delay: 2s; }
+
+        @keyframes sparkleAnim {
+            0%, 100% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.5); opacity: 1; }
+        }
+
+        .music-wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 5px;
+            padding: 0 20px;
+            z-index: 4;
+        }
+        .music-wave .wave-bar {
+            width: 4px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 4px 4px 0 0;
+            animation: waveAnim 1.2s ease-in-out infinite;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+        }
+        .music-wave .wave-bar:nth-child(1) { height: 30%; animation-delay: 0s; }
+        .music-wave .wave-bar:nth-child(2) { height: 60%; animation-delay: 0.1s; }
+        .music-wave .wave-bar:nth-child(3) { height: 100%; animation-delay: 0.2s; }
+        .music-wave .wave-bar:nth-child(4) { height: 70%; animation-delay: 0.3s; }
+        .music-wave .wave-bar:nth-child(5) { height: 40%; animation-delay: 0.4s; }
+        .music-wave .wave-bar:nth-child(6) { height: 80%; animation-delay: 0.5s; }
+        .music-wave .wave-bar:nth-child(7) { height: 50%; animation-delay: 0.6s; }
+        .music-wave .wave-bar:nth-child(8) { height: 90%; animation-delay: 0.7s; }
+        .music-wave .wave-bar:nth-child(9) { height: 35%; animation-delay: 0.8s; }
+        .music-wave .wave-bar:nth-child(10) { height: 75%; animation-delay: 0.9s; }
+
+        @keyframes waveAnim {
+            0%, 100% { transform: scaleY(0.3); opacity: 0.5; }
+            50% { transform: scaleY(1); opacity: 1; }
+        }
+
+        .choir-title-subtitle {
+            position: relative;
+            z-index: 5;
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+            margin-top: 8px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            animation: subtitlePulse 3s ease-in-out infinite;
+        }
+
+        @keyframes subtitlePulse {
+            0%, 100% { opacity: 0.7; letter-spacing: 2px; }
+            50% { opacity: 1; letter-spacing: 3px; }
+        }
+
         .choice-modal {
             position: fixed;
             inset: 0;
@@ -950,6 +1150,7 @@
             border-left: 4px solid var(--primary);
             font-weight: 600;
             line-height: 1.5;
+            margin-bottom: 20px;
         }
 
         .info-box i { 
@@ -1012,6 +1213,13 @@
                 height: 56px;
                 font-size: 24px;
             }
+
+            .choir-title-banner { min-height: 110px; padding: 22px 12px; border-radius: 16px; }
+            .choir-title-text { font-size: 18px; gap: 6px 8px; }
+            .music-note-deco { display: none; }
+            .choir-title-subtitle { font-size: 10px; letter-spacing: 1.2px; margin-top: 6px; }
+            .music-wave { height: 22px; gap: 3px; }
+            .music-wave .wave-bar { width: 3px; }
         }
 
         .fa-spin { animation: spin 1s linear infinite; }
@@ -1032,21 +1240,56 @@
             <div class="bar"></div>
         </div>
         <h2>🎵 Choir Attendance</h2>
-        <p>SYSTEM LOADING...</p>
+        <p>Turashakisha amakuru...</p>
     </div>
 
+    <!-- MAIN CONTAINER -->
     <div class="container" id="mainContainer">
         
         <!-- FORM SCREEN -->
         <div id="formScreen" style="display: none;">
+            
+            <!-- ANIMATED CHOIR TITLE BANNER -->
+            <div class="choir-title-banner">
+                <span class="music-note-deco note-1">🎵</span>
+                <span class="music-note-deco note-2">🎶</span>
+                <span class="music-note-deco note-3">🎼</span>
+                <span class="music-note-deco note-4">🎵</span>
+                <span class="music-note-deco note-5">🎶</span>
+                <span class="music-note-deco note-6">🎼</span>
+                <span class="sparkle s1"></span>
+                <span class="sparkle s2"></span>
+                <span class="sparkle s3"></span>
+                <span class="sparkle s4"></span>
+                <span class="sparkle s5"></span>
+                <div class="music-wave">
+                    <div class="wave-bar"></div><div class="wave-bar"></div>
+                    <div class="wave-bar"></div><div class="wave-bar"></div>
+                    <div class="wave-bar"></div><div class="wave-bar"></div>
+                    <div class="wave-bar"></div><div class="wave-bar"></div>
+                    <div class="wave-bar"></div><div class="wave-bar"></div>
+                </div>
+                <div style="position: relative; z-index: 5; display: flex; flex-direction: column; align-items: center; width: 100%;">
+                    <div class="choir-title-text" id="memberChoirTitle">
+                        <span class="word">🎵</span>
+                        <span class="word">HERTIER DU CIEL</span>
+                        <span class="word">FAMILY CHOIR</span>
+                        <span class="word">🎵</span>
+                    </div>
+                    <div class="choir-title-subtitle" id="memberChoirSubtitle">
+                        Kwiyandikisha mu Itsinda
+                    </div>
+                </div>
+            </div>
+
             <div class="header">
                 <div class="logo-wrap">
                     <div class="icon">
-                        <i class="fas fa-music"></i>
+                        <i class="fas fa-user-plus"></i>
                     </div>
                 </div>
                 <h1>Iyandikishe</h1>
-                <p>Injira mu itsinda ry'abaririmbyi 🎶</p>
+                <p>Injira MUMURYANGO WABARAGWA BIJURU 🎶</p>
             </div>
 
             <div class="error-message" id="errorMsg">
@@ -1064,7 +1307,6 @@
                 <div class="photo-upload-text">
                     <strong>📸 Kanda hano wongeremo ifoto</strong>
                     Hitamo: Kamera cyangwa Gallery
-                
                 </div>
             </div>
 
@@ -1073,31 +1315,31 @@
 
             <!-- AMAZINA -->
             <div class="form-group">
-                <label><i class="fas fa-user"></i> Amazina yuzuye <span>*</span></label>
-                <input type="text" class="form-control" id="regName" placeholder="Uwase Marie" autocomplete="name" maxlength="60">
+                <label><i class="fas fa-user"></i> Amazina yuzuye(full name) <span>*</span></label>
+                <input type="text" class="form-control" id="regName" placeholder="xxxxx yyyy" autocomplete="name" maxlength="60">
             </div>
 
             <!-- EMAIL -->
             <div class="form-group">
                 <label><i class="fas fa-envelope"></i> Email yawe <span>*</span></label>
-                <input type="email" class="form-control" id="regEmail" placeholder="uwase@gmail.com" autocomplete="email">
+                <input type="email" class="form-control" id="regEmail" placeholder="xxxx@gmail.com" autocomplete="email">
             </div>
 
             <!-- PASSWORD -->
             <div class="form-group">
-                <label><i class="fas fa-lock"></i> Ijambo banga or password <span>*</span></label>
-                <input type="password" class="form-control" id="regPassword" placeholder="Nibura 6 (uzayikoresha kwinjira)" minlength="6">
+                <label><i class="fas fa-lock"></i> Ijambo banga(password) <span>*</span></label>
+                <input type="password" class="form-control" id="regPassword" placeholder="Nibura 6 (uzayikoresha winjira)" minlength="6">
             </div>
 
             <!-- NIMERO -->
             <div class="form-group">
-                <label><i class="fas fa-id-card"></i> Nimero ya telephone <span>*</span></label>
+                <label><i class="fas fa-id-card"></i> Nimero ya Telefone <span>*</span></label>
                 <input type="text" class="form-control" id="regNumber" placeholder="2234567890 cyangwa 0788..." maxlength="20">
             </div>
 
             <!-- LEVEL -->
             <div class="form-group">
-                <label><i class="fas fa-graduation-cap"></i>  hitamo Level yawe <span>*</span></label>
+                <label><i class="fas fa-graduation-cap"></i> Level yawe <span>*</span></label>
                 <div class="level-selector" id="levelSelector">
                     <button type="button" class="level-btn" onclick="selectLevel('L1', this)">
                         <span class="level-icon">🎓</span>
@@ -1131,7 +1373,7 @@
             <div class="form-group">
                 <label><i class="fas fa-microphone"></i> Ijwi ryawe <span>*</span></label>
                 <select class="form-control" id="regVoice">
-                    <option value="">-- Hitamo ijwi uririmba --</option>
+                    <option value="">-- Hitamo ijwi ryawe --</option>
                     <option value="Soprano">🎵 Soprano</option>
                     <option value="Alto">🎵 Alto</option>
                     <option value="Tenor">🎵 Tenor</option>
@@ -1142,7 +1384,7 @@
             <!-- SUBMIT -->
             <button class="btn btn-primary" id="submitBtn" onclick="submitRegistration()">
                 <i class="fas fa-check-circle"></i>
-                <span>SUBMIT</span>
+                <span>IYANDIKISHE</span>
             </button>
         </div>
 
@@ -1152,26 +1394,30 @@
                 <i class="fas fa-check"></i>
             </div>
             <h2>Wakiriwe! 🎉</h2>
-            <p>Wiyandikishije neza.tegereza permission</p>
+            <p>Wiyandikishije neza. tegereza permission.</p>
 
             <div class="member-card" id="successMemberCard"></div>
 
             <div class="info-box">
                 <i class="fas fa-info-circle"></i>
-                <span>Uzajya winjira na <strong>email</strong> na <strong>ijambo ry'ibanga</strong> wakoresheje. Tegereza permission</span>
+                <span>Uzajya winjira na <strong>email</strong> na <strong>ijambo ry'ibanga</strong> wakoresheje. Tegereza permission.</span>
             </div>
+
+            <!-- BACK TO HOME BUTTON -->
+            <a href="index.html" class="btn btn-primary" style="text-decoration: none; margin-top: 0;">
+                <i class="fas fa-home"></i>
+                <span>Subira Ahabanza</span>
+            </a>
         </div>
+
     </div>
-<a href="index.html" class="btn btn-primary" style="margin-top: 20px; text-decoration: none;">
-    <i class="fas fa-home"></i>
-    <span>Subira Ahabanza</span>
-</a>
+
     <!-- CHOICE MODAL -->
     <div class="choice-modal" id="photoChoiceModal">
         <div class="choice-sheet">
             <div class="sheet-handle"></div>
             <div class="choice-title">📸 Hitamo Ifoto</div>
-            <div class="choice-subtitle">Fata ifoto nshya cyangwa uhitemo  isanzwe muri gallery</div>
+            <div class="choice-subtitle">Fata ifoto nshya cyangwa uhitemo iyi isanzwe muri gallery</div>
             
             <div class="choice-options">
                 <div class="choice-option camera" onclick="chooseCamera()">
@@ -1231,12 +1477,59 @@
         // ============================================
         // INIT
         // ============================================
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadChoirName();
+            
             setTimeout(() => {
                 document.getElementById('loadingScreen').classList.add('hidden');
                 document.getElementById('formScreen').style.display = 'block';
             }, 1500);
         });
+
+        // ============================================
+        // LOAD CHOIR NAME
+        // ============================================
+        async function loadChoirName() {
+            try {
+                const usersSnap = await getDocs(collection(db, 'users'));
+                let choirName = 'Choir Imanzi';
+                
+                usersSnap.forEach(d => {
+                    const data = d.data();
+                    if (data.choirName && data.role === 'super_admin') {
+                        choirName = data.choirName;
+                    }
+                });
+                
+                updateChoirBanner(choirName);
+            } catch (e) {
+                console.error('Error loading choir name:', e);
+                updateChoirBanner('Choir Imanzi');
+            }
+        }
+
+        // ============================================
+        // UPDATE CHOIR BANNER
+        // ============================================
+        function updateChoirBanner(choirName) {
+            const titleEl = document.getElementById('memberChoirTitle');
+            if (titleEl) {
+                const words = choirName.toUpperCase().split(' ');
+                let html = '<span class="word">🎵</span>';
+                words.forEach(word => {
+                    if (word.trim()) html += `<span class="word">${word}</span>`;
+                });
+                html += '<span class="word">🎵</span>';
+                titleEl.innerHTML = html;
+            }
+            
+            const subtitleEl = document.getElementById('memberChoirSubtitle');
+            if (subtitleEl) {
+                subtitleEl.textContent = `Kwiyandikisha mu ${choirName}`;
+            }
+            
+            document.title = `🎵 ${choirName} — Kwiyandikisha`;
+        }
 
         // ============================================
         // LEVEL SELECTOR
@@ -1375,28 +1668,21 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turabika...</span>';
             
             try {
-                // ============================================
-                // 1. Upload photo kuri Cloudinary
-                // ============================================
+                // 1. Upload photo
                 let photoURL = null;
                 if (photoFile) {
                     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turazamura ifoto...</span>';
                     photoURL = await uploadToCloudinary(photoFile);
                 }
                 
-                // ============================================
-                // 2. Kora account muri Firebase Auth
-                // ============================================
+                // 2. Create Auth account
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turakora account...</span>';
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
                 
-                // Update profile
                 await updateProfile(user, { displayName: name, photoURL: photoURL });
                 
-                // ============================================
-                // 3. Bika muri Firestore
-                // ============================================
+                // 3. Write to Firestore
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turabika...</span>';
                 const memberNumber = `CH-${Date.now().toString().slice(-4)}`;
                 
@@ -1417,14 +1703,10 @@
                     registeredVia: 'qr-code'
                 });
                 
-                // ============================================
-                // 4. SOHOKA muri Auth
-                // ============================================
+                // 4. Sign out
                 await signOut(auth);
                 
-                // ============================================
-                // 5. Confetti + Success screen
-                // ============================================
+                // 5. Confetti + Success
                 confetti({
                     particleCount: 200,
                     spread: 100,
