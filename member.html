@@ -347,7 +347,6 @@
             padding-right: 50px;
         }
 
-        /* LEVEL SELECTOR — GRID 6x1 */
         .level-selector {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
@@ -621,9 +620,6 @@
             flex-shrink: 0;
         }
 
-        /* ============================================
-           ANIMATED CHOIR TITLE BANNER
-           ============================================ */
         .choir-title-banner {
             position: relative;
             width: 100%;
@@ -1272,8 +1268,8 @@
                 <div style="position: relative; z-index: 5; display: flex; flex-direction: column; align-items: center; width: 100%;">
                     <div class="choir-title-text" id="memberChoirTitle">
                         <span class="word">🎵</span>
-                        <span class="word">HERTIER DU CIEL</span>
-                        <span class="word">FAMILY CHOIR</span>
+                        <span class="word">HERTIER DU CIEL FAMILY</span>
+                        <span class="word">CHOIR</span>
                         <span class="word">🎵</span>
                     </div>
                     <div class="choir-title-subtitle" id="memberChoirSubtitle">
@@ -1289,7 +1285,7 @@
                     </div>
                 </div>
                 <h1>Iyandikishe</h1>
-                <p>Injira MUMURYANGO WABARAGWA BIJURU 🎶</p>
+                <p>INJIRA MU ITINDA RYABARAGWA BIJURU 🎶</p>
             </div>
 
             <div class="error-message" id="errorMsg">
@@ -1316,7 +1312,7 @@
             <!-- AMAZINA -->
             <div class="form-group">
                 <label><i class="fas fa-user"></i> Amazina yuzuye(full name) <span>*</span></label>
-                <input type="text" class="form-control" id="regName" placeholder="xxxxx yyyy" autocomplete="name" maxlength="60">
+                <input type="text" class="form-control" id="regName" placeholder="Uwase Marie" autocomplete="name" maxlength="60">
             </div>
 
             <!-- EMAIL -->
@@ -1394,13 +1390,13 @@
                 <i class="fas fa-check"></i>
             </div>
             <h2>Wakiriwe! 🎉</h2>
-            <p>Wiyandikishije neza. tegereza permission.</p>
+            <p>Wiyandikishije neza. wait for permission.</p>
 
             <div class="member-card" id="successMemberCard"></div>
 
             <div class="info-box">
                 <i class="fas fa-info-circle"></i>
-                <span>Uzajya winjira na <strong>email</strong> na <strong>ijambo ry'ibanga</strong> wakoresheje. Tegereza permission.</span>
+                <span>Uzajya winjira na <strong>email</strong> na <strong>ijambo ry'ibanga</strong> wakoresheje. Tegereza ko Secretary akwemeza.</span>
             </div>
 
             <!-- BACK TO HOME BUTTON -->
@@ -1487,12 +1483,15 @@
         });
 
         // ============================================
-        // LOAD CHOIR NAME
+        // LOAD CHOIR NAME — YAKOSOWE
         // ============================================
         async function loadChoirName() {
+            // Default name (niba getDocs irananirwa)
+            let choirName = 'HERTIER DU CIEL FAMILY CHOIR';
+            
             try {
+                // Gerageza gusoma kuva Firestore
                 const usersSnap = await getDocs(collection(db, 'users'));
-                let choirName = 'Choir Imanzi';
                 
                 usersSnap.forEach(d => {
                     const data = d.data();
@@ -1501,11 +1500,13 @@
                     }
                 });
                 
-                updateChoirBanner(choirName);
+                console.log('✅ Choir name from Firestore:', choirName);
             } catch (e) {
-                console.error('Error loading choir name:', e);
-                updateChoirBanner('Choir Imanzi');
+                console.log('⚠️ Using default choir name (getDocs blocked):', choirName);
+                // Nta kibazo — koresha default
             }
+            
+            updateChoirBanner(choirName);
         }
 
         // ============================================
@@ -1648,6 +1649,12 @@
             const voice = document.getElementById('regVoice').value;
             const btn = document.getElementById('submitBtn');
             
+            console.log('🔵 submitRegistration yahamagawe');
+            console.log('Name:', name);
+            console.log('Email:', email);
+            console.log('Level:', level);
+            console.log('Voice:', voice);
+            
             // ===== VALIDATION =====
             if (!name) { showError('Shyiramo amazina yawe'); return; }
             if (name.length < 3) { showError('Amazina agomba kuba nibura 3'); return; }
@@ -1671,18 +1678,27 @@
                 // 1. Upload photo
                 let photoURL = null;
                 if (photoFile) {
+                    console.log('📸 Uploading photo...');
                     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turazamura ifoto...</span>';
                     photoURL = await uploadToCloudinary(photoFile);
+                    console.log('✅ Photo uploaded:', photoURL);
                 }
                 
                 // 2. Create Auth account
+                console.log('🔐 Creating Auth account...');
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turakora account...</span>';
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
+                console.log('✅ Auth user created:', user.uid);
                 
-                await updateProfile(user, { displayName: name, photoURL: photoURL });
+                try {
+                    await updateProfile(user, { displayName: name, photoURL: photoURL });
+                } catch (e) {
+                    console.log('⚠️ updateProfile failed (nibyo):', e.message);
+                }
                 
                 // 3. Write to Firestore
+                console.log('📝 Writing to Firestore...');
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turabika...</span>';
                 const memberNumber = `CH-${Date.now().toString().slice(-4)}`;
                 
@@ -1702,9 +1718,11 @@
                     createdAt: serverTimestamp(),
                     registeredVia: 'qr-code'
                 });
+                console.log('✅ Firestore write OK');
                 
                 // 4. Sign out
                 await signOut(auth);
+                console.log('✅ Signed out');
                 
                 // 5. Confetti + Success
                 confetti({
@@ -1743,7 +1761,9 @@
                 }
                 
             } catch (error) {
-                console.error('Registration error:', error);
+                console.error('❌ Registration error:', error);
+                console.error('Error code:', error.code);
+                console.error('Error message:', error.message);
                 
                 let errorMsg = 'Ikibazo cyabaye. Ongera ugerageze.';
                 
@@ -1756,7 +1776,7 @@
                 } else if (error.code === 'auth/network-request-failed') {
                     errorMsg = 'Interineti ntiboneka';
                 } else if (error.code === 'permission-denied') {
-                    errorMsg = 'Nta ruhushya. Reba Firestore Rules.';
+                    errorMsg = 'Nta ruhushya rwo kwandika. Reba Firestore Rules.';
                 } else if (error.message) {
                     errorMsg = error.message;
                 }
