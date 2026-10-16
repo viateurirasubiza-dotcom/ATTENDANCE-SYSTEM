@@ -1351,192 +1351,146 @@
         // SUBMIT REGISTRATION — YAKOSOWE
         // ============================================
         window.submitRegistration = async function() {
-            const name = document.getElementById('regName').value.trim();
-            const email = document.getElementById('regEmail').value.trim().toLowerCase();
-            const password = document.getElementById('regPassword').value;
-            const number = document.getElementById('regNumber').value.trim();
-            const level = document.getElementById('regLevel').value;
-            const voice = document.getElementById('regVoice').value;
-            const btn = document.getElementById('submitBtn');
-            
-            // ===== VALIDATION =====
-            if (!name) { showError('Shyiramo amazina yawe'); return; }
-            if (name.length < 3) { showError('Amazina agomba kuba nibura 3'); return; }
-            
-            if (!email) { showError('Shyiramo email yawe'); return; }
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('Email ntariyo'); return; }
-            
-            if (!password) { showError('Shyiramo ijambo ry\'ibanga'); return; }
-            if (password.length < 6) { showError('Ijambo ry\'ibanga rigomba kuba nibura 6'); return; }
-            
-            if (!number) { showError('Shyiramo nimero yawe'); return; }
-            if (number.length < 5) { showError('Nimero ni ngufi cyane'); return; }
-            
-            if (!level) { showError('Hitamo level yawe (L1 - L4)'); return; }
-            if (!voice) { showError('Hitamo ijwi ryawe'); return; }
-            
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turabika...</span>';
-            
-            try {
-                // ============================================
-                // 1. Reba niba email isanzwe muri members
-                // ============================================
-                const existingMember = await getDocs(collection(db, 'members'));
-                let emailExists = false;
-                existingMember.forEach(d => {
-                    if (d.data().email === email) emailExists = true;
-                });
-                
-                if (emailExists) {
-                    showError('Email isanzwe ikoreshwa');
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fas fa-check-circle"></i> <span>IYANDIKISHE</span>';
-                    return;
-                }
-                
-                // ============================================
-                // 2. Upload photo kuri Cloudinary
-                // ============================================
-                let photoURL = null;
-                if (photoFile) {
-                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turazamura ifoto...</span>';
-                    photoURL = await uploadToCloudinary(photoFile);
-                }
-                
-                // ============================================
-                // 3. KORA ACCOUNT MURI FIREBASE AUTH — NGOMBA!
-                // ============================================
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turakora account...</span>';
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-                console.log('✅ Auth user created:', user.uid);
-                
-                // Update profile
-                await updateProfile(user, { displayName: name, photoURL: photoURL });
-                
-                // ============================================
-                // 4. Member number
-                // ============================================
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turabika...</span>';
-                let memberNumber;
-                try {
-                    const membersSnap = await getDocs(collection(db, 'members'));
-                    memberNumber = `CH-${String(membersSnap.size + 1).padStart(3, '0')}`;
-                } catch (e) {
-                    memberNumber = `CH-${Date.now().toString().slice(-3)}`;
-                }
-                
-                // ============================================
-                // 5. Bika muri Firestore — NA UID + EMAIL!
-                // ============================================
-                await addDoc(collection(db, 'members'), {
-                    uid: user.uid,                    // ⬅️ NGOMBA!
-                    email: email,                     // ⬅️ NGOMBA!
-                    name: name,
-                    number: number,
-                    level: level,
-                    voice: voice,
-                    memberId: memberNumber,
-                    photo: photoURL,
-                    photoSource: 'cloudinary',
-                    status: 'pending',                // ⬅️ TEGEREZA KWEMEZWA
-                    role: 'member',
-                    registeredAt: serverTimestamp(),
-                    createdAt: serverTimestamp(),
-                    registeredVia: 'qr-code'
-                });
-                
-                // ============================================
-                // 6. SOHOKA MURI AUTH — kugira ngo ataremewe atinjire
-                // ============================================
-                await signOut(auth);
-                
-                // ============================================
-                // 7. Confetti + Success screen
-                // ============================================
-                confetti({
-                    particleCount: 200,
-                    spread: 100,
-                    origin: { y: 0.6 },
-                    colors: ['#6366f1', '#8b5cf6', '#10b981', '#f59e0b', '#ec4899']
-                });
-                
-                document.getElementById('formScreen').style.display = 'none';
-                
-                const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-                const photoHtml = photoURL 
-                    ? `<img src="${photoURL}" class="member-photo" alt="${name}">`
-                    : `<div class="member-avatar">${initials}</div>`;
-                
-                document.getElementById('successMemberCard').innerHTML = `
-                    ${photoHtml}
-                    <div class="member-info">
-                        <div class="member-name">${name}</div>
-                        <div class="member-details">
-                            <span><i class="fas fa-hashtag"></i> ${memberNumber}</span>
-                            <span><i class="fas fa-envelope"></i> ${email}</span>
-                            <span><i class="fas fa-id-card"></i> ${number}</span>
-                            <span><i class="fas fa-graduation-cap"></i> ${level}</span>
-                            <span><i class="fas fa-microphone"></i> ${voice}</span>
-                        </div>
-                    </div>
-                `;
-                
-                document.getElementById('successScreen').classList.add('active');
-                
-                if (navigator.vibrate) {
-                    navigator.vibrate([100, 50, 100, 50, 200]);
-                }
-                
-            } catch (error) {
-                console.error('Registration error:', error);
-                
-                let errorMsg = 'Ikibazo cyabaye. Ongera ugerageze.';
-                
-                if (error.code === 'auth/email-already-in-use') {
-                    errorMsg = 'Email isanzwe ikoreshwa. Koresha indi cyangwa winjire.';
-                } else if (error.code === 'auth/invalid-email') {
-                    errorMsg = 'Email ntariyo';
-                } else if (error.code === 'auth/weak-password') {
-                    errorMsg = 'Ijambo ry\'ibanga ni ngufi cyane (nibura 6)';
-                } else if (error.code === 'auth/network-request-failed') {
-                    errorMsg = 'Interineti ntiboneka';
-                } else if (error.message?.includes('preset')) {
-                    errorMsg = 'Upload preset ntariyo. Reba Cloudinary settings.';
-                } else if (error.message) {
-                    errorMsg = error.message;
-                }
-                
-                showError(errorMsg);
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-check-circle"></i> <span>IYANDIKISHE</span>';
-            }
-        };
-
+    const name = document.getElementById('regName').value.trim();
+    const email = document.getElementById('regEmail').value.trim().toLowerCase();
+    const password = document.getElementById('regPassword').value;
+    const number = document.getElementById('regNumber').value.trim();
+    const level = document.getElementById('regLevel').value;
+    const voice = document.getElementById('regVoice').value;
+    const btn = document.getElementById('submitBtn');
+    
+    // ===== VALIDATION =====
+    if (!name) { showError('Shyiramo amazina yawe'); return; }
+    if (name.length < 3) { showError('Amazina agomba kuba nibura 3'); return; }
+    
+    if (!email) { showError('Shyiramo email yawe'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('Email ntariyo'); return; }
+    
+    if (!password) { showError('Shyiramo ijambo ry\'ibanga'); return; }
+    if (password.length < 6) { showError('Ijambo ry\'ibanga rigomba kuba nibura 6'); return; }
+    
+    if (!number) { showError('Shyiramo nimero yawe'); return; }
+    if (number.length < 5) { showError('Nimero ni ngufi cyane'); return; }
+    
+    if (!level) { showError('Hitamo level yawe (L1 - L4)'); return; }
+    if (!voice) { showError('Hitamo ijwi ryawe'); return; }
+    
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turabika...</span>';
+    
+    try {
         // ============================================
-        // OVERLAY CLICK
+        // 1. Upload photo kuri Cloudinary
         // ============================================
-        document.getElementById('photoChoiceModal').addEventListener('click', function(e) {
-            if (e.target === this) closePhotoChoice();
-        });
-
-        // Enter key navigation
-        document.getElementById('regName').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') document.getElementById('regEmail').focus();
+        let photoURL = null;
+        if (photoFile) {
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turazamura ifoto...</span>';
+            photoURL = await uploadToCloudinary(photoFile);
+        }
+        
+        // ============================================
+        // 2. KORA ACCOUNT MURI FIREBASE AUTH — NGOMBA!
+        // ============================================
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turakora account...</span>';
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        console.log('✅ Auth user created:', user.uid);
+        
+        // Update profile
+        await updateProfile(user, { displayName: name, photoURL: photoURL });
+        
+        // ============================================
+        // 3. Generate member number — RANDOM (nta getDocs!)
+        // ============================================
+        const memberNumber = `CH-${Date.now().toString().slice(-4)}`;
+        
+        // ============================================
+        // 4. Bika muri Firestore — NA UID + EMAIL!
+        // ============================================
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turabika...</span>';
+        await addDoc(collection(db, 'members'), {
+            uid: user.uid,
+            email: email,
+            name: name,
+            number: number,
+            level: level,
+            voice: voice,
+            memberId: memberNumber,
+            photo: photoURL,
+            photoSource: 'cloudinary',
+            status: 'pending',
+            role: 'member',
+            registeredAt: serverTimestamp(),
+            createdAt: serverTimestamp(),
+            registeredVia: 'qr-code'
         });
         
-        document.getElementById('regEmail').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') document.getElementById('regPassword').focus();
+        // ============================================
+        // 5. SOHOKA MURI AUTH — kugira ngo ataremewe atinjire
+        // ============================================
+        await signOut(auth);
+        
+        // ============================================
+        // 6. Confetti + Success screen
+        // ============================================
+        confetti({
+            particleCount: 200,
+            spread: 100,
+            origin: { y: 0.6 },
+            colors: ['#6366f1', '#8b5cf6', '#10b981', '#f59e0b', '#ec4899']
         });
         
-        document.getElementById('regPassword').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') document.getElementById('regNumber').focus();
-        });
+        document.getElementById('formScreen').style.display = 'none';
         
-        document.getElementById('regNumber').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') document.getElementById('regVoice').focus();
-        });
+        const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        const photoHtml = photoURL 
+            ? `<img src="${photoURL}" class="member-photo" alt="${name}">`
+            : `<div class="member-avatar">${initials}</div>`;
+        
+        document.getElementById('successMemberCard').innerHTML = `
+            ${photoHtml}
+            <div class="member-info">
+                <div class="member-name">${name}</div>
+                <div class="member-details">
+                    <span><i class="fas fa-hashtag"></i> ${memberNumber}</span>
+                    <span><i class="fas fa-envelope"></i> ${email}</span>
+                    <span><i class="fas fa-id-card"></i> ${number}</span>
+                    <span><i class="fas fa-graduation-cap"></i> ${level}</span>
+                    <span><i class="fas fa-microphone"></i> ${voice}</span>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('successScreen').classList.add('active');
+        
+        if (navigator.vibrate) {
+            navigator.vibrate([100, 50, 100, 50, 200]);
+        }
+        
+    } catch (error) {
+        console.error('Registration error:', error);
+        
+        let errorMsg = 'Ikibazo cyabaye. Ongera ugerageze.';
+        
+        if (error.code === 'auth/email-already-in-use') {
+            errorMsg = 'Email isanzwe ikoreshwa. Koresha indi cyangwa winjire.';
+        } else if (error.code === 'auth/invalid-email') {
+            errorMsg = 'Email ntariyo';
+        } else if (error.code === 'auth/weak-password') {
+            errorMsg = 'Ijambo ry\'ibanga ni ngufi cyane (nibura 6)';
+        } else if (error.code === 'auth/network-request-failed') {
+            errorMsg = 'Interineti ntiboneka';
+        } else if (error.code === 'permission-denied') {
+            errorMsg = 'Nta ruhushya rwo kwandika. Reba Firestore Rules.';
+        } else if (error.message) {
+            errorMsg = error.message;
+        }
+        
+        showError(errorMsg);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check-circle"></i> <span>IYANDIKISHE</span>';
+    }
+};
     </script>
 
 </body>
