@@ -1332,6 +1332,11 @@
                 <label><i class="fas fa-id-card"></i> Nimero   ya Telefone <span>*</span></label>
                 <input type="text" class="form-control" id="regNumber" placeholder="2234567890 cyangwa 0788..." maxlength="20">
             </div>
+            <!-- BIRTHDAY (ITARIKI Y'AMAVUKO) -->
+            <div class="form-group">
+                <label><i class="fas fa-birthday-cake"></i> Itariki wavukiye (Birthday)</label>
+                <input type="date" class="form-control" id="regBirthday" style="color: var(--text);">
+            </div>
 
             <!-- LEVEL -->
             <div class="form-group">
@@ -1636,7 +1641,6 @@
             const data = await response.json();
             return data.secure_url;
         }
-
         // ============================================
         // SUBMIT REGISTRATION
         // ============================================
@@ -1647,6 +1651,7 @@
             const number = document.getElementById('regNumber').value.trim();
             const level = document.getElementById('regLevel').value;
             const voice = document.getElementById('regVoice').value;
+            const birthday = document.getElementById('regBirthday').value; // <--- IYI YARI IBURA
             const btn = document.getElementById('submitBtn');
             
             console.log('🔵 submitRegistration yahamagawe');
@@ -1654,6 +1659,7 @@
             console.log('Email:', email);
             console.log('Level:', level);
             console.log('Voice:', voice);
+            console.log('Birthday:', birthday);
             
             // ===== VALIDATION =====
             if (!name) { showError('Shyiramo amazina yawe'); return; }
@@ -1709,6 +1715,7 @@
                     number: number,
                     level: level,
                     voice: voice,
+                    birthday: birthday, // <--- IYI NI NSHYA YONGEWEHO
                     memberId: memberNumber,
                     photo: photoURL,
                     photoSource: 'cloudinary',
@@ -1750,6 +1757,7 @@
                             <span><i class="fas fa-id-card"></i> ${number}</span>
                             <span><i class="fas fa-graduation-cap"></i> ${levelIcon} ${level}</span>
                             <span><i class="fas fa-microphone"></i> ${voice}</span>
+                            ${birthday ? `<span><i class="fas fa-birthday-cake"></i> ${new Date(birthday).toLocaleDateString('rw-RW')}</span>` : ''}
                         </div>
                     </div>
                 `;
