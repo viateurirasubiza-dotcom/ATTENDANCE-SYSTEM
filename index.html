@@ -747,7 +747,8 @@ body {
 }
 .attendance-table {
     background: var(--bg-card); border: 1px solid var(--border);
-    border-radius: var(--radius); overflow: hidden; margin-bottom: 24px;
+    border-radius: var(--radius); margin-bottom: 24px;
+    /* Kuraho overflow: hidden hano kugira ngo table-responsive-wrapper ikore */
 }
 .attendance-table table { width: 100%; border-collapse: collapse; }
 .attendance-table th {
@@ -2438,7 +2439,12 @@ body {
                 <div class="nav-item member-only" onclick="switchPage('my-dashboard', this)" style="display: none;">
                     <i class="fas fa-home"></i><span>Ahabanza</span>
                 </div>
-                
+                                <div class="nav-item admin-only" onclick="openCreateModal()">
+                    <i class="fas fa-calendar-plus"></i><span>Kora Attendance</span>
+                </div>
+                <div class="nav-item admin-only" onclick="openQRRegisterModal()">
+                    <i class="fas fa-qrcode"></i><span>QR Code Mushya</span>
+                </div>
                 <div class="nav-item admin-only" onclick="switchPage('members', this)">
                     <i class="fas fa-users"></i><span>Abaririmbyi</span>
                     <span class="count" id="sidebarMemberCount">0</span>
@@ -2569,25 +2575,7 @@ body {
                         </div>
                     </div>
 
-                    <div class="new-attendance-banner" onclick="openCreateModal()">
-                        <div class="new-attendance-content">
-                            <div class="new-attendance-icon"><i class="fas fa-plus"></i></div>
-                            <div class="new-attendance-text">
-                                <h2>Kora Attendance Nshya</h2>
-                                <p>Kanda hano utangire iteraniro rishya</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="qr-register-banner" onclick="openQRRegisterModal()">
-                        <div class="new-attendance-content">
-                            <div class="new-attendance-icon"><i class="fas fa-qrcode"></i></div>
-                            <div class="new-attendance-text">
-                                <h2>Kora QR y'Umuririmbyi Mushya</h2>
-                                <p>Umuririmbyi mushya ascane QR yiyandikishe</p>
-                            </div>
-                        </div>
-                    </div>
+                  
 
                     <div class="section-title">
                         <i class="fas fa-folder-open"></i>
@@ -2693,20 +2681,22 @@ body {
                         <i class="fas fa-search"></i>
                         <input type="text" id="searchMember" placeholder="Shakisha umuririmbyi..." oninput="filterMembersList()">
                     </div>
-                    <div class="attendance-table">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th style="width: 50px;">#</th>
-                                    <th>Umuririmbyi</th>
-                                    <th>Nimero (ID)</th>
-                                    <th>Level</th>
-                                    <th>Ijwi</th>
-                                    <th style="width: 220px; text-align: center;">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="membersTableBody"></tbody>
-                        </table>
+                                    <div class="attendance-table">
+                        <div class="table-responsive-wrapper" style="width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;">
+                            <table style="min-width: 650px; width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50px;">#</th>
+                                        <th>Umuririmbyi</th>
+                                        <th>Nimero (ID)</th>
+                                        <th>Level</th>
+                                        <th>Ijwi</th>
+                                        <th style="width: 220px; text-align: center;">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="membersTableBody"></tbody>
+                            </table>
+                        </div>
                     </div>
                     <div class="submit-bar">
                         <div class="summary">
@@ -3170,15 +3160,7 @@ body {
                                 <i class="fas fa-comments"></i>
                                 <span>Ubutumwa</span>
                             </div>
-                            <div class="chat-tabs">
-                                <button class="chat-tab active" onclick="switchChatTab('group', this)">
-                                    <i class="fas fa-users"></i> Itsinda
-                                </button>
-                                <button class="chat-tab" onclick="switchChatTab('private', this)">
-                                    <i class="fas fa-user"></i> Private
-                                </button>
-                            </div>
-                              
+                           
 
                             <!-- IYI NI YO BUTO NSHYA YO KUREMA ITSINDA (Iri hejuru y'urutonde) -->
                            <div class="admin-only" style="padding: 0 8px 8px 8px;">
@@ -3186,13 +3168,7 @@ body {
         <i class="fas fa-plus"></i> Itsinda Rishya
     </button>
 </div>
-                           <!-- Search Button — ikanda igahita izana modal nziza -->
-<div style="padding: 8px;">
-    <button onclick="openChatSearchModal()" style="width:100%; display:flex; align-items:center; gap:10px; padding:12px 16px; border:1.5px solid var(--border); border-radius:12px; background:var(--bg); color:var(--text-secondary); font-family:inherit; font-size:13.5px; font-weight:600; cursor:pointer; transition:all 0.2s;">
-        <i class="fas fa-search"></i>
-        <span>Shakisha umuntu...</span>
-    </button>
-</div>
+  
 <!-- ===== CHAT SEARCH MODAL ===== -->
 <div class="modal-overlay" id="chatSearchModal" style="align-items: flex-start; padding-top: 80px;">
     <div class="modal" style="max-width: 520px; padding: 0; overflow: hidden;">
@@ -4004,7 +3980,7 @@ body {
         </div>
     </div>
 
-    <div class="toast-container" id="toastContainer"></div>
+  
     <script type="module">
        
        
@@ -4501,54 +4477,71 @@ body {
         // ============================================
         // UNREAD COUNT
         // ============================================
-        function startUnreadListener() {
-            if (!currentUser) return;
-            const myUid = currentUser.uid;
-            const q = query(collection(db, 'privateChats'), where('participants', 'array-contains', myUid));
-            
-            if (unreadListener) unreadListener();
-            unreadListener = onSnapshot(q, (snap) => {
-                let count = 0;
-                const unreadByUid = {};
-                snap.forEach(d => {
-                    const data = d.data();
-                    if (data.fromUid !== myUid && !(data.readBy || []).includes(myUid)) {
-                        count++;
-                        const otherUid = data.participants.find(u => u !== myUid);
-                        if (otherUid) unreadByUid[otherUid] = (unreadByUid[otherUid] || 0) + 1;
-                    }
-                });
-                window._unreadCounts = unreadByUid;
-                
-                const badge = document.getElementById('chatBadge');
-                const sidebarBadge = document.getElementById('sidebarChatCount');
-                if (badge) { badge.textContent = count; badge.style.display = count > 0 ? 'flex' : 'none'; }
-                if (sidebarBadge) { sidebarBadge.textContent = count; sidebarBadge.style.display = count > 0 ? 'flex' : 'none'; }
-                
-                renderChatList();
-            });
+       function startUnreadListener() {
+    if (!currentUser) return;
+    const myUid = currentUser.uid;
+    const q = query(collection(db, 'privateChats'), where('participants', 'array-contains', myUid));
+    
+    if (unreadListener) unreadListener();
+    unreadListener = onSnapshot(q, (snap) => {
+        let count = 0;
+        const unreadByUid = {};
+        snap.forEach(d => {
+            const data = d.data();
+            // Reba niba ubutumwa ari ubw'undi muntu, kandi ntabwo uri muri readBy
+            if (data.fromUid !== myUid && !(data.readBy || []).includes(myUid)) {
+                count++;
+                const otherUid = data.participants.find(u => u !== myUid);
+                if (otherUid) unreadByUid[otherUid] = (unreadByUid[otherUid] || 0) + 1;
+            }
+        });
+        window._unreadCounts = unreadByUid;
+        
+        // Hindura badge (umubare utukura)
+        const badge = document.getElementById('chatBadge');
+        const sidebarBadge = document.getElementById('sidebarChatCount');
+        
+        if (badge) { 
+            badge.textContent = count; 
+            badge.style.display = count > 0 ? 'flex' : 'none'; 
         }
-
+        if (sidebarBadge) { 
+            sidebarBadge.textContent = count; 
+            sidebarBadge.style.display = count > 0 ? 'flex' : 'none'; 
+        }
+        
+        // Vugurura chat list niba ari private
+        renderChatList();
+    });
+}
         // ============================================
         // READ RECEIPTS
-        // ============================================
-        // Shyiramo iyi hejuru ya file niba itariho
 async function markPrivateMessagesAsRead() {
     if (!currentUser || !currentPrivateChatId) return;
+    
+    // IYI NI YO LOCK (Kugira ngo itajegajega)
+    if (window._isMarkingRead) return;
+    
     const myUid = currentUser.uid;
     
     // Shakisha ubutumwa butarasomwa
     const unread = chatMessages.filter(m => m.fromUid !== myUid && !(m.readBy || []).includes(myUid));
     if (unread.length === 0) return;
 
-    // Koresha arrayUnion
-    for (let m of unread) {
-        try {
+    // Funga lock
+    window._isMarkingRead = true;
+
+    try {
+        const promises = unread.map(m => {
             const ref = doc(db, 'privateChats', m.id);
-            await updateDoc(ref, { readBy: arrayUnion(myUid) });
-        } catch(e) {
-            console.error("Error marking as read:", e);
-        }
+            return updateDoc(ref, { readBy: arrayUnion(myUid) });
+        });
+        await Promise.all(promises);
+    } catch(e) {
+        console.error("Error marking as read:", e);
+    } finally {
+        // Fungura lock
+        window._isMarkingRead = false;
     }
 }
         // ============================================
@@ -5098,35 +5091,64 @@ async function markPrivateMessagesAsRead() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
-        function renderMembersForAttendance() {
-            const tbody = document.getElementById('membersTableBody');
-            const activeMembers = members.filter(m => m.status === 'active' || !m.status);
-            
-            tbody.innerHTML = activeMembers.map((m, i) => {
-                const initials = m.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-                const photoHtml = m.photo ? `<img src="${m.photo}" class="row-photo" onerror="this.outerHTML='<div class=\\'row-avatar\\'>${initials}</div>'">` : `<div class="row-avatar">${initials}</div>`;
-                
-                const isPresent = currentTickList.some(t => t.id === m.id);
-                const isLate = currentLateList.some(t => t.id === m.id);
-                const isAbsent = currentAbsentList.some(t => t.id === m.id);
-                const levelClass = m.level === 'Special' ? 'special' : '';
-                
-                return `<tr data-member-id="${m.id}">
-                    <td><strong>${i + 1}</strong></td>
-                    <td><div class="member-cell-row">${photoHtml}<div class="row-info"><div class="name">${m.name}</div><div class="id">${m.memberId || ''}</div></div></div></td>
-                    <td><strong>${m.number || '-'}</strong></td>
-                    <td><span class="level-badge ${levelClass}">${m.level === 'Special' ? '⭐' : '🎓'} ${m.level || '-'}</span></td>
-                    <td><span class="voice-badge ${(m.voice || '').toLowerCase()}"><i class="fas fa-microphone"></i> ${m.voice}</span></td>
-                    <td style="text-align: center;">
-                        <div class="status-buttons">
-                            <button class="status-btn present ${isPresent ? 'active' : ''}" onclick="markPresent('${m.id}')" title="Yaje"><i class="fas fa-check"></i></button>
-                            <button class="status-btn late ${isLate ? 'active' : ''}" onclick="openLateModal('${m.id}')" title="Late"><i class="fas fa-clock"></i></button>
-                            <button class="status-btn absent ${isAbsent ? 'active' : ''}" onclick="openAbsentModal('${m.id}')" title="Ntabwo"><i class="fas fa-times"></i></button>
-                        </div>
-                    </td>
-                </tr>`;
-            }).join('');
-        }
+        // ============================================
+// RENDER MEMBERS FOR ATTENDANCE
+// ============================================
+window.renderMembersForAttendance = function() {
+    const tbody = document.getElementById('membersTableBody');
+    if (!tbody) return;
+    
+    const activeMembers = members.filter(m => m.status === 'active' || !m.status);
+    
+    if (activeMembers.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-secondary);">
+            <i class="fas fa-users" style="font-size:40px;opacity:0.3;display:block;margin-bottom:10px;"></i>
+            Nta baririmbyi babonetse. Banza wongereho abaririmbyi.
+        </td></tr>`;
+        return;
+    }
+    
+    tbody.innerHTML = activeMembers.map((m, i) => {
+        const initials = (m.name || '?').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        const photoHtml = m.photo
+            ? `<img src="${m.photo}" class="row-photo" onerror="this.outerHTML='<div class=\\'row-avatar\\'>${initials}</div>'">`
+            : `<div class="row-avatar">${initials}</div>`;
+        
+        const isPresent = currentTickList.some(t => t.id === m.id);
+        const isLate = currentLateList.some(t => t.id === m.id);
+        const isAbsent = currentAbsentList.some(t => t.id === m.id);
+        const levelClass = m.level === 'Special' ? 'special' : '';
+        
+        return `<tr data-member-id="${m.id}">
+            <td><strong>${i + 1}</strong></td>
+            <td>
+                <div class="member-cell-row">
+                    ${photoHtml}
+                    <div class="row-info">
+                        <div class="name">${m.name || '-'}</div>
+                        <div class="id">${m.memberId || ''}</div>
+                    </div>
+                </div>
+            </td>
+            <td><strong>${m.number || '-'}</strong></td>
+            <td><span class="level-badge ${levelClass}">${m.level === 'Special' ? '⭐' : '🎓'} ${m.level || '-'}</span></td>
+            <td><span class="voice-badge ${(m.voice || '').toLowerCase()}"><i class="fas fa-microphone"></i> ${m.voice || '-'}</span></td>
+            <td style="text-align: center;">
+                <div class="status-buttons">
+                    <button type="button" class="status-btn present ${isPresent ? 'active' : ''}" onclick="window.markPresent('${m.id}')" title="Yaje">
+                        <i class="fas fa-check"></i>
+                    </button>
+                    <button type="button" class="status-btn late ${isLate ? 'active' : ''}" onclick="window.openLateModal('${m.id}')" title="Late">
+                        <i class="fas fa-clock"></i>
+                    </button>
+                    <button type="button" class="status-btn absent ${isAbsent ? 'active' : ''}" onclick="window.openAbsentModal('${m.id}')" title="Ntabwo">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>`;
+    }).join('');
+};
 
         window.markPresent = function(memberId) {
             currentLateList = currentLateList.filter(t => t.id !== memberId);
@@ -5316,46 +5338,70 @@ async function markPrivateMessagesAsRead() {
         // ============================================
         // VIEW SESSION
         // ============================================
-        window.viewSession = function(id) {
-            const s = sessions.find(x => x.id === id);
-            if (!s) return;
-            const activeMembers = members.filter(m => m.status === 'active' || !m.status);
-            const present = s.presentMembers?.length || 0;
-            const late = s.lateMembers?.length || 0;
-            const absent = s.absentMembers?.length || 0;
-            const total = activeMembers.length;
-            const pct = total > 0 ? Math.round((present / total) * 100) : 0;
-            
-            const renderRow = (item) => {
-                const m = members.find(x => x.id === item.id);
-                if (!m) return '';
-                const initials = m.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-                const photoHtml = m.photo ? `<img src="${m.photo}" class="view-row-photo" onerror="this.outerHTML='<div class=\\'view-row-avatar\\'>${initials}</div>'">` : `<div class="view-row-avatar">${initials}</div>`;
-                const timeInfo = item.time ? `<span style="font-weight:700;color:var(--warning);"><i class="fas fa-clock"></i> ${item.time}</span>` : '';
-                return `<tr><td><div style="display:flex;align-items:center;gap:12px;">${photoHtml}<div><div style="font-weight:600;">${m.name}</div><div style="font-size:12px;color:var(--text-secondary);">${m.memberId || ''}</div></div></div></td><td><strong>${m.number || '-'}</strong></td><td><span class="level-badge">${m.level === 'Special' ? '⭐' : '🎓'} ${m.level || '-'}</span></td><td><span class="voice-badge ${(m.voice||'').toLowerCase()}"><i class="fas fa-microphone"></i> ${m.voice}</span></td><td>${timeInfo}</td></tr>`;
-            };
-            
-            document.getElementById('detailContent').innerHTML = `
-                <div class="detail-header"><h2>${s.name}</h2><p><i class="fas fa-calendar"></i> ${formatDate(s.date)} | <i class="fas fa-clock"></i> ${s.time}</p></div>
-                <div class="detail-stats">
-                    <div class="detail-stat blue"><div class="value">${total}</div><div class="label">Bose</div></div>
-                    <div class="detail-stat green"><div class="value">${present}</div><div class="label">Baje</div></div>
-                    <div class="detail-stat orange"><div class="value">${late}</div><div class="label">Late</div></div>
-                    <div class="detail-stat red"><div class="value">${absent}</div><div class="label">Bataje</div></div>
-                </div>
-                ${present > 0 ? `<h4 style="margin-bottom:12px;font-size:15px;color:var(--success);">✅ Abaje (${present})</h4>
-                <div class="view-table-wrapper" style="margin-bottom:20px;"><table><thead><tr><th>Umuririmbyi</th><th>Nimero</th><th>Level</th><th>Ijwi</th><th>Isaha</th></tr></thead><tbody>${(s.presentMembers || []).map(renderRow).join('')}</tbody></table></div>` : ''}
-                ${late > 0 ? `<h4 style="margin-bottom:12px;font-size:15px;color:var(--warning);">⏰ Late (${late})</h4>
-                <div class="view-table-wrapper" style="margin-bottom:20px;"><table><thead><tr><th>Umuririmbyi</th><th>Nimero</th><th>Level</th><th>Ijwi</th><th>Isaha</th></tr></thead><tbody>${(s.lateMembers || []).map(renderRow).join('')}</tbody></table></div>` : ''}
-                ${absent > 0 ? `<h4 style="margin-bottom:12px;font-size:15px;color:var(--danger);">❌ Bataje (${absent})</h4>
-                <div class="view-table-wrapper" style="margin-bottom:20px;"><table><thead><tr><th>Umuririmbyi</th><th>Nimero</th><th>Level</th><th>Ijwi</th><th>Impamvu</th></tr></thead><tbody>${(s.absentMembers || []).map(item => { const m = members.find(x => x.id === item.id); if (!m) return ''; return `<tr><td><strong>${m.name}</strong></td><td>${m.number || '-'}</td><td>${m.level || '-'}</td><td>${m.voice}</td><td><span style="color:var(--danger);font-weight:600;">${item.reason || '-'}</span>${item.note ? `<br><span style="font-size:11px;color:var(--text-secondary);">${item.note}</span>` : ''}</td></tr>`; }).join('')}</tbody></table></div>` : ''}
-                <div class="modal-actions">
-                    <button class="btn btn-danger" onclick="exportPDF('${s.id}')"><i class="fas fa-file-pdf"></i> PDF</button>
-                    <button class="btn btn-outline" onclick="closeModal('detailModal')">Funga</button>
-                </div>`;
-            document.getElementById('detailModal').classList.add('active');
-        };
-
+       window.viewSession = function(id) {
+    const s = sessions.find(x => x.id === id);
+    if (!s) return;
+    const activeMembers = members.filter(m => m.status === 'active' || !m.status);
+    const present = s.presentMembers?.length || 0;
+    const late = s.lateMembers?.length || 0;
+    const absent = s.absentMembers?.length || 0;
+    const total = activeMembers.length;
+    const pct = total > 0 ? Math.round((present / total) * 100) : 0;
+    
+    const renderRow = (item) => {
+        const m = members.find(x => x.id === item.id);
+        if (!m) return '';
+        const initials = m.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        const photoHtml = m.photo ? `<img src="${m.photo}" class="view-row-photo" onerror="this.outerHTML='<div class=\\'view-row-avatar\\'>${initials}</div>'">` : `<div class="view-row-avatar">${initials}</div>`;
+        const timeInfo = item.time ? `<span style="font-weight:700;color:var(--warning);"><i class="fas fa-clock"></i> ${item.time}</span>` : '';
+        return `<tr><td><div style="display:flex;align-items:center;gap:12px;">${photoHtml}<div><div style="font-weight:600;">${m.name}</div><div style="font-size:12px;color:var(--text-secondary);">${m.memberId || ''}</div></div></div></td><td><strong>${m.number || '-'}</strong></td><td><span class="level-badge">${m.level === 'Special' ? '⭐' : '🎓'} ${m.level || '-'}</span></td><td><span class="voice-badge ${(m.voice||'').toLowerCase()}"><i class="fas fa-microphone"></i> ${m.voice}</span></td><td>${timeInfo}</td></tr>`;
+    };
+    
+    document.getElementById('detailContent').innerHTML = `
+        <div class="detail-header"><h2>${s.name}</h2><p><i class="fas fa-calendar"></i> ${formatDate(s.date)} | <i class="fas fa-clock"></i> ${s.time}</p></div>
+        <div class="detail-stats">
+            <div class="detail-stat blue"><div class="value">${total}</div><div class="label">Bose</div></div>
+            <div class="detail-stat green"><div class="value">${present}</div><div class="label">Baje</div></div>
+            <div class="detail-stat orange"><div class="value">${late}</div><div class="label">Late</div></div>
+            <div class="detail-stat red"><div class="value">${absent}</div><div class="label">Bataje</div></div>
+        </div>
+        
+        ${present > 0 ? `<h4 style="margin-bottom:12px;font-size:15px;color:var(--success);">✅ Abaje (${present})</h4>
+        <div class="view-table-wrapper" style="margin-bottom:20px;"><table><thead><tr><th>Umuririmbyi</th><th>Nimero</th><th>Level</th><th>Ijwi</th><th>Isaha</th></tr></thead><tbody>${(s.presentMembers || []).map(renderRow).join('')}</tbody></table></div>` : ''}
+        
+        ${late > 0 ? `<h4 style="margin-bottom:12px;font-size:15px;color:var(--warning);">⏰ Late (${late})</h4>
+        <div class="view-table-wrapper" style="margin-bottom:20px;"><table><thead><tr><th>Umuririmbyi</th><th>Nimero</th><th>Level</th><th>Ijwi</th><th>Isaha</th><th>Impamvu</th></tr></thead><tbody>${(s.lateMembers || []).map(item => { 
+            const m = members.find(x => x.id === item.id); 
+            if (!m) return ''; 
+            return `<tr>
+                <td><strong>${m.name}</strong></td>
+                <td>${m.number || '-'}</td>
+                <td>${m.level || '-'}</td>
+                <td>${m.voice}</td>
+                <td><strong style="color:var(--warning);">${item.time || '-'}</strong></td>
+                <td><span style="color:var(--warning);font-weight:600;">${item.reason || '-'}</span>${item.note ? `<br><span style="font-size:11px;color:var(--text-secondary);">${item.note}</span>` : ''}</td>
+            </tr>`; 
+        }).join('')}</tbody></table></div>` : ''}
+        
+        ${absent > 0 ? `<h4 style="margin-bottom:12px;font-size:15px;color:var(--danger);">❌ Bataje (${absent})</h4>
+        <div class="view-table-wrapper" style="margin-bottom:20px;"><table><thead><tr><th>Umuririmbyi</th><th>Nimero</th><th>Level</th><th>Ijwi</th><th>Impamvu</th></tr></thead><tbody>${(s.absentMembers || []).map(item => { 
+            const m = members.find(x => x.id === item.id); 
+            if (!m) return ''; 
+            return `<tr>
+                <td><strong>${m.name}</strong></td>
+                <td>${m.number || '-'}</td>
+                <td>${m.level || '-'}</td>
+                <td>${m.voice}</td>
+                <td><span style="color:var(--danger);font-weight:600;">${item.reason || '-'}</span>${item.note ? `<br><span style="font-size:11px;color:var(--text-secondary);">${item.note}</span>` : ''}</td>
+            </tr>`; 
+        }).join('')}</tbody></table></div>` : ''}
+        
+        <div class="modal-actions">
+            <button class="btn btn-danger" onclick="exportPDF('${s.id}')"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button class="btn btn-outline" onclick="closeModal('detailModal')">Funga</button>
+        </div>`;
+    document.getElementById('detailModal').classList.add('active');
+};
         window.deleteSession = async function(id) {
             const s = sessions.find(x => x.id === id);
             if (!s || !confirm(`Urabyemeza gusiba "${s.name}"?`)) return;
@@ -5388,35 +5434,74 @@ async function markPrivateMessagesAsRead() {
         }
 
         window.renderAttendancePage = function() {
-            const list = document.getElementById('attendanceHistoryList');
-            if (!list) return;
-            const filtered = filterByPeriod(sessions);
-            const activeMembers = members.filter(m => m.status === 'active' || !m.status);
-            
-            if (filtered.length === 0) {
-                list.innerHTML = `<div class="empty-state"><div class="icon"><i class="fas fa-calendar-times"></i></div><h3>Nta mateka</h3></div>`;
-                return;
-            }
-            list.innerHTML = filtered.map(s => {
-                const present = s.presentMembers?.length || 0;
-                const late = s.lateMembers?.length || 0;
-                const absent = s.absentMembers?.length || 0;
-                const total = activeMembers.length;
-                const pct = total > 0 ? Math.round((present / total) * 100) : 0;
-                return `<div class="saved-card">
-                    <div class="saved-info"><h3><i class="fas fa-calendar-check"></i> ${s.name}</h3>
-                        <div class="saved-meta"><span><i class="fas fa-calendar"></i> ${formatDate(s.date)}</span><span><i class="fas fa-clock"></i> ${s.time}</span><span style="color:var(--success);"><i class="fas fa-check"></i> ${present}</span><span style="color:var(--warning);"><i class="fas fa-clock"></i> ${late}</span><span style="color:var(--danger);"><i class="fas fa-times"></i> ${absent}</span></div>
-                    </div>
-                    <div class="saved-percent">${pct}%</div>
-                    <div class="saved-actions">
-                        <button class="action-btn view" onclick="viewSession('${s.id}')"><i class="fas fa-eye"></i></button>
-                        <button class="action-btn pdf" onclick="exportPDF('${s.id}')"><i class="fas fa-file-pdf"></i></button>
-                        <button class="action-btn delete" onclick="deleteSession('${s.id}')"><i class="fas fa-trash"></i></button>
-                    </div>
-                </div>`;
-            }).join('');
-        };
+    const list = document.getElementById('attendanceHistoryList');
+    if (!list) return;
+    
+    const filtered = filterByPeriod(sessions);
+    const activeMembers = members.filter(m => m.status === 'active' || !m.status);
+    
+    if (filtered.length === 0) {
+        list.innerHTML = `<div class="empty-state"><div class="icon"><i class="fas fa-calendar-times"></i></div><h3>Nta mateka</h3></div>`;
+        return;
+    }
+    
+    list.innerHTML = filtered.map(s => {
+        const present = s.presentMembers?.length || 0;
+        const late = s.lateMembers?.length || 0;
+        const absent = s.absentMembers?.length || 0;
+        const total = activeMembers.length;
+        const pct = total > 0 ? Math.round((present / total) * 100) : 0;
 
+        // Hano tugenda turaba niba hari abakererewe cyangwa abataje bakagira impamvu
+        let lateAndAbsentHtml = '';
+        
+        if ((s.lateMembers && s.lateMembers.length > 0) || (s.absentMembers && s.absentMembers.length > 0)) {
+            lateAndAbsentHtml = `
+                <div style="margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px; font-size: 12px;">
+                    ${(s.lateMembers || []).map(lm => {
+                        const m = members.find(x => x.id === lm.id);
+                        if (!m) return '';
+                        return `<div style="margin-bottom: 4px; display: flex; align-items: start; gap: 6px;">
+                            <span style="color: var(--warning); font-weight: 700;"><i class="fas fa-clock"></i> Late:</span>
+                            <span><strong>${m.name}</strong> — ${lm.reason || 'Nta mpamvu yanditswe'} ${lm.note ? `(${lm.note})` : ''}</span>
+                        </div>`;
+                    }).join('')}
+                    
+                    ${(s.absentMembers || []).map(am => {
+                        const m = members.find(x => x.id === am.id);
+                        if (!m) return '';
+                        return `<div style="margin-bottom: 4px; display: flex; align-items: start; gap: 6px;">
+                            <span style="color: var(--danger); font-weight: 700;"><i class="fas fa-times-circle"></i> Ntabwo:</span>
+                            <span><strong>${m.name}</strong> — ${am.reason || 'Nta mpamvu yanditswe'} ${am.note ? `(${am.note})` : ''}</span>
+                        </div>`;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        return `<div class="saved-card" style="flex-direction: column; align-items: stretch;">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
+                <div class="saved-info">
+                    <h3><i class="fas fa-calendar-check"></i> ${s.name}</h3>
+                    <div class="saved-meta">
+                        <span><i class="fas fa-calendar"></i> ${formatDate(s.date)}</span>
+                        <span><i class="fas fa-clock"></i> ${s.time}</span>
+                        <span style="color:var(--success);"><i class="fas fa-check"></i> ${present}</span>
+                        <span style="color:var(--warning);"><i class="fas fa-clock"></i> ${late}</span>
+                        <span style="color:var(--danger);"><i class="fas fa-times"></i> ${absent}</span>
+                    </div>
+                </div>
+                <div class="saved-percent">${pct}%</div>
+                <div class="saved-actions">
+                    <button class="action-btn view" onclick="viewSession('${s.id}')"><i class="fas fa-eye"></i></button>
+                    <button class="action-btn pdf" onclick="exportPDF('${s.id}')"><i class="fas fa-file-pdf"></i></button>
+                    <button class="action-btn delete" onclick="deleteSession('${s.id}')"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+            ${lateAndAbsentHtml}
+        </div>`;
+    }).join('');
+};
         // ============================================
         // MEMBERS
         // ============================================
@@ -6836,60 +6921,20 @@ async function markPrivateMessagesAsRead() {
                 openGroupChat();
             }
         };
-
-             function renderChatList() {
+function renderChatList() {
     const chatList = document.getElementById('chatList');
     if (!chatList) return;
     
-    let html = '';
-    
-    if (chatTab === 'group') {
-        html = `<div class="chat-item active" onclick="openGroupChat()" style="background: rgba(56,189,248,0.1);">
+    // Itsinda Rusange gusa
+    chatList.innerHTML = `
+        <div class="chat-item active" onclick="openGroupChat()" style="background: rgba(56,189,248,0.1);">
             <div class="chat-item-avatar" style="background: var(--gradient-2);"><i class="fas fa-users"></i></div>
             <div class="chat-item-info">
                 <div class="chat-item-name">Itsinda Rusange</div>
                 <div class="chat-item-preview" id="groupChatPreview">Vugana n'itsinda...</div>
             </div>
-        </div>`;
-    } else {
-        // Werekana abo wavuganye na bo gusa
-        const activeMembers = members.filter(m => 
-            (m.status === 'active' || !m.status) && 
-            m.uid && 
-            m.uid !== currentUser.uid &&
-            window._recentChatUids && 
-            window._recentChatUids.has(m.uid)
-        );
-        
-        if (activeMembers.length === 0) {
-            html = `<div style="padding:20px; text-align:center; color:var(--text-secondary); font-size:13px;">
-                <i class="fas fa-comments" style="font-size:24px; opacity:0.3; display:block; margin-bottom:8px;"></i>
-                Nta muntu wavuganye na we.<br>Kanda "Shakisha umuntu..." hejuru utangire.
-            </div>`;
-        } else {
-            html = activeMembers.map(m => {
-                const initials = m.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-                const photoHtml = m.photo 
-                    ? `<img src="${m.photo}" style="width:100%;height:100%;object-fit:cover;">` 
-                    : initials;
-                const chatId = [currentUser.uid, m.uid].sort().join('_');
-                const isActive = currentPrivateChatId === chatId;
-                const unread = window._unreadCounts && window._unreadCounts[m.uid] ? window._unreadCounts[m.uid] : 0;
-                const unreadBadge = unread > 0 ? `<div class="chat-item-unread">${unread}</div>` : '';
-                
-                return `<div class="chat-item ${isActive ? 'active' : ''}" onclick="openPrivateChat('${m.uid}', '${m.name.replace(/'/g, "\\'")}', '${m.photo || ''}')">
-                    <div class="chat-item-avatar">${photoHtml}</div>
-                    <div class="chat-item-info">
-                        <div class="chat-item-name">${m.name}</div>
-                        <div class="chat-item-preview">Kanda kuvugana</div>
-                    </div>
-                    ${unreadBadge}
-                </div>`;
-            }).join('');
-        }
-    }
-    
-    chatList.innerHTML = html;
+        </div>
+    `;
 }
         window.openGroupChat = function() {
             currentChatType = 'group';
@@ -7100,7 +7145,7 @@ window.selectChatUser = function(uid, name, photo) {
         messagesEl.innerHTML = `<div class="chat-empty"><i class="fas fa-exclamation-triangle"></i><h3>Ikibazo cyabaye</h3><p>${error.message}</p></div>`;
     }); // <--- IYI NI YO YARI IBURA (gufunga onSnapshot)
 }
-  function loadPrivateMessages() {
+ function loadPrivateMessages() {
     if (chatUnsubscribe) { chatUnsubscribe(); chatUnsubscribe = null; }
     if (!currentPrivateChatId) return;
     
@@ -7119,112 +7164,116 @@ window.selectChatUser = function(uid, name, photo) {
         snap.forEach(d => chatMessages.push({ id: d.id, ...d.data() }));
         renderChatMessages();
         
-        // Hita usoma ubutumwa ako kanya (nta setTimeout ikenewe)
-        markPrivateMessagesAsRead();
+        // Tegereza gato kugira ngo chatMessages ibe yuzuye mbere yo gusoma
+        setTimeout(() => {
+            markPrivateMessagesAsRead();
+        }, 500);
+        
     }, (error) => {
         console.error('Chat error:', error);
         messagesEl.innerHTML = `<div class="chat-empty"><i class="fas fa-exclamation-triangle"></i><h3>Ikibazo cyabaye</h3><p>${error.message}</p></div>`;
     });
 }
-        function renderChatMessages() {
-            const messagesEl = document.getElementById('chatMessages');
-            if (!messagesEl) return;
-            
-            if (chatMessages.length === 0) {
-                messagesEl.innerHTML = `<div class="chat-empty">
-                    <i class="fas fa-comments"></i>
-                    <h3>Nta butumwa</h3>
-                    <p>Tangira kuvuga</p>
-                </div>`;
-                return;
-            }
-            
-            const myUid = currentUser?.uid;
-            
-            let html = chatMessages.map(msg => {
-                const isMine = msg.fromUid === myUid;
-                const date = msg.createdAt?.toDate ? msg.createdAt.toDate() : new Date();
-                const timeStr = `${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
-                const initials = (msg.fromName || '?').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-                const avatarHtml = msg.fromPhoto 
-                    ? `<img src="${msg.fromPhoto}">` 
-                    : initials;
-                
-                let receiptHtml = '';
-                if (isMine) {
-                    const readBy = msg.readBy || [];
-                    const isRead = readBy.length > 1 || (currentChatType === 'private' && readBy.includes(currentPrivateChatUser?.uid));
-                    receiptHtml = isRead 
-                        ? `<span style="color:#38bdf8;font-weight:700;font-size:12px;margin-left:4px;">✓✓</span>` 
-                        : `<span style="color:rgba(255,255,255,0.6);font-size:12px;margin-left:4px;">✓</span>`;
-                }
+      function renderChatMessages() {
+    const messagesEl = document.getElementById('chatMessages');
+    if (!messagesEl) return;
+    
+    if (chatMessages.length === 0) {
+        messagesEl.innerHTML = `<div class="chat-empty"><i class="fas fa-comments"></i><h3>Nta butumwa</h3><p>Tangira kuvuga</p></div>`;
+        return;
+    }
+    
+    const myUid = currentUser?.uid;
+    
+    let html = chatMessages.map(msg => {
+        const isMine = msg.fromUid === myUid;
+        const date = msg.createdAt?.toDate ? msg.createdAt.toDate() : new Date();
+        const timeStr = `${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
+        const initials = (msg.fromName || '?').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        const avatarHtml = msg.fromPhoto ? `<img src="${msg.fromPhoto}">` : initials;
 
-                               return `<div class="chat-message ${isMine ? 'mine' : ''}">
-                    <div class="chat-message-avatar">${avatarHtml}</div>
-                    <div>
-                        ${!isMine ? `<div class="chat-message-sender">${msg.fromName || 'Unknown'}</div>` : ''}
-                        <div class="chat-message-bubble" style="position:relative;">
-                            <div class="chat-message-text">${escapeHtml(msg.message || '')}</div>
-                            <div class="chat-message-time" style="display:flex;align-items:center;justify-content:flex-end;gap:6px;">
-                                ${timeStr} ${receiptHtml}
-                                ${isMine ? `
-                                    <span style="cursor:pointer;color:rgba(255,255,255,0.8);font-size:11px;margin-left:4px;" onclick="editMessage('${msg.id}', '${escapeHtml(msg.message || '')}')" title="Hindura"><i class="fas fa-edit"></i></span>
-                                    <span style="cursor:pointer;color:rgba(255,100,100,0.9);font-size:11px;" onclick="deleteMessage('${msg.id}')" title="Siba"><i class="fas fa-trash"></i></span>
-                                ` : ''}
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-            }).join('');
-
-            if (currentChatType === 'private' && chatMessages.length > 0) {
-                const lastMsg = chatMessages[chatMessages.length - 1];
-                const typing = lastMsg.typing || {};
-                if (typing[currentPrivateChatUser?.uid]) {
-                    html += `<div style="font-size:12px;color:var(--text-secondary);padding:4px 16px;font-style:italic;">
-                        ${currentPrivateChatUser.name} arandika...
-                    </div>`;
-                }
-            }
-
-            messagesEl.innerHTML = html;
-            messagesEl.scrollTop = messagesEl.scrollHeight;
+        // Iyi ni Reply (niba irimo)
+        let replyHtml = '';
+        if (msg.replyTo) {
+            replyHtml = `
+                <div style="background: rgba(0,0,0,0.1); border-left: 3px solid var(--primary); padding: 6px 10px; border-radius: 6px; margin-bottom: 8px; font-size: 12px; color: ${isMine ? 'rgba(255,255,255,0.9)' : 'var(--text-secondary)'};">
+                    <strong>${msg.replyTo.fromName}</strong><br>
+                    ${msg.replyTo.message.substring(0, 50)}${msg.replyTo.message.length > 50 ? '...' : ''}
+                </div>
+            `;
         }
 
-        window.sendChatMessage = async function() {
-            const input = document.getElementById('chatInput');
-            const message = input.value.trim();
-            if (!message) return;
-            
-            input.value = '';
-            
-            try {
-                const chatData = {
-                    message,
-                    fromUid: currentUser.uid,
-                    fromName: currentUserData.name || currentUser.email,
-                    fromPhoto: currentUserData.photo || null,
-                    readBy: [currentUser.uid], // <--- IYI NI NSHYA
-                    createdAt: serverTimestamp()
-                };
-                
-                if (currentChatType === 'group') {
-                    await addDoc(collection(db, 'groupChats'), chatData);
-                } else if (currentChatType === 'private' && currentPrivateChatId) {
-                    await addDoc(collection(db, 'privateChats'), {
-                        ...chatData,
-                        chatId: currentPrivateChatId,
-                        participants: [currentUser.uid, currentPrivateChatUser.uid],
-                        typing: {} // <--- IYI NI NSHYA
-                    });
-                }
-                updateTypingStatus(false);
-            } catch (error) {
-                showToast('❌ ' + error.message, 'error');
-                input.value = message;
-            }
-        };
+        // Buto zo kuri ubutumwa (Edit, Delete, Reply)
+        let actionsHtml = `
+            <div class="message-actions" style="display: none; position: absolute; top: 5px; right: 5px; background: var(--bg-card); border-radius: 8px; box-shadow: var(--shadow); padding: 4px; gap: 4px; z-index: 10;">
+                <button onclick="setReply('${msg.id}', '${escapeHtml(msg.message)}', '${msg.fromName}')" style="border:none; background:transparent; cursor:pointer; padding: 4px;" title="Subiza"><i class="fas fa-reply" style="color: var(--primary);"></i></button>
+                ${isMine ? `
+                    <button onclick="editMessage('${msg.id}', '${escapeHtml(msg.message)}')" style="border:none; background:transparent; cursor:pointer; padding: 4px;" title="Hindura"><i class="fas fa-edit" style="color: var(--warning);"></i></button>
+                    <button onclick="deleteMessage('${msg.id}')" style="border:none; background:transparent; cursor:pointer; padding: 4px;" title="Siba"><i class="fas fa-trash" style="color: var(--danger);"></i></button>
+                ` : ''}
+            </div>
+        `;
 
+        return `<div class="chat-message ${isMine ? 'mine' : ''}" onmouseenter="this.querySelector('.message-actions').style.display='flex'" onmouseleave="this.querySelector('.message-actions').style.display='none'">
+            <div class="chat-message-avatar">${avatarHtml}</div>
+            <div>
+                ${!isMine ? `<div class="chat-message-sender">${msg.fromName || 'Unknown'}</div>` : ''}
+                <div class="chat-message-bubble" style="position:relative;">
+                    ${replyHtml} <!-- Iyi ni Reply Preview -->
+                    <div class="chat-message-text">${escapeHtml(msg.message || '')}</div>
+                    <div class="chat-message-time" style="display:flex;align-items:center;justify-content:flex-end;">
+                        ${timeStr}
+                    </div>
+                    ${actionsHtml} <!-- Buto zo kuri ubutumwa -->
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+
+    messagesEl.innerHTML = html;
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+window.sendChatMessage = async function() {
+    const input = document.getElementById('chatInput');
+    const message = input.value.trim();
+    if (!message) return;
+    
+    // Reba niba hari ubutumwa turimo gusubiza (Reply)
+    let replyTo = null;
+    if (window._replyingTo) {
+        replyTo = {
+            id: window._replyingTo.id,
+            message: window._replyingTo.message,
+            fromName: window._replyingTo.fromName
+        };
+    }
+
+    input.value = '';
+    
+    try {
+        const chatData = {
+            message,
+            fromUid: currentUser.uid,
+            fromName: currentUserData.name || currentUser.email,
+            fromPhoto: currentUserData.photo || null,
+            readBy: [currentUser.uid],
+            replyTo: replyTo, // <--- IYI NI NSHYA
+            createdAt: serverTimestamp()
+        };
+        
+        // Buri gihe kohereza mu Itsinda Rusange gusa
+        await addDoc(collection(db, 'groupChats'), chatData);
+        
+        // Siba Reply nyuma yo kohereza
+        window._replyingTo = null;
+        const replyPreview = document.getElementById('replyPreviewBar');
+        if (replyPreview) replyPreview.style.display = 'none';
+        
+    } catch (error) {
+        showToast('❌ ' + error.message, 'error');
+        input.value = message;
+    }
+};
         // ============================================
         // REPORTS
         // ============================================
@@ -7849,6 +7898,251 @@ window.deleteMessage = async function(msgId) {
         showToast('❌ ' + error.message, 'error');
     }
 };
+// ============================================
+// MARK PRESENT
+// ============================================
+window.markPresent = function(memberId) {
+    // Kura kuri late na absent
+    currentLateList = currentLateList.filter(t => t.id !== memberId);
+    currentAbsentList = currentAbsentList.filter(t => t.id !== memberId);
+    
+    const i = currentTickList.findIndex(t => t.id === memberId);
+    if (i === -1) {
+        const now = new Date();
+        const time = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+        currentTickList.push({ id: memberId, time, status: 'present' });
+    } else {
+        // Kanda kenshi = gukuraho
+        currentTickList.splice(i, 1);
+    }
+    
+    // Hindura UI ya row
+    const row = document.querySelector(`tr[data-member-id="${memberId}"]`);
+    if (row) {
+        row.classList.remove('late', 'absent');
+        const isNowPresent = currentTickList.some(t => t.id === memberId);
+        row.classList.toggle('checked', isNowPresent);
+        row.querySelector('.status-btn.present').classList.toggle('active', isNowPresent);
+        row.querySelector('.status-btn.late').classList.remove('active');
+        row.querySelector('.status-btn.absent').classList.remove('active');
+    }
+    
+    window.updateCounter();
+};
+
+// ============================================
+// LATE MODAL
+// ============================================
+window.openLateModal = function(memberId) {
+    const m = members.find(x => x.id === memberId);
+    if (!m) return;
+    
+    currentLateMemberId = memberId;
+    
+    const nameEl = document.getElementById('lateModalName');
+    if (nameEl) nameEl.textContent = m.name;
+    
+    const timeEl = document.getElementById('lateTime');
+    if (timeEl) timeEl.value = '18:30';
+    
+    const reasonEl = document.getElementById('lateReason');
+    if (reasonEl) reasonEl.value = '';
+    
+    const noteEl = document.getElementById('lateNote');
+    if (noteEl) noteEl.value = '';
+    
+    document.getElementById('lateModal').classList.add('active');
+};
+
+window.closeLateModal = function() {
+    document.getElementById('lateModal').classList.remove('active');
+    currentLateMemberId = null;
+};
+
+window.saveLate = function() {
+    const time = document.getElementById('lateTime').value;
+    const reason = document.getElementById('lateReason').value;
+    const note = document.getElementById('lateNote').value.trim();
+    
+    if (!time || !reason) {
+        showToast('Uzuza isaha na impamvu', 'warning');
+        return;
+    }
+    
+    const memberId = currentLateMemberId;
+    if (!memberId) return;
+    
+    // Kura kuri present na absent
+    currentTickList = currentTickList.filter(t => t.id !== memberId);
+    currentAbsentList = currentAbsentList.filter(t => t.id !== memberId);
+    
+    // Ongeraho kuri late (niba isanzweho, yisubireho)
+    const existing = currentLateList.findIndex(t => t.id === memberId);
+    if (existing !== -1) currentLateList.splice(existing, 1);
+    currentLateList.push({ id: memberId, time, status: 'late', reason, note });
+    
+    // Hindura row UI
+    const row = document.querySelector(`tr[data-member-id="${memberId}"]`);
+    if (row) {
+        row.classList.remove('checked', 'absent');
+        row.classList.add('late');
+        row.querySelector('.status-btn.present').classList.remove('active');
+        row.querySelector('.status-btn.late').classList.add('active');
+        row.querySelector('.status-btn.absent').classList.remove('active');
+    }
+    
+    window.closeLateModal();
+    window.updateCounter();
+    
+    const m = members.find(x => x.id === memberId);
+    showToast(`⏰ ${m?.name || 'Umuririmbyi'} yanditswe nka Late`, 'warning');
+};
+
+// ============================================
+// ABSENT MODAL
+// ============================================
+window.openAbsentModal = function(memberId) {
+    const m = members.find(x => x.id === memberId);
+    if (!m) return;
+    
+    currentAbsentMemberId = memberId;
+    
+    const nameEl = document.getElementById('absentModalName');
+    if (nameEl) nameEl.textContent = m.name;
+    
+    const reasonEl = document.getElementById('absentReason');
+    if (reasonEl) reasonEl.value = '';
+    
+    const noteEl = document.getElementById('absentNote');
+    if (noteEl) noteEl.value = '';
+    
+    document.getElementById('absentModal').classList.add('active');
+};
+
+window.closeAbsentModal = function() {
+    document.getElementById('absentModal').classList.remove('active');
+    currentAbsentMemberId = null;
+};
+
+window.saveAbsent = function() {
+    const reason = document.getElementById('absentReason').value;
+    const note = document.getElementById('absentNote').value.trim();
+    
+    if (!reason) {
+        showToast('Hitamo impamvu', 'warning');
+        return;
+    }
+    
+    const memberId = currentAbsentMemberId;
+    if (!memberId) return;
+    
+    // Kura kuri present na late
+    currentTickList = currentTickList.filter(t => t.id !== memberId);
+    currentLateList = currentLateList.filter(t => t.id !== memberId);
+    
+    // Ongeraho kuri absent
+    const existing = currentAbsentList.findIndex(t => t.id === memberId);
+    if (existing !== -1) currentAbsentList.splice(existing, 1);
+    currentAbsentList.push({ id: memberId, status: 'absent', reason, note });
+    
+    // Hindura row UI
+    const row = document.querySelector(`tr[data-member-id="${memberId}"]`);
+    if (row) {
+        row.classList.remove('checked', 'late');
+        row.classList.add('absent');
+        row.querySelector('.status-btn.present').classList.remove('active');
+        row.querySelector('.status-btn.late').classList.remove('active');
+        row.querySelector('.status-btn.absent').classList.add('active');
+    }
+    
+    window.closeAbsentModal();
+    window.updateCounter();
+    
+    const m = members.find(x => x.id === memberId);
+    showToast(`❌ ${m?.name || 'Umuririmbyi'} yanditswe nka Ntabwo`, 'error');
+};
+
+// ============================================
+// UPDATE COUNTER
+// ============================================
+window.updateCounter = function() {
+    const activeCount = members.filter(m => m.status === 'active' || !m.status).length;
+    
+    const counterText = document.getElementById('counterText');
+    if (counterText) counterText.textContent = `${currentTickList.length} / ${activeCount}`;
+    
+    const submitCount = document.getElementById('submitCount');
+    if (submitCount) submitCount.textContent = currentTickList.length;
+    
+    const submitLate = document.getElementById('submitLate');
+    if (submitLate) submitLate.textContent = currentLateList.length;
+    
+    const submitAbsent = document.getElementById('submitAbsent');
+    if (submitAbsent) submitAbsent.textContent = currentAbsentList.length;
+    
+    const submitTotal = document.getElementById('submitTotal');
+    if (submitTotal) submitTotal.textContent = activeCount;
+};
+
+// ============================================
+// FILTER MEMBERS LIST (Search)
+// ============================================
+window.filterMembersList = function() {
+    const searchEl = document.getElementById('searchMember');
+    if (!searchEl) return;
+    
+    const search = searchEl.value.toLowerCase().trim();
+    
+    document.querySelectorAll('#membersTableBody tr').forEach(row => {
+        const name = (row.querySelector('.name')?.textContent || '').toLowerCase();
+        const number = (row.querySelectorAll('td')[2]?.textContent || '').toLowerCase();
+        const memberId = (row.querySelector('.id')?.textContent || '').toLowerCase();
+        
+        const matches = !search || name.includes(search) || number.includes(search) || memberId.includes(search);
+        row.style.display = matches ? '' : 'none';
+    });
+};
+window.setReply = function(id, message, fromName) {
+    window._replyingTo = { id, message, fromName };
+    
+    // Hisha preview ya kera niba ihari
+    let replyPreview = document.getElementById('replyPreviewBar');
+    if (replyPreview) replyPreview.remove();
+
+    // Kora preview nshya hejuru y'aho wandikira
+    const chatInputBar = document.querySelector('.chat-input-bar');
+    if (chatInputBar) {
+        replyPreview = document.createElement('div');
+        replyPreview.id = 'replyPreviewBar';
+        replyPreview.style.cssText = 'background: var(--bg); padding: 8px 12px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 13px;';
+        replyPreview.innerHTML = `
+            <div>
+                <span style="color: var(--primary); font-weight: 700;">Gusubiza ${fromName}</span><br>
+                <span style="color: var(--text-secondary);">${message.substring(0, 50)}...</span>
+            </div>
+            <button onclick="cancelReply()" style="border:none; background:transparent; color: var(--danger); cursor:pointer;"><i class="fas fa-times"></i></button>
+        `;
+        chatInputBar.parentNode.insertBefore(replyPreview, chatInputBar);
+    }
+};
+
+window.cancelReply = function() {
+    window._replyingTo = null;
+    const replyPreview = document.getElementById('replyPreviewBar');
+    if (replyPreview) replyPreview.remove();
+};
+document.addEventListener('click', function(event) {
+    const sidebar = document.getElementById('sidebar');
+    const menuToggle = document.querySelector('.menu-toggle');
+    
+    // Reba niba sidebar ifunguye (ifite class 'open')
+    if (sidebar && sidebar.classList.contains('open')) {
+        // Reba niba aho wakanze atari muri sidebar cyangwa kuri buto ya menu
+        if (!sidebar.contains(event.target) && menuToggle && !menuToggle.contains(event.target)) {
+            sidebar.classList.remove('open');
+        }
+    }
+});
     </script>
 </body>
 </html>
