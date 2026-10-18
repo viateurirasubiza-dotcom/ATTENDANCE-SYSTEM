@@ -2008,6 +2008,44 @@ body {
     .submit-bar { flex-direction: column; }
     .submit-bar .btn { width: 100%; }
     .qr-actions { grid-template-columns: 1fr; }
+
+    /* IYI NI YO YONGERWA KURI TELEFONE */
+    .attendance-table, 
+    .table-card, 
+    .checklist-card {
+        overflow-x: auto !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .attendance-table table,
+    .table-card table,
+    .checklist-table {
+        min-width: 600px !important; /* Ituma habaho scroll aho kugira ngo ipaji yaguke */
+    }
+
+    /* Kugabanya imbonerahamwe kuri telefone nto */
+    .stats-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 10px !important;
+    }
+
+    .choir-title-banner {
+        min-height: 160px !important;
+        padding: 28px 14px !important;
+    }
+}
+@media (max-width: 600px) {
+    .header { padding: 12px 16px; }
+    .logo span { display: none; }
+    .user-chip span { display: none; }
+    .main { padding: 14px; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .detail-stats { grid-template-columns: 1fr; }
+    .saved-card { flex-direction: column; align-items: stretch; }
+    .submit-bar { flex-direction: column; }
+    .submit-bar .btn { width: 100%; }
+    .qr-actions { grid-template-columns: 1fr; }
 }
 @media (max-width: 480px) {
     .auth-card { padding: 32px 24px; border-radius: 24px; }
@@ -2074,6 +2112,13 @@ body {
 @keyframes floatBtn {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-5px); }
+}
+.table-responsive-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    display: block;
 }
     </style>
 </head>
