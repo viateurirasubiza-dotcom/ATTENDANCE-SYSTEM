@@ -2,35 +2,24 @@
 <html lang="rw">
 <head>
     <meta charset="UTF-8">
-    
-<link rel="icon" type="image/png" href="/favicon.png">
-
+    <link rel="icon" type="image/png" href="/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>HCFC CHOIR | Héritiers du Ciel Family Choir</title>
-
-<meta name="description" content="Bienvenue sur HCFC CHOIR, la plateforme des Héritiers du Ciel Family Choir pour les informations du chœur, les activités et la gestion des présences.">
-
-<meta name="robots" content="index, follow">
-
-<link rel="canonical" href="https://hcfc-choir.vercel.app/">
-
-<!-- Open Graph: WhatsApp and social media previews -->
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="HCFC CHOIR">
-<meta property="og:title" content="HCFC CHOIR | Héritiers du Ciel Family Choir">
-<meta property="og:description" content="Bienvenue sur HCFC CHOIR, la plateforme des Héritiers du Ciel Family Choir pour les informations du chœur, les activités et la gestion des présences.">
-<meta property="og:url" content="https://hcfc-choir.vercel.app/">
-<meta property="og:locale" content="fr_RW">
-
-<!-- Twitter/X -->
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="HCFC CHOIR | Héritiers du Ciel Family Choir">
-<meta name="twitter:description" content="Bienvenue sur HCFC CHOIR, la plateforme des Héritiers du Ciel Family Choir pour les informations du chœur, les activités et la gestion des présences.">
-
+    <title>HCFC CHOIR | Héritiers du Ciel Family Choir</title>
+    <meta name="description" content="Bienvenue sur HCFC CHOIR, la plateforme des Héritiers du Ciel Family Choir pour les informations du chœur, les activités et la gestion des présences.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://hcfc-choir.vercel.app/">
     
-    <!-- Google Search Console Verification -->
-     <meta name="google-site-verification" content="ztgP5gbM_2EwfO7MgZwJb7Q7NUjo-Pjbh_wKhVJZfBU" />
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="HCFC CHOIR">
+    <meta property="og:title" content="HCFC CHOIR | Héritiers du Ciel Family Choir">
+    <meta property="og:description" content="Bienvenue sur HCFC CHOIR, la plateforme des Héritiers du Ciel Family Choir pour les informations du chœur, les activités et la gestion des présences.">
+    <meta property="og:url" content="https://hcfc-choir.vercel.app/">
+    <meta property="og:locale" content="fr_RW">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="HCFC CHOIR | Héritiers du Ciel Family Choir">
+    <meta name="twitter:description" content="Bienvenue sur HCFC CHOIR, la plateforme des Héritiers du Ciel Family Choir pour les informations du chœur, les activités et la gestion des présences.">
+    <meta name="google-site-verification" content="ztgP5gbM_2EwfO7MgZwJb7Q7NUjo-Pjbh_wKhVJZfBU" />
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.0/dist/confetti.browser.min.js"></script>
@@ -38,7 +27,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Dark mode permanent -->
     <script>
         (function() {
             try {
@@ -4106,52 +4094,42 @@ body {
         // ============================================
         // HELPERS
         // ============================================
-        // ============================================
-// HELPERS (SUBIZA AHA)
-// ============================================
-window.showToast = function(message, type = 'success') {
-    const container = document.getElementById('toastContainer');
-    if (!container) return;
-    const icons = { success: 'fa-check', error: 'fa-times', warning: 'fa-exclamation', info: 'fa-info' };
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.innerHTML = `<div class="toast-icon"><i class="fas ${icons[type]}"></i></div><span>${escapeHtml(message)}</span>`;
-    container.appendChild(toast);
-    setTimeout(() => toast.classList.add('show'), 10);
-    setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 3500);
-};
-
-window.closeModal = function(id) { 
-    const el = document.getElementById(id);
-    if (el) el.classList.remove('active');
-};
-
-document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', function(e) { 
-    if (e.target === this) this.classList.remove('active'); 
-}));
-
-window.formatDate = function(d) {
-    if (!d) return '-';
-    try {
-        const dt = new Date(d);
-        if (isNaN(dt.getTime())) return '-';
-        return `${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}/${dt.getFullYear()}`;
-    } catch(e) { return '-'; }
-};
-
-function escapeHtml(text) {
-    if (text === null || text === undefined) return '';
-    const div = document.createElement('div');
-    div.textContent = String(text);
-    return div.innerHTML;
-}
-        window.formatDate = function(d) {
-            if (!d) return '-';
-            const dt = new Date(d);
-            return `${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}/${dt.getFullYear()}`;
+        window.showToast = function(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const icons = { success: 'fa-check', error: 'fa-times', warning: 'fa-exclamation', info: 'fa-info' };
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<div class="toast-icon"><i class="fas ${icons[type]}"></i></div><span>${escapeHtml(message)}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 3500);
         };
 
-      
+        window.closeModal = function(id) { 
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('active');
+        };
+
+        document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', function(e) { 
+            if (e.target === this) this.classList.remove('active'); 
+        }));
+
+        window.formatDate = function(d) {
+            if (!d) return '-';
+            try {
+                const dt = new Date(d);
+                if (isNaN(dt.getTime())) return '-';
+                return `${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}/${dt.getFullYear()}`;
+            } catch(e) { return '-'; }
+        };
+
+        function escapeHtml(text) {
+            if (text === null || text === undefined) return '';
+            const div = document.createElement('div');
+            div.textContent = String(text);
+            return div.innerHTML;
+        }
 
         // ============================================
         // CLOUDINARY UPLOAD
@@ -4528,60 +4506,68 @@ function escapeHtml(text) {
         // ============================================
         // UNREAD COUNT
         // ============================================
-   // ============================================
-// START UNREAD LISTENER — VERSION YUZUYE
-// ============================================
-window.startUnreadListener = function() {
-    if (!currentUser) {
-        console.warn('⚠️ startUnreadListener: nta user winjiye');
-        return;
-    }
-    
-    const myUid = currentUser.uid;
-    
-    if (unreadListener) {
-        try { unreadListener(); } catch(e) { console.warn('Old listener error:', e); }
-        unreadListener = null;
-    }
-    
-    const q = query(
-        collection(db, 'privateChats'), 
-        where('participants', 'array-contains', myUid)
-    );
-    
-    unreadListener = onSnapshot(q, (snap) => {
-        try {
-            let count = 0;
-            const unreadByUid = {};
+        window.startUnreadListener = function() {
+            if (!currentUser) return;
+            const myUid = currentUser.uid;
             
-            snap.forEach(d => {
-                const data = d.data();
-                // ✅ GUKOSORA: Reba niba readBy ari array. Niba itabaho, ibara nka [].
-                const readBy = Array.isArray(data.readBy) ? data.readBy : [];
-                const participants = Array.isArray(data.participants) ? data.participants : [];
-                
-                // Niba atari ubutumwa bwawe, kandi ntubarimo myUid
-                if (data.fromUid !== myUid && !readBy.includes(myUid)) {
-                    count++;
-                    const otherUid = participants.find(u => u !== myUid);
-                    if (otherUid) {
-                        unreadByUid[otherUid] = (unreadByUid[otherUid] || 0) + 1;
-                    }
-                }
-            });
-            
-            window._unreadCounts = unreadByUid;
-            
-            // Kuraho ubutumwa bwa chat uri muri yo
-            if (currentChatType === 'private' && currentPrivateChatUser) {
-                const currentChatUnread = unreadByUid[currentPrivateChatUser.uid] || 0;
-                count = Math.max(0, count - currentChatUnread);
+            if (unreadListener) {
+                try { unreadListener(); } catch(e) {}
+                unreadListener = null;
             }
             
-            // Vugurura badge
+            const q = query(
+                collection(db, 'privateChats'), 
+                where('participants', 'array-contains', myUid)
+            );
+            
+            unreadListener = onSnapshot(q, (snap) => {
+                try {
+                    let count = 0;
+                    const unreadByUid = {};
+                    
+                    snap.forEach(d => {
+                        const data = d.data();
+                        const readBy = Array.isArray(data.readBy) ? data.readBy : [];
+                        const participants = Array.isArray(data.participants) ? data.participants : [];
+                        
+                        if (data.fromUid !== myUid && !readBy.includes(myUid)) {
+                            count++;
+                            const otherUid = participants.find(u => u !== myUid);
+                            if (otherUid) {
+                                unreadByUid[otherUid] = (unreadByUid[otherUid] || 0) + 1;
+                            }
+                        }
+                    });
+                    
+                    window._unreadCounts = unreadByUid;
+                    
+                    if (currentChatType === 'private' && currentPrivateChatUser) {
+                        const currentChatUnread = unreadByUid[currentPrivateChatUser.uid] || 0;
+                        count = Math.max(0, count - currentChatUnread);
+                    }
+                    
+                    window.updateChatBadges(count);
+                    
+                    if (typeof renderChatList === 'function') {
+                        try { renderChatList(); } catch(e) {}
+                    }
+                    
+                    console.log(`📬 Unread count: ${count}`, unreadByUid);
+                    
+                } catch (innerError) {
+                    console.error('❌ Error in unread listener callback:', innerError);
+                }
+            }, (error) => {
+                console.error('❌ Unread listener error:', error);
+                if (error.code === 'permission-denied') {
+                    window.updateChatBadges(0);
+                }
+            });
+        };
+
+        window.updateChatBadges = function(count) {
             const badge = document.getElementById('chatBadge');
             const sidebarBadge = document.getElementById('sidebarChatCount');
-            
             if (badge) {
                 badge.textContent = count;
                 badge.style.display = count > 0 ? 'flex' : 'none';
@@ -4590,106 +4576,57 @@ window.startUnreadListener = function() {
                 sidebarBadge.textContent = count;
                 sidebarBadge.style.display = count > 0 ? 'flex' : 'none';
             }
-            
-            // Vugurura chat list
-            if (typeof renderChatList === 'function') {
-                try { renderChatList(); } catch(e) { console.warn('renderChatList error:', e); }
-            }
-            
-            console.log(`📬 Unread count: ${count}`, unreadByUid);
-            
-        } catch (innerError) {
-            console.error('❌ Error in unread listener callback:', innerError);
-        }
-    }, (error) => {
-        console.error('❌ Unread listener error:', error);
-        
-        if (error.code === 'permission-denied') {
-            const badge = document.getElementById('chatBadge');
-            const sidebarBadge = document.getElementById('sidebarChatCount');
-            if (badge) { badge.style.display = 'none'; }
-            if (sidebarBadge) { sidebarBadge.style.display = 'none'; }
-        }
-    });
-};
-// ============================================
-// HELPER: VUGURURA BADGE ZOSE
-// ============================================
-function updateChatBadges(count) {
-    const badge = document.getElementById('chatBadge');
-    const sidebarBadge = document.getElementById('sidebarChatCount');
-    
-    if (badge) {
-        badge.textContent = count;
-        badge.style.display = count > 0 ? 'flex' : 'none';
-    }
-    if (sidebarBadge) {
-        sidebarBadge.textContent = count;
-        sidebarBadge.style.display = count > 0 ? 'flex' : 'none';
-    }
-}
+        };
+
         // READ RECEIPTS
-// ============================================
-// MARK PRIVATE MESSAGES AS READ (VERSION YUZUYE)
-// ============================================
-window.markPrivateMessagesAsRead = async function() {
-    if (!currentUser || !currentPrivateChatId) return;
-    if (window._isMarkingRead) return;
-    
-    const myUid = currentUser.uid;
-    window._isMarkingRead = true;
-    
-    try {
-        const q = query(
-            collection(db, 'privateChats'),
-            where('chatId', '==', currentPrivateChatId)
-        );
-        const snap = await getDocs(q);
-        
-        const promises = [];
-        
-        snap.forEach(d => {
-            const data = d.data();
-            const readBy = Array.isArray(data.readBy) ? data.readBy : [];
+        window.markPrivateMessagesAsRead = async function() {
+            if (!currentUser || !currentPrivateChatId) return;
+            if (window._isMarkingRead) return;
             
-            // Niba ubutumwa ari ubw'undi muntu KANDI ntubarimo myUid
-            if (data.fromUid !== myUid && !readBy.includes(myUid)) {
-                // ✅ Koresha updateDoc niba document isanzweho (ari yo nzira yizewe)
-                const ref = doc(db, 'privateChats', d.id);
-                promises.push(updateDoc(ref, { readBy: arrayUnion(myUid) }));
+            const myUid = currentUser.uid;
+            window._isMarkingRead = true;
+            
+            try {
+                const q = query(
+                    collection(db, 'privateChats'),
+                    where('chatId', '==', currentPrivateChatId)
+                );
+                const snap = await getDocs(q);
+                
+                const promises = [];
+                
+                snap.forEach(d => {
+                    const data = d.data();
+                    const readBy = Array.isArray(data.readBy) ? data.readBy : [];
+                    
+                    if (data.fromUid !== myUid && !readBy.includes(myUid)) {
+                        const ref = doc(db, 'privateChats', d.id);
+                        promises.push(updateDoc(ref, { readBy: arrayUnion(myUid) }));
+                    }
+                });
+                
+                if (promises.length === 0) {
+                    if (typeof window.updateChatBadges === 'function') {
+                        window.updateChatBadges(0);
+                    }
+                    return;
+                }
+                
+                await Promise.all(promises);
+                console.log(`✅ Marked ${promises.length} messages as read`);
+                
+                if (typeof window.updateChatBadges === 'function') {
+                    window.updateChatBadges(0);
+                }
+                
+            } catch(e) {
+                console.error("❌ Error marking as read:", e);
+            } finally {
+                window._isMarkingRead = false;
             }
-        });
-        
-        if (promises.length === 0) {
-            if (typeof window.updateChatBadges === 'function') {
-                window.updateChatBadges(0);
-            }
-            return;
-        }
-        
-        await Promise.all(promises);
-        console.log(`✅ Marked ${promises.length} messages as read`);
-        
-        // Hita uzimya badge ako kanya
-        if (typeof window.updateChatBadges === 'function') {
-            window.updateChatBadges(0);
-        } else {
-            const badge = document.getElementById('chatBadge');
-            const sidebarBadge = document.getElementById('sidebarChatCount');
-            if (badge) badge.style.display = 'none';
-            if (sidebarBadge) sidebarBadge.style.display = 'none';
-        }
-        
-    } catch(e) {
-        console.error("❌ Error marking as read:", e);
-    } finally {
-        window._isMarkingRead = false;
-    }
-};
-// ============================================
-// HELPER: VUGURURA BADGE ZOSE
-// ============================================
-    // ============================================
+        };
+
+        // ============================================
         // TYPING INDICATOR
         // ============================================
         function setupTypingListener() {
@@ -4868,61 +4805,60 @@ window.markPrivateMessagesAsRead = async function() {
                 if (ls) ls.classList.add('hidden'); 
             }, 1000);
         }
-function enterApp() {
-    const authScreen = document.getElementById('authScreen');
-    const appEl = document.getElementById('app');
-    const ls = document.getElementById('loadingScreen');
-    
-    if (authScreen) { authScreen.classList.add('hidden'); authScreen.style.display = 'none'; }
-    if (appEl) { appEl.classList.add('active'); appEl.style.display = 'block'; }
-    if (ls) { ls.classList.add('hidden'); ls.style.display = 'none'; }
-    
-    const role = currentUserData?.role;
-    const isAdmin = role === 'admin' || role === 'super_admin';
-    const isSuperAdmin = role === 'super_admin';
-    const isMember = role === 'member';
-    
-    if (isMember) {
-        document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
-        document.querySelectorAll('.super-admin-only').forEach(el => el.style.display = 'none');
-        document.querySelectorAll('.member-only').forEach(el => el.style.display = '');
-        document.querySelectorAll('.nav-item.admin-only').forEach(item => item.style.display = 'none');
-        document.querySelectorAll('.nav-item.super-admin-only').forEach(item => item.style.display = 'none');
-    } else {
-        document.querySelectorAll('.member-only').forEach(el => el.style.display = 'none');
-        document.querySelectorAll('.admin-only').forEach(el => el.style.display = '');
-        
-        if (isSuperAdmin) {
-            document.querySelectorAll('.super-admin-only').forEach(el => el.style.display = '');
-            document.querySelectorAll('.nav-item.super-admin-only').forEach(item => item.style.display = '');
-        } else {
-            document.querySelectorAll('.super-admin-only').forEach(el => el.style.display = 'none');
-            document.querySelectorAll('.nav-item.super-admin-only').forEach(item => item.style.display = 'none');
+
+        function enterApp() {
+            const authScreen = document.getElementById('authScreen');
+            const appEl = document.getElementById('app');
+            const ls = document.getElementById('loadingScreen');
+            
+            if (authScreen) { authScreen.classList.add('hidden'); authScreen.style.display = 'none'; }
+            if (appEl) { appEl.classList.add('active'); appEl.style.display = 'block'; }
+            if (ls) { ls.classList.add('hidden'); ls.style.display = 'none'; }
+            
+            const role = currentUserData?.role;
+            const isAdmin = role === 'admin' || role === 'super_admin';
+            const isSuperAdmin = role === 'super_admin';
+            const isMember = role === 'member';
+            
+            if (isMember) {
+                document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.super-admin-only').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.member-only').forEach(el => el.style.display = '');
+                document.querySelectorAll('.nav-item.admin-only').forEach(item => item.style.display = 'none');
+                document.querySelectorAll('.nav-item.super-admin-only').forEach(item => item.style.display = 'none');
+            } else {
+                document.querySelectorAll('.member-only').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.admin-only').forEach(el => el.style.display = '');
+                
+                if (isSuperAdmin) {
+                    document.querySelectorAll('.super-admin-only').forEach(el => el.style.display = '');
+                    document.querySelectorAll('.nav-item.super-admin-only').forEach(item => item.style.display = '');
+                } else {
+                    document.querySelectorAll('.super-admin-only').forEach(el => el.style.display = 'none');
+                    document.querySelectorAll('.nav-item.super-admin-only').forEach(item => item.style.display = 'none');
+                }
+            }
+            
+            updateProfileUI();
+            
+            if (isMember) {
+                switchPage('my-dashboard', null);
+            } else {
+                switchPage('dashboard', null);
+                try { renderDashboard(); } catch(e) { console.error(e); }
+                try { renderMembers(); } catch(e) { console.error(e); }
+                try { renderAttendancePage(); } catch(e) { console.error(e); }
+                try { renderPhotosPage(); } catch(e) { console.error(e); }
+            }
+            
+            try { initPresence(); } catch(e) { console.error(e); }
+            try { startUnreadListener(); } catch(e) { console.error(e); }
+            
+            const today = new Date().toISOString().split('T')[0];
+            const sd = document.getElementById('sessionDate');
+            if (sd) sd.value = today;
         }
-    }
-    
-    updateProfileUI();
-    
-    // ✅ HAMAGARA PAGE YAKWIYE GUSA
-    if (isMember) {
-        switchPage('my-dashboard', null);
-        // Hagarika hano — ntubandanye guhamagara admin functions!
-    } else {
-        switchPage('dashboard', null);
-        try { renderDashboard(); } catch(e) { console.error(e); }
-        try { renderMembers(); } catch(e) { console.error(e); }
-        try { renderAttendancePage(); } catch(e) { console.error(e); }
-        try { renderPhotosPage(); } catch(e) { console.error(e); }
-    }
-    
-    // START CHAT SERVICES (Birashobora gukorera bose)
-    try { initPresence(); } catch(e) { console.error(e); }
-    try { startUnreadListener(); } catch(e) { console.error(e); }
-    
-    const today = new Date().toISOString().split('T')[0];
-    const sd = document.getElementById('sessionDate');
-    if (sd) sd.value = today;
-}
+
         // ============================================
         // UPDATE PROFILE UI
         // ============================================
@@ -5004,64 +4940,63 @@ function enterApp() {
             document.title = `🎵 ${choirName} - Attendance System`;
         };
 
-       window.uploadProfilePhoto = async function(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    if (file.size > 5 * 1024 * 1024) { showToast('Ifoto ni nini cyane (max 5MB)', 'warning'); return; }
-    
-    try {
-        showToast('⏳ Turashyira ifoto...', 'info');
-        const photoURL = await uploadToCloudinary(file, 'choir_profiles');
-        
-        if (currentUserData.role === 'member') {
-            await updateDoc(doc(db, 'members', currentUserData.memberId), { photo: photoURL });
-        } else {
-            await updateDoc(doc(db, 'users', currentUser.uid), { photo: photoURL });
-        }
-        
-        currentUserData.photo = photoURL;
-        await updateProfile(currentUser, { photoURL });
-        
-        // Vugurura amakuru
-        await loadMembers();
-        await loadUsers();
-        
-        updateProfileUI();
-        renderPhotosPage();
-        
-        showToast('✅ Ifoto yahinduwe!', 'success');
-    } catch (error) { 
-        showToast('❌ ' + error.message, 'error'); 
-    }
-};
-       window.saveProfile = async function() {
-    const name = document.getElementById('profileInputName').value.trim();
-    const phone = document.getElementById('profileInputPhone').value.trim();
-    const choirName = document.getElementById('choirName')?.value.trim();
-    const birthday = document.getElementById('profileInputBirthday')?.value;
-    if (!name) { showToast('Amazina ntashobora kuba ubusa', 'warning'); return; }
-    try {
-        if (currentUserData.role === 'member') {
-            const updateData = { name, number: phone };
-            if (birthday) updateData.birthday = birthday;
-            await updateDoc(doc(db, 'members', currentUserData.memberId), updateData);
-            currentUserData.name = name;
-            if (birthday) currentUserData.birthday = birthday;
-        } else {
-            // ADMIN NA SUPER ADMIN — ubu bashobora kubika birthday
-            const updateData = { name, phone, choirName };
-            if (birthday) updateData.birthday = birthday;
-            await updateDoc(doc(db, 'users', currentUser.uid), updateData);
-            currentUserData.name = name;
-            currentUserData.phone = phone;
-            if (birthday) currentUserData.birthday = birthday;
-            if (choirName) currentUserData.choirName = choirName;
-        }
-        await updateProfile(currentUser, { displayName: name });
-        updateProfileUI();
-        showToast('✅ Profile yabitswe', 'success');
-    } catch (error) { showToast('❌ ' + error.message, 'error'); }
-};
+        window.uploadProfilePhoto = async function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (file.size > 5 * 1024 * 1024) { showToast('Ifoto ni nini cyane (max 5MB)', 'warning'); return; }
+            
+            try {
+                showToast('⏳ Turashyira ifoto...', 'info');
+                const photoURL = await uploadToCloudinary(file, 'choir_profiles');
+                
+                if (currentUserData.role === 'member') {
+                    await updateDoc(doc(db, 'members', currentUserData.memberId), { photo: photoURL });
+                } else {
+                    await updateDoc(doc(db, 'users', currentUser.uid), { photo: photoURL });
+                }
+                
+                currentUserData.photo = photoURL;
+                await updateProfile(currentUser, { photoURL });
+                
+                await loadMembers();
+                await loadUsers();
+                
+                updateProfileUI();
+                renderPhotosPage();
+                
+                showToast('✅ Ifoto yahinduwe!', 'success');
+            } catch (error) { 
+                showToast('❌ ' + error.message, 'error'); 
+            }
+        };
+
+        window.saveProfile = async function() {
+            const name = document.getElementById('profileInputName').value.trim();
+            const phone = document.getElementById('profileInputPhone').value.trim();
+            const choirName = document.getElementById('choirName')?.value.trim();
+            const birthday = document.getElementById('profileInputBirthday')?.value;
+            if (!name) { showToast('Amazina ntashobora kuba ubusa', 'warning'); return; }
+            try {
+                if (currentUserData.role === 'member') {
+                    const updateData = { name, number: phone };
+                    if (birthday) updateData.birthday = birthday;
+                    await updateDoc(doc(db, 'members', currentUserData.memberId), updateData);
+                    currentUserData.name = name;
+                    if (birthday) currentUserData.birthday = birthday;
+                } else {
+                    const updateData = { name, phone, choirName };
+                    if (birthday) updateData.birthday = birthday;
+                    await updateDoc(doc(db, 'users', currentUser.uid), updateData);
+                    currentUserData.name = name;
+                    currentUserData.phone = phone;
+                    if (birthday) currentUserData.birthday = birthday;
+                    if (choirName) currentUserData.choirName = choirName;
+                }
+                await updateProfile(currentUser, { displayName: name });
+                updateProfileUI();
+                showToast('✅ Profile yabitswe', 'success');
+            } catch (error) { showToast('❌ ' + error.message, 'error'); }
+        };
 
         window.changePassword = async function() {
             const oldPwd = document.getElementById('oldPassword').value;
@@ -5086,36 +5021,35 @@ function enterApp() {
         };
 
         window.switchPage = function(page, element) {
-    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-    if (element) element.classList.add('active');
-    
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    const pageEl = document.getElementById('page-' + page);
-    if (pageEl) pageEl.classList.add('active');
-    
-    // --- IBI NI BYO BIHAMAGARA FUNCTIONS ZOSE UKURIKIJE NA PAJI ---
-    if (page === 'members') renderMembers();
-    if (page === 'pending') renderPending();
-    if (page === 'users') renderUsers();
-    if (page === 'my-dashboard') renderMyDashboard();
-    if (page === 'attendance') renderAttendancePage();
-    if (page === 'voices') renderVoicesPage();
-    if (page === 'photos') renderPhotosPage();
-    if (page === 'reports') initReportsPage();
-    if (page === 'profile') updateProfileUI();
-    if (page === 'uniform') {
-        if (currentUniformTab === 'checklist') renderChecklist();
-        else renderUniforms();
-    }
-    if (page === 'lyrics') renderLyrics(); // IYI NI YO YABURAGA
-    if (page === 'announcements') renderAnnouncements(); // IYI NI YO YABURAGA
-    if (page === 'birthday') renderBirthdayPage();
-    if (page === 'recycle-bin') renderRecycleBin();
-    if (page === 'chat') initChatPage(); // IYI NI YO YABURAGA
-    
-    if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-};
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            if (element) element.classList.add('active');
+            
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const pageEl = document.getElementById('page-' + page);
+            if (pageEl) pageEl.classList.add('active');
+            
+            if (page === 'members') renderMembers();
+            if (page === 'pending') renderPending();
+            if (page === 'users') renderUsers();
+            if (page === 'my-dashboard') renderMyDashboard();
+            if (page === 'attendance') renderAttendancePage();
+            if (page === 'voices') renderVoicesPage();
+            if (page === 'photos') renderPhotosPage();
+            if (page === 'reports') initReportsPage();
+            if (page === 'profile') updateProfileUI();
+            if (page === 'uniform') {
+                if (currentUniformTab === 'checklist') renderChecklist();
+                else renderUniforms();
+            }
+            if (page === 'lyrics') renderLyrics();
+            if (page === 'announcements') renderAnnouncements();
+            if (page === 'birthday') renderBirthdayPage();
+            if (page === 'recycle-bin') renderRecycleBin();
+            if (page === 'chat') initChatPage();
+            
+            if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
 
         function updateClock() {
             const now = new Date();
@@ -5248,267 +5182,125 @@ function enterApp() {
         };
 
         // ============================================
-// RENDER MEMBERS FOR ATTENDANCE
-// ============================================
-window.renderMembersForAttendance = function() {
-    const tbody = document.getElementById('membersTableBody');
-    if (!tbody) return;
-    
-    const activeMembers = members.filter(m => m.status === 'active' || !m.status);
-    
-    if (activeMembers.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-secondary);">
-            <i class="fas fa-users" style="font-size:40px;opacity:0.3;display:block;margin-bottom:10px;"></i>
-            Nta baririmbyi babonetse. Banza wongereho abaririmbyi.
-        </td></tr>`;
-        return;
-    }
-    
-    tbody.innerHTML = activeMembers.map((m, i) => {
-        const initials = (m.name || '?').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-        const photoHtml = m.photo
-            ? `<img src="${m.photo}" class="row-photo" onerror="this.outerHTML='<div class=\\'row-avatar\\'>${initials}</div>'">`
-            : `<div class="row-avatar">${initials}</div>`;
-        
-        const isPresent = currentTickList.some(t => t.id === m.id);
-        const isLate = currentLateList.some(t => t.id === m.id);
-        const isAbsent = currentAbsentList.some(t => t.id === m.id);
-        const levelClass = m.level === 'Special' ? 'special' : '';
-        
-        return `<tr data-member-id="${m.id}">
-            <td><strong>${i + 1}</strong></td>
-            <td>
-                <div class="member-cell-row">
-                    ${photoHtml}
-                    <div class="row-info">
-                        <div class="name">${m.name || '-'}</div>
-                        <div class="id">${m.memberId || ''}</div>
-                    </div>
-                </div>
-            </td>
-            <td><strong>${m.number || '-'}</strong></td>
-            <td><span class="level-badge ${levelClass}">${m.level === 'Special' ? '⭐' : '🎓'} ${m.level || '-'}</span></td>
-            <td><span class="voice-badge ${(m.voice || '').toLowerCase()}"><i class="fas fa-microphone"></i> ${m.voice || '-'}</span></td>
-            <td style="text-align: center;">
-                <div class="status-buttons">
-                    <button type="button" class="status-btn present ${isPresent ? 'active' : ''}" onclick="window.markPresent('${m.id}')" title="Yaje">
-                        <i class="fas fa-check"></i>
-                    </button>
-                    <button type="button" class="status-btn late ${isLate ? 'active' : ''}" onclick="window.openLateModal('${m.id}')" title="Late">
-                        <i class="fas fa-clock"></i>
-                    </button>
-                    <button type="button" class="status-btn absent ${isAbsent ? 'active' : ''}" onclick="window.openAbsentModal('${m.id}')" title="Ntabwo">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </td>
-        </tr>`;
-    }).join('');
-};
+        // RENDER MEMBERS FOR ATTENDANCE
+        // ============================================
+        window.renderMembersForAttendance = function() {
+            const tbody = document.getElementById('membersTableBody');
+            if (!tbody) return;
+            
+            const activeMembers = members.filter(m => m.status === 'active' || !m.status);
+            
+            if (activeMembers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-secondary);">
+                    <i class="fas fa-users" style="font-size:40px;opacity:0.3;display:block;margin-bottom:10px;"></i>
+                    Nta baririmbyi babonetse. Banza wongereho abaririmbyi.
+                </td></tr>`;
+                return;
+            }
+            
+            tbody.innerHTML = activeMembers.map((m, i) => {
+                const initials = (m.name || '?').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                const photoHtml = m.photo
+                    ? `<img src="${m.photo}" class="row-photo" onerror="this.outerHTML='<div class=\\'row-avatar\\'>${initials}</div>'">`
+                    : `<div class="row-avatar">${initials}</div>`;
+                
+                const isPresent = currentTickList.some(t => t.id === m.id);
+                const isLate = currentLateList.some(t => t.id === m.id);
+                const isAbsent = currentAbsentList.some(t => t.id === m.id);
+                const levelClass = m.level === 'Special' ? 'special' : '';
+                
+                return `<tr data-member-id="${m.id}">
+                    <td><strong>${i + 1}</strong></td>
+                    <td>
+                        <div class="member-cell-row">
+                            ${photoHtml}
+                            <div class="row-info">
+                                <div class="name">${m.name || '-'}</div>
+                                <div class="id">${m.memberId || ''}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><strong>${m.number || '-'}</strong></td>
+                    <td><span class="level-badge ${levelClass}">${m.level === 'Special' ? '⭐' : '🎓'} ${m.level || '-'}</span></td>
+                    <td><span class="voice-badge ${(m.voice || '').toLowerCase()}"><i class="fas fa-microphone"></i> ${m.voice || '-'}</span></td>
+                    <td style="text-align: center;">
+                        <div class="status-buttons">
+                            <button type="button" class="status-btn present ${isPresent ? 'active' : ''}" onclick="window.markPresent('${m.id}')" title="Yaje">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button type="button" class="status-btn late ${isLate ? 'active' : ''}" onclick="window.openLateModal('${m.id}')" title="Late">
+                                <i class="fas fa-clock"></i>
+                            </button>
+                            <button type="button" class="status-btn absent ${isAbsent ? 'active' : ''}" onclick="window.openAbsentModal('${m.id}')" title="Ntabwo">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('');
+        };
 
-       // ============================================
-// MARK PRESENT (SUBIZA AHA — Kode imwe gusa)
-// ============================================
-window.markPresent = function(memberId) {
-    if (!memberId) return;
-    currentLateList = currentLateList.filter(t => t.id !== memberId);
-    currentAbsentList = currentAbsentList.filter(t => t.id !== memberId);
-    
-    const i = currentTickList.findIndex(t => t.id === memberId);
-    if (i === -1) {
-        const now = new Date();
-        const time = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
-        currentTickList.push({ id: memberId, time, status: 'present' });
-    } else {
-        currentTickList.splice(i, 1);
-    }
-    
-    const row = document.querySelector(`tr[data-member-id="${memberId}"]`);
-    if (row) {
-        row.classList.remove('late', 'absent');
-        const isNowPresent = currentTickList.some(t => t.id === memberId);
-        row.classList.toggle('checked', isNowPresent);
-        const presentBtn = row.querySelector('.status-btn.present');
-        const lateBtn = row.querySelector('.status-btn.late');
-        const absentBtn = row.querySelector('.status-btn.absent');
-        if (presentBtn) presentBtn.classList.toggle('active', isNowPresent);
-        if (lateBtn) lateBtn.classList.remove('active');
-        if (absentBtn) absentBtn.classList.remove('active');
-    }
-    window.updateCounter();
-};
+        window.markPresent = function(memberId) {
+            if (!memberId) return;
+            currentLateList = currentLateList.filter(t => t.id !== memberId);
+            currentAbsentList = currentAbsentList.filter(t => t.id !== memberId);
+            
+            const i = currentTickList.findIndex(t => t.id === memberId);
+            if (i === -1) {
+                const now = new Date();
+                const time = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+                currentTickList.push({ id: memberId, time, status: 'present' });
+            } else {
+                currentTickList.splice(i, 1);
+            }
+            
+            const row = document.querySelector(`tr[data-member-id="${memberId}"]`);
+            if (row) {
+                row.classList.remove('late', 'absent');
+                const isNowPresent = currentTickList.some(t => t.id === memberId);
+                row.classList.toggle('checked', isNowPresent);
+                const presentBtn = row.querySelector('.status-btn.present');
+                const lateBtn = row.querySelector('.status-btn.late');
+                const absentBtn = row.querySelector('.status-btn.absent');
+                if (presentBtn) presentBtn.classList.toggle('active', isNowPresent);
+                if (lateBtn) lateBtn.classList.remove('active');
+                if (absentBtn) absentBtn.classList.remove('active');
+            }
+            window.updateCounter();
+        };
 
-// ============================================
-// LATE MODAL (SUBIZA AHA)
-// ============================================
-window.openLateModal = function(memberId) {
-    const m = members.find(x => x.id === memberId);
-    if (!m) return;
-    currentLateMemberId = memberId;
-    const nameEl = document.getElementById('lateModalName');
-    if (nameEl) nameEl.textContent = m.name;
-    const timeEl = document.getElementById('lateTime');
-    if (timeEl) timeEl.value = '18:30';
-    const reasonEl = document.getElementById('lateReason');
-    if (reasonEl) reasonEl.value = '';
-    const noteEl = document.getElementById('lateNote');
-    if (noteEl) noteEl.value = '';
-    const modal = document.getElementById('lateModal');
-    if (modal) modal.classList.add('active');
-};
-
-window.closeLateModal = function() {
-    const modal = document.getElementById('lateModal');
-    if (modal) modal.classList.remove('active');
-    currentLateMemberId = null;
-};
-
-window.saveLate = function() {
-    const time = document.getElementById('lateTime')?.value;
-    const reason = document.getElementById('lateReason')?.value;
-    const note = document.getElementById('lateNote')?.value.trim() || '';
-    if (!time || !reason) { showToast('Uzuza isaha na impamvu', 'warning'); return; }
-    const memberId = currentLateMemberId;
-    if (!memberId) return;
-    
-    currentTickList = currentTickList.filter(t => t.id !== memberId);
-    currentAbsentList = currentAbsentList.filter(t => t.id !== memberId);
-    const existing = currentLateList.findIndex(t => t.id === memberId);
-    if (existing !== -1) currentLateList.splice(existing, 1);
-    currentLateList.push({ id: memberId, time, status: 'late', reason, note });
-    
-    const row = document.querySelector(`tr[data-member-id="${memberId}"]`);
-    if (row) {
-        row.classList.remove('checked', 'absent');
-        row.classList.add('late');
-        const p = row.querySelector('.status-btn.present');
-        const l = row.querySelector('.status-btn.late');
-        const a = row.querySelector('.status-btn.absent');
-        if (p) p.classList.remove('active');
-        if (l) l.classList.add('active');
-        if (a) a.classList.remove('active');
-    }
-    window.closeLateModal();
-    window.updateCounter();
-    const m = members.find(x => x.id === memberId);
-    showToast(`⏰ ${m?.name || 'Umuririmbyi'} yanditswe nka Late`, 'warning');
-};
-
-// ============================================
-// ABSENT MODAL (SUBIZA AHA)
-// ============================================
-window.openAbsentModal = function(memberId) {
-    const m = members.find(x => x.id === memberId);
-    if (!m) return;
-    currentAbsentMemberId = memberId;
-    const nameEl = document.getElementById('absentModalName');
-    if (nameEl) nameEl.textContent = m.name;
-    const reasonEl = document.getElementById('absentReason');
-    if (reasonEl) reasonEl.value = '';
-    const noteEl = document.getElementById('absentNote');
-    if (noteEl) noteEl.value = '';
-    const modal = document.getElementById('absentModal');
-    if (modal) modal.classList.add('active');
-};
-
-window.closeAbsentModal = function() {
-    const modal = document.getElementById('absentModal');
-    if (modal) modal.classList.remove('active');
-    currentAbsentMemberId = null;
-};
-
-window.saveAbsent = function() {
-    const reason = document.getElementById('absentReason')?.value;
-    const note = document.getElementById('absentNote')?.value.trim() || '';
-    if (!reason) { showToast('Hitamo impamvu', 'warning'); return; }
-    const memberId = currentAbsentMemberId;
-    if (!memberId) return;
-    
-    currentTickList = currentTickList.filter(t => t.id !== memberId);
-    currentLateList = currentLateList.filter(t => t.id !== memberId);
-    const existing = currentAbsentList.findIndex(t => t.id === memberId);
-    if (existing !== -1) currentAbsentList.splice(existing, 1);
-    currentAbsentList.push({ id: memberId, status: 'absent', reason, note });
-    
-    const row = document.querySelector(`tr[data-member-id="${memberId}"]`);
-    if (row) {
-        row.classList.remove('checked', 'late');
-        row.classList.add('absent');
-        const p = row.querySelector('.status-btn.present');
-        const l = row.querySelector('.status-btn.late');
-        const a = row.querySelector('.status-btn.absent');
-        if (p) p.classList.remove('active');
-        if (l) l.classList.remove('active');
-        if (a) a.classList.add('active');
-    }
-    window.closeAbsentModal();
-    window.updateCounter();
-    const m = members.find(x => x.id === memberId);
-    showToast(`❌ ${m?.name || 'Umuririmbyi'} yanditswe nka Ntabwo`, 'error');
-};
-
-// ============================================
-// UPDATE COUNTER (SUBIZA AHA)
-// ============================================
-window.updateCounter = function() {
-    const activeCount = members.filter(m => m.status === 'active' || !m.status).length;
-    const counterText = document.getElementById('counterText');
-    if (counterText) counterText.textContent = `${currentTickList.length} / ${activeCount}`;
-    const submitCount = document.getElementById('submitCount');
-    if (submitCount) submitCount.textContent = currentTickList.length;
-    const submitLate = document.getElementById('submitLate');
-    if (submitLate) submitLate.textContent = currentLateList.length;
-    const submitAbsent = document.getElementById('submitAbsent');
-    if (submitAbsent) submitAbsent.textContent = currentAbsentList.length;
-    const submitTotal = document.getElementById('submitTotal');
-    if (submitTotal) submitTotal.textContent = activeCount;
-};
-
-// ============================================
-// FILTER MEMBERS LIST (SUBIZA AHA)
-// ============================================
-window.filterMembersList = function() {
-    const searchEl = document.getElementById('searchMember');
-    if (!searchEl) return;
-    const search = searchEl.value.toLowerCase().trim();
-    document.querySelectorAll('#membersTableBody tr').forEach(row => {
-        const name = (row.querySelector('.name')?.textContent || '').toLowerCase();
-        const tds = row.querySelectorAll('td');
-        const number = (tds[2]?.textContent || '').toLowerCase();
-        const memberId = (row.querySelector('.id')?.textContent || '').toLowerCase();
-        const matches = !search || name.includes(search) || number.includes(search) || memberId.includes(search);
-        row.style.display = matches ? '' : 'none';
-    });
-};
         window.openLateModal = function(memberId) {
             const m = members.find(x => x.id === memberId);
             if (!m) return;
             currentLateMemberId = memberId;
-            document.getElementById('lateModalName').textContent = m.name;
-            document.getElementById('lateTime').value = '18:30';
-            document.getElementById('lateReason').value = '';
-            document.getElementById('lateNote').value = '';
-            document.getElementById('lateModal').classList.add('active');
+            const nameEl = document.getElementById('lateModalName');
+            if (nameEl) nameEl.textContent = m.name;
+            const timeEl = document.getElementById('lateTime');
+            if (timeEl) timeEl.value = '18:30';
+            const reasonEl = document.getElementById('lateReason');
+            if (reasonEl) reasonEl.value = '';
+            const noteEl = document.getElementById('lateNote');
+            if (noteEl) noteEl.value = '';
+            const modal = document.getElementById('lateModal');
+            if (modal) modal.classList.add('active');
         };
 
         window.closeLateModal = function() {
-            document.getElementById('lateModal').classList.remove('active');
+            const modal = document.getElementById('lateModal');
+            if (modal) modal.classList.remove('active');
             currentLateMemberId = null;
         };
 
         window.saveLate = function() {
-            const time = document.getElementById('lateTime').value;
-            const reason = document.getElementById('lateReason').value;
-            const note = document.getElementById('lateNote').value.trim();
-            
+            const time = document.getElementById('lateTime')?.value;
+            const reason = document.getElementById('lateReason')?.value;
+            const note = document.getElementById('lateNote')?.value.trim() || '';
             if (!time || !reason) { showToast('Uzuza isaha na impamvu', 'warning'); return; }
-            
             const memberId = currentLateMemberId;
             if (!memberId) return;
             
             currentTickList = currentTickList.filter(t => t.id !== memberId);
             currentAbsentList = currentAbsentList.filter(t => t.id !== memberId);
-            
             const existing = currentLateList.findIndex(t => t.id === memberId);
             if (existing !== -1) currentLateList.splice(existing, 1);
             currentLateList.push({ id: memberId, time, status: 'late', reason, note });
@@ -5517,43 +5309,48 @@ window.filterMembersList = function() {
             if (row) {
                 row.classList.remove('checked', 'absent');
                 row.classList.add('late');
-                row.querySelector('.status-btn.present').classList.remove('active');
-                row.querySelector('.status-btn.late').classList.add('active');
-                row.querySelector('.status-btn.absent').classList.remove('active');
+                const p = row.querySelector('.status-btn.present');
+                const l = row.querySelector('.status-btn.late');
+                const a = row.querySelector('.status-btn.absent');
+                if (p) p.classList.remove('active');
+                if (l) l.classList.add('active');
+                if (a) a.classList.remove('active');
             }
-            
-            closeLateModal();
-            updateCounter();
-            showToast(`⏰ ${members.find(m => m.id === memberId)?.name} yanditswe nka Late`, 'warning');
+            window.closeLateModal();
+            window.updateCounter();
+            const m = members.find(x => x.id === memberId);
+            showToast(`⏰ ${m?.name || 'Umuririmbyi'} yanditswe nka Late`, 'warning');
         };
 
         window.openAbsentModal = function(memberId) {
             const m = members.find(x => x.id === memberId);
             if (!m) return;
             currentAbsentMemberId = memberId;
-            document.getElementById('absentModalName').textContent = m.name;
-            document.getElementById('absentReason').value = '';
-            document.getElementById('absentNote').value = '';
-            document.getElementById('absentModal').classList.add('active');
+            const nameEl = document.getElementById('absentModalName');
+            if (nameEl) nameEl.textContent = m.name;
+            const reasonEl = document.getElementById('absentReason');
+            if (reasonEl) reasonEl.value = '';
+            const noteEl = document.getElementById('absentNote');
+            if (noteEl) noteEl.value = '';
+            const modal = document.getElementById('absentModal');
+            if (modal) modal.classList.add('active');
         };
 
         window.closeAbsentModal = function() {
-            document.getElementById('absentModal').classList.remove('active');
+            const modal = document.getElementById('absentModal');
+            if (modal) modal.classList.remove('active');
             currentAbsentMemberId = null;
         };
 
         window.saveAbsent = function() {
-            const reason = document.getElementById('absentReason').value;
-            const note = document.getElementById('absentNote').value.trim();
-            
+            const reason = document.getElementById('absentReason')?.value;
+            const note = document.getElementById('absentNote')?.value.trim() || '';
             if (!reason) { showToast('Hitamo impamvu', 'warning'); return; }
-            
             const memberId = currentAbsentMemberId;
             if (!memberId) return;
             
             currentTickList = currentTickList.filter(t => t.id !== memberId);
             currentLateList = currentLateList.filter(t => t.id !== memberId);
-            
             const existing = currentAbsentList.findIndex(t => t.id === memberId);
             if (existing !== -1) currentAbsentList.splice(existing, 1);
             currentAbsentList.push({ id: memberId, status: 'absent', reason, note });
@@ -5562,85 +5359,96 @@ window.filterMembersList = function() {
             if (row) {
                 row.classList.remove('checked', 'late');
                 row.classList.add('absent');
-                row.querySelector('.status-btn.present').classList.remove('active');
-                row.querySelector('.status-btn.late').classList.remove('active');
-                row.querySelector('.status-btn.absent').classList.add('active');
+                const p = row.querySelector('.status-btn.present');
+                const l = row.querySelector('.status-btn.late');
+                const a = row.querySelector('.status-btn.absent');
+                if (p) p.classList.remove('active');
+                if (l) l.classList.remove('active');
+                if (a) a.classList.add('active');
             }
-            
-            closeAbsentModal();
-            updateCounter();
-            showToast(`❌ ${members.find(m => m.id === memberId)?.name} yanditswe nka Ntabwo`, 'error');
+            window.closeAbsentModal();
+            window.updateCounter();
+            const m = members.find(x => x.id === memberId);
+            showToast(`❌ ${m?.name || 'Umuririmbyi'} yanditswe nka Ntabwo`, 'error');
         };
 
-        function updateCounter() {
+        window.updateCounter = function() {
             const activeCount = members.filter(m => m.status === 'active' || !m.status).length;
-            document.getElementById('counterText').textContent = `${currentTickList.length} / ${activeCount}`;
-            document.getElementById('submitCount').textContent = currentTickList.length;
-            document.getElementById('submitLate').textContent = currentLateList.length;
-            document.getElementById('submitAbsent').textContent = currentAbsentList.length;
-            document.getElementById('submitTotal').textContent = activeCount;
-        }
+            const counterText = document.getElementById('counterText');
+            if (counterText) counterText.textContent = `${currentTickList.length} / ${activeCount}`;
+            const submitCount = document.getElementById('submitCount');
+            if (submitCount) submitCount.textContent = currentTickList.length;
+            const submitLate = document.getElementById('submitLate');
+            if (submitLate) submitLate.textContent = currentLateList.length;
+            const submitAbsent = document.getElementById('submitAbsent');
+            if (submitAbsent) submitAbsent.textContent = currentAbsentList.length;
+            const submitTotal = document.getElementById('submitTotal');
+            if (submitTotal) submitTotal.textContent = activeCount;
+        };
 
         window.filterMembersList = function() {
-            const search = document.getElementById('searchMember').value.toLowerCase();
+            const searchEl = document.getElementById('searchMember');
+            if (!searchEl) return;
+            const search = searchEl.value.toLowerCase().trim();
             document.querySelectorAll('#membersTableBody tr').forEach(row => {
-                const name = row.querySelector('.name')?.textContent.toLowerCase() || '';
-                const number = row.querySelectorAll('td')[2]?.textContent.toLowerCase() || '';
-                row.style.display = (name.includes(search) || number.includes(search)) ? '' : 'none';
+                const name = (row.querySelector('.name')?.textContent || '').toLowerCase();
+                const tds = row.querySelectorAll('td');
+                const number = (tds[2]?.textContent || '').toLowerCase();
+                const memberId = (row.querySelector('.id')?.textContent || '').toLowerCase();
+                const matches = !search || name.includes(search) || number.includes(search) || memberId.includes(search);
+                row.style.display = matches ? '' : 'none';
             });
         };
 
-       window.submitAttendance = async function() {
-    if (!currentSession) { showToast('Nta teraniro', 'warning'); return; }
-    if (currentTickList.length === 0 && currentLateList.length === 0 && currentAbsentList.length === 0) { 
-        showToast('Nta muntu wanditswe', 'warning'); return; 
-    }
-    const btn = document.getElementById('submitBtn');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turabika...';
-    
-    try {
-        // Turabika attendance mu database (Ntacyo kibazo kiri kuri currentUser.uid)
-        await addDoc(collection(db, 'sessions'), {
-            name: currentSession.name, 
-            date: currentSession.date, 
-            time: currentSession.time,
-            presentMembers: currentTickList,
-            lateMembers: currentLateList,
-            absentMembers: currentAbsentList,
-            totalPresent: currentTickList.length,
-            totalLate: currentLateList.length,
-            totalAbsent: currentAbsentList.length,
-            createdAt: serverTimestamp(), 
-            createdBy: currentUser ? currentUser.uid : 'admin-unknown' // YAKOSOWE
-        });
+        window.submitAttendance = async function() {
+            if (!currentSession) { showToast('Nta teraniro', 'warning'); return; }
+            if (currentTickList.length === 0 && currentLateList.length === 0 && currentAbsentList.length === 0) { 
+                showToast('Nta muntu wanditswe', 'warning'); return; 
+            }
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turabika...';
+            
+            try {
+                await addDoc(collection(db, 'sessions'), {
+                    name: currentSession.name, 
+                    date: currentSession.date, 
+                    time: currentSession.time,
+                    presentMembers: currentTickList,
+                    lateMembers: currentLateList,
+                    absentMembers: currentAbsentList,
+                    totalPresent: currentTickList.length,
+                    totalLate: currentLateList.length,
+                    totalAbsent: currentAbsentList.length,
+                    createdAt: serverTimestamp(), 
+                    createdBy: currentUser ? currentUser.uid : 'admin-unknown'
+                });
 
-        confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
-        showToast(`✅ ${currentSession.name} ryabitswe!`, 'success');
-        
-        await loadSessions();
-        
-        // Gusubiza ibintu uko byari biri
-        currentSession = null; 
-        currentTickList = []; 
-        currentLateList = []; 
-        currentAbsentList = [];
-        
-        btn.disabled = false; 
-        btn.innerHTML = '<i class="fas fa-check"></i> SUBMIT';
-        
-        setTimeout(() => {
-            switchPage('dashboard', document.querySelector('.nav-item'));
-            renderDashboard();
-        }, 800);
-        
-    } catch (error) {
-        btn.disabled = false; 
-        btn.innerHTML = '<i class="fas fa-check"></i> SUBMIT';
-        showToast('❌ ' + error.message, 'error');
-        console.error("Error submitting attendance:", error);
-    }
-};
+                confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+                showToast(`✅ ${currentSession.name} ryabitswe!`, 'success');
+                
+                await loadSessions();
+                
+                currentSession = null; 
+                currentTickList = []; 
+                currentLateList = []; 
+                currentAbsentList = [];
+                
+                btn.disabled = false; 
+                btn.innerHTML = '<i class="fas fa-check"></i> SUBMIT';
+                
+                setTimeout(() => {
+                    switchPage('dashboard', document.querySelector('.nav-item'));
+                    renderDashboard();
+                }, 800);
+                
+            } catch (error) {
+                btn.disabled = false; 
+                btn.innerHTML = '<i class="fas fa-check"></i> SUBMIT';
+                showToast('❌ ' + error.message, 'error');
+                console.error("Error submitting attendance:", error);
+            }
+        };
 
         window.cancelCreate = function() {
             if ((currentTickList.length > 0 || currentLateList.length > 0 || currentAbsentList.length > 0) && !confirm('Ufite abanditswe batabitswe. Urabyemeza?')) return;
@@ -5654,70 +5462,71 @@ window.filterMembersList = function() {
         // ============================================
         // VIEW SESSION
         // ============================================
-       window.viewSession = function(id) {
-    const s = sessions.find(x => x.id === id);
-    if (!s) return;
-    const activeMembers = members.filter(m => m.status === 'active' || !m.status);
-    const present = s.presentMembers?.length || 0;
-    const late = s.lateMembers?.length || 0;
-    const absent = s.absentMembers?.length || 0;
-    const total = activeMembers.length;
-    const pct = total > 0 ? Math.round((present / total) * 100) : 0;
-    
-    const renderRow = (item) => {
-        const m = members.find(x => x.id === item.id);
-        if (!m) return '';
-        const initials = m.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-        const photoHtml = m.photo ? `<img src="${m.photo}" class="view-row-photo" onerror="this.outerHTML='<div class=\\'view-row-avatar\\'>${initials}</div>'">` : `<div class="view-row-avatar">${initials}</div>`;
-        const timeInfo = item.time ? `<span style="font-weight:700;color:var(--warning);"><i class="fas fa-clock"></i> ${item.time}</span>` : '';
-        return `<tr><td><div style="display:flex;align-items:center;gap:12px;">${photoHtml}<div><div style="font-weight:600;">${m.name}</div><div style="font-size:12px;color:var(--text-secondary);">${m.memberId || ''}</div></div></div></td><td><strong>${m.number || '-'}</strong></td><td><span class="level-badge">${m.level === 'Special' ? '⭐' : '🎓'} ${m.level || '-'}</span></td><td><span class="voice-badge ${(m.voice||'').toLowerCase()}"><i class="fas fa-microphone"></i> ${m.voice}</span></td><td>${timeInfo}</td></tr>`;
-    };
-    
-    document.getElementById('detailContent').innerHTML = `
-        <div class="detail-header"><h2>${s.name}</h2><p><i class="fas fa-calendar"></i> ${formatDate(s.date)} | <i class="fas fa-clock"></i> ${s.time}</p></div>
-        <div class="detail-stats">
-            <div class="detail-stat blue"><div class="value">${total}</div><div class="label">Bose</div></div>
-            <div class="detail-stat green"><div class="value">${present}</div><div class="label">Baje</div></div>
-            <div class="detail-stat orange"><div class="value">${late}</div><div class="label">Late</div></div>
-            <div class="detail-stat red"><div class="value">${absent}</div><div class="label">Bataje</div></div>
-        </div>
-        
-        ${present > 0 ? `<h4 style="margin-bottom:12px;font-size:15px;color:var(--success);">✅ Abaje (${present})</h4>
-        <div class="view-table-wrapper" style="margin-bottom:20px;"><table><thead><tr><th>Umuririmbyi</th><th>Nimero</th><th>Level</th><th>Ijwi</th><th>Isaha</th></tr></thead><tbody>${(s.presentMembers || []).map(renderRow).join('')}</tbody></table></div>` : ''}
-        
-        ${late > 0 ? `<h4 style="margin-bottom:12px;font-size:15px;color:var(--warning);">⏰ Late (${late})</h4>
-        <div class="view-table-wrapper" style="margin-bottom:20px;"><table><thead><tr><th>Umuririmbyi</th><th>Nimero</th><th>Level</th><th>Ijwi</th><th>Isaha</th><th>Impamvu</th></tr></thead><tbody>${(s.lateMembers || []).map(item => { 
-            const m = members.find(x => x.id === item.id); 
-            if (!m) return ''; 
-            return `<tr>
-                <td><strong>${m.name}</strong></td>
-                <td>${m.number || '-'}</td>
-                <td>${m.level || '-'}</td>
-                <td>${m.voice}</td>
-                <td><strong style="color:var(--warning);">${item.time || '-'}</strong></td>
-                <td><span style="color:var(--warning);font-weight:600;">${item.reason || '-'}</span>${item.note ? `<br><span style="font-size:11px;color:var(--text-secondary);">${item.note}</span>` : ''}</td>
-            </tr>`; 
-        }).join('')}</tbody></table></div>` : ''}
-        
-        ${absent > 0 ? `<h4 style="margin-bottom:12px;font-size:15px;color:var(--danger);">❌ Bataje (${absent})</h4>
-        <div class="view-table-wrapper" style="margin-bottom:20px;"><table><thead><tr><th>Umuririmbyi</th><th>Nimero</th><th>Level</th><th>Ijwi</th><th>Impamvu</th></tr></thead><tbody>${(s.absentMembers || []).map(item => { 
-            const m = members.find(x => x.id === item.id); 
-            if (!m) return ''; 
-            return `<tr>
-                <td><strong>${m.name}</strong></td>
-                <td>${m.number || '-'}</td>
-                <td>${m.level || '-'}</td>
-                <td>${m.voice}</td>
-                <td><span style="color:var(--danger);font-weight:600;">${item.reason || '-'}</span>${item.note ? `<br><span style="font-size:11px;color:var(--text-secondary);">${item.note}</span>` : ''}</td>
-            </tr>`; 
-        }).join('')}</tbody></table></div>` : ''}
-        
-        <div class="modal-actions">
-            <button class="btn btn-danger" onclick="exportPDF('${s.id}')"><i class="fas fa-file-pdf"></i> PDF</button>
-            <button class="btn btn-outline" onclick="closeModal('detailModal')">Funga</button>
-        </div>`;
-    document.getElementById('detailModal').classList.add('active');
-};
+        window.viewSession = function(id) {
+            const s = sessions.find(x => x.id === id);
+            if (!s) return;
+            const activeMembers = members.filter(m => m.status === 'active' || !m.status);
+            const present = s.presentMembers?.length || 0;
+            const late = s.lateMembers?.length || 0;
+            const absent = s.absentMembers?.length || 0;
+            const total = activeMembers.length;
+            const pct = total > 0 ? Math.round((present / total) * 100) : 0;
+            
+            const renderRow = (item) => {
+                const m = members.find(x => x.id === item.id);
+                if (!m) return '';
+                const initials = m.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                const photoHtml = m.photo ? `<img src="${m.photo}" class="view-row-photo" onerror="this.outerHTML='<div class=\\'view-row-avatar\\'>${initials}</div>'">` : `<div class="view-row-avatar">${initials}</div>`;
+                const timeInfo = item.time ? `<span style="font-weight:700;color:var(--warning);"><i class="fas fa-clock"></i> ${item.time}</span>` : '';
+                return `<tr><td><div style="display:flex;align-items:center;gap:12px;">${photoHtml}<div><div style="font-weight:600;">${m.name}</div><div style="font-size:12px;color:var(--text-secondary);">${m.memberId || ''}</div></div></div></td><td><strong>${m.number || '-'}</strong></td><td><span class="level-badge">${m.level === 'Special' ? '⭐' : '🎓'} ${m.level || '-'}</span></td><td><span class="voice-badge ${(m.voice||'').toLowerCase()}"><i class="fas fa-microphone"></i> ${m.voice}</span></td><td>${timeInfo}</td></tr>`;
+            };
+            
+            document.getElementById('detailContent').innerHTML = `
+                <div class="detail-header"><h2>${s.name}</h2><p><i class="fas fa-calendar"></i> ${formatDate(s.date)} | <i class="fas fa-clock"></i> ${s.time}</p></div>
+                <div class="detail-stats">
+                    <div class="detail-stat blue"><div class="value">${total}</div><div class="label">Bose</div></div>
+                    <div class="detail-stat green"><div class="value">${present}</div><div class="label">Baje</div></div>
+                    <div class="detail-stat orange"><div class="value">${late}</div><div class="label">Late</div></div>
+                    <div class="detail-stat red"><div class="value">${absent}</div><div class="label">Bataje</div></div>
+                </div>
+                
+                ${present > 0 ? `<h4 style="margin-bottom:12px;font-size:15px;color:var(--success);">✅ Abaje (${present})</h4>
+                <div class="view-table-wrapper" style="margin-bottom:20px;"><table><thead><tr><th>Umuririmbyi</th><th>Nimero</th><th>Level</th><th>Ijwi</th><th>Isaha</th></tr></thead><tbody>${(s.presentMembers || []).map(renderRow).join('')}</tbody></table></div>` : ''}
+                
+                ${late > 0 ? `<h4 style="margin-bottom:12px;font-size:15px;color:var(--warning);">⏰ Late (${late})</h4>
+                <div class="view-table-wrapper" style="margin-bottom:20px;"><table><thead><tr><th>Umuririmbyi</th><th>Nimero</th><th>Level</th><th>Ijwi</th><th>Isaha</th><th>Impamvu</th></tr></thead><tbody>${(s.lateMembers || []).map(item => { 
+                    const m = members.find(x => x.id === item.id); 
+                    if (!m) return ''; 
+                    return `<tr>
+                        <td><strong>${m.name}</strong></td>
+                        <td>${m.number || '-'}</td>
+                        <td>${m.level || '-'}</td>
+                        <td>${m.voice}</td>
+                        <td><strong style="color:var(--warning);">${item.time || '-'}</strong></td>
+                        <td><span style="color:var(--warning);font-weight:600;">${item.reason || '-'}</span>${item.note ? `<br><span style="font-size:11px;color:var(--text-secondary);">${item.note}</span>` : ''}</td>
+                    </tr>`; 
+                }).join('')}</tbody></table></div>` : ''}
+                
+                ${absent > 0 ? `<h4 style="margin-bottom:12px;font-size:15px;color:var(--danger);">❌ Bataje (${absent})</h4>
+                <div class="view-table-wrapper" style="margin-bottom:20px;"><table><thead><tr><th>Umuririmbyi</th><th>Nimero</th><th>Level</th><th>Ijwi</th><th>Impamvu</th></tr></thead><tbody>${(s.absentMembers || []).map(item => { 
+                    const m = members.find(x => x.id === item.id); 
+                    if (!m) return ''; 
+                    return `<tr>
+                        <td><strong>${m.name}</strong></td>
+                        <td>${m.number || '-'}</td>
+                        <td>${m.level || '-'}</td>
+                        <td>${m.voice}</td>
+                        <td><span style="color:var(--danger);font-weight:600;">${item.reason || '-'}</span>${item.note ? `<br><span style="font-size:11px;color:var(--text-secondary);">${item.note}</span>` : ''}</td>
+                    </tr>`; 
+                }).join('')}</tbody></table></div>` : ''}
+                
+                <div class="modal-actions">
+                    <button class="btn btn-danger" onclick="exportPDF('${s.id}')"><i class="fas fa-file-pdf"></i> PDF</button>
+                    <button class="btn btn-outline" onclick="closeModal('detailModal')">Funga</button>
+                </div>`;
+            document.getElementById('detailModal').classList.add('active');
+        };
+
         window.deleteSession = async function(id) {
             const s = sessions.find(x => x.id === id);
             if (!s || !confirm(`Urabyemeza gusiba "${s.name}"?`)) return;
@@ -5750,74 +5559,74 @@ window.filterMembersList = function() {
         }
 
         window.renderAttendancePage = function() {
-    const list = document.getElementById('attendanceHistoryList');
-    if (!list) return;
-    
-    const filtered = filterByPeriod(sessions);
-    const activeMembers = members.filter(m => m.status === 'active' || !m.status);
-    
-    if (filtered.length === 0) {
-        list.innerHTML = `<div class="empty-state"><div class="icon"><i class="fas fa-calendar-times"></i></div><h3>Nta mateka</h3></div>`;
-        return;
-    }
-    
-    list.innerHTML = filtered.map(s => {
-        const present = s.presentMembers?.length || 0;
-        const late = s.lateMembers?.length || 0;
-        const absent = s.absentMembers?.length || 0;
-        const total = activeMembers.length;
-        const pct = total > 0 ? Math.round((present / total) * 100) : 0;
+            const list = document.getElementById('attendanceHistoryList');
+            if (!list) return;
+            
+            const filtered = filterByPeriod(sessions);
+            const activeMembers = members.filter(m => m.status === 'active' || !m.status);
+            
+            if (filtered.length === 0) {
+                list.innerHTML = `<div class="empty-state"><div class="icon"><i class="fas fa-calendar-times"></i></div><h3>Nta mateka</h3></div>`;
+                return;
+            }
+            
+            list.innerHTML = filtered.map(s => {
+                const present = s.presentMembers?.length || 0;
+                const late = s.lateMembers?.length || 0;
+                const absent = s.absentMembers?.length || 0;
+                const total = activeMembers.length;
+                const pct = total > 0 ? Math.round((present / total) * 100) : 0;
 
-        // Hano tugenda turaba niba hari abakererewe cyangwa abataje bakagira impamvu
-        let lateAndAbsentHtml = '';
-        
-        if ((s.lateMembers && s.lateMembers.length > 0) || (s.absentMembers && s.absentMembers.length > 0)) {
-            lateAndAbsentHtml = `
-                <div style="margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px; font-size: 12px;">
-                    ${(s.lateMembers || []).map(lm => {
-                        const m = members.find(x => x.id === lm.id);
-                        if (!m) return '';
-                        return `<div style="margin-bottom: 4px; display: flex; align-items: start; gap: 6px;">
-                            <span style="color: var(--warning); font-weight: 700;"><i class="fas fa-clock"></i> Late:</span>
-                            <span><strong>${m.name}</strong> — ${lm.reason || 'Nta mpamvu yanditswe'} ${lm.note ? `(${lm.note})` : ''}</span>
-                        </div>`;
-                    }).join('')}
-                    
-                    ${(s.absentMembers || []).map(am => {
-                        const m = members.find(x => x.id === am.id);
-                        if (!m) return '';
-                        return `<div style="margin-bottom: 4px; display: flex; align-items: start; gap: 6px;">
-                            <span style="color: var(--danger); font-weight: 700;"><i class="fas fa-times-circle"></i> Ntabwo:</span>
-                            <span><strong>${m.name}</strong> — ${am.reason || 'Nta mpamvu yanditswe'} ${am.note ? `(${am.note})` : ''}</span>
-                        </div>`;
-                    }).join('')}
-                </div>
-            `;
-        }
+                let lateAndAbsentHtml = '';
+                
+                if ((s.lateMembers && s.lateMembers.length > 0) || (s.absentMembers && s.absentMembers.length > 0)) {
+                    lateAndAbsentHtml = `
+                        <div style="margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px; font-size: 12px;">
+                            ${(s.lateMembers || []).map(lm => {
+                                const m = members.find(x => x.id === lm.id);
+                                if (!m) return '';
+                                return `<div style="margin-bottom: 4px; display: flex; align-items: start; gap: 6px;">
+                                    <span style="color: var(--warning); font-weight: 700;"><i class="fas fa-clock"></i> Late:</span>
+                                    <span><strong>${m.name}</strong> — ${lm.reason || 'Nta mpamvu yanditswe'} ${lm.note ? `(${lm.note})` : ''}</span>
+                                </div>`;
+                            }).join('')}
+                            
+                            ${(s.absentMembers || []).map(am => {
+                                const m = members.find(x => x.id === am.id);
+                                if (!m) return '';
+                                return `<div style="margin-bottom: 4px; display: flex; align-items: start; gap: 6px;">
+                                    <span style="color: var(--danger); font-weight: 700;"><i class="fas fa-times-circle"></i> Ntabwo:</span>
+                                    <span><strong>${m.name}</strong> — ${am.reason || 'Nta mpamvu yanditswe'} ${am.note ? `(${am.note})` : ''}</span>
+                                </div>`;
+                            }).join('')}
+                        </div>
+                    `;
+                }
 
-        return `<div class="saved-card" style="flex-direction: column; align-items: stretch;">
-            <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
-                <div class="saved-info">
-                    <h3><i class="fas fa-calendar-check"></i> ${s.name}</h3>
-                    <div class="saved-meta">
-                        <span><i class="fas fa-calendar"></i> ${formatDate(s.date)}</span>
-                        <span><i class="fas fa-clock"></i> ${s.time}</span>
-                        <span style="color:var(--success);"><i class="fas fa-check"></i> ${present}</span>
-                        <span style="color:var(--warning);"><i class="fas fa-clock"></i> ${late}</span>
-                        <span style="color:var(--danger);"><i class="fas fa-times"></i> ${absent}</span>
+                return `<div class="saved-card" style="flex-direction: column; align-items: stretch;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
+                        <div class="saved-info">
+                            <h3><i class="fas fa-calendar-check"></i> ${s.name}</h3>
+                            <div class="saved-meta">
+                                <span><i class="fas fa-calendar"></i> ${formatDate(s.date)}</span>
+                                <span><i class="fas fa-clock"></i> ${s.time}</span>
+                                <span style="color:var(--success);"><i class="fas fa-check"></i> ${present}</span>
+                                <span style="color:var(--warning);"><i class="fas fa-clock"></i> ${late}</span>
+                                <span style="color:var(--danger);"><i class="fas fa-times"></i> ${absent}</span>
+                            </div>
+                        </div>
+                        <div class="saved-percent">${pct}%</div>
+                        <div class="saved-actions">
+                            <button class="action-btn view" onclick="viewSession('${s.id}')"><i class="fas fa-eye"></i></button>
+                            <button class="action-btn pdf" onclick="exportPDF('${s.id}')"><i class="fas fa-file-pdf"></i></button>
+                            <button class="action-btn delete" onclick="deleteSession('${s.id}')"><i class="fas fa-trash"></i></button>
+                        </div>
                     </div>
-                </div>
-                <div class="saved-percent">${pct}%</div>
-                <div class="saved-actions">
-                    <button class="action-btn view" onclick="viewSession('${s.id}')"><i class="fas fa-eye"></i></button>
-                    <button class="action-btn pdf" onclick="exportPDF('${s.id}')"><i class="fas fa-file-pdf"></i></button>
-                    <button class="action-btn delete" onclick="deleteSession('${s.id}')"><i class="fas fa-trash"></i></button>
-                </div>
-            </div>
-            ${lateAndAbsentHtml}
-        </div>`;
-    }).join('');
-};
+                    ${lateAndAbsentHtml}
+                </div>`;
+            }).join('');
+        };
+
         // ============================================
         // MEMBERS
         // ============================================
@@ -6258,68 +6067,77 @@ window.filterMembersList = function() {
         // ============================================
         // PHOTOS
         // ============================================
-       window.renderPhotosPage = function() {
-    const grid = document.getElementById('photoGrid');
-    if (!grid) return;
+        window.renderPhotosPage = function() {
+            const grid = document.getElementById('photoGrid');
+            if (!grid) return;
 
-    // KUSANYA ABANTU BOSE BAFITE AMAFOTO (Members + Users/Admins)
-    const allPeopleWithPhotos = [];
-    
-    // 1. Abaririmbyi (Members)
-    members.filter(m => (m.status === 'active' || !m.status) && m.photo).forEach(m => {
-        allPeopleWithPhotos.push({
-            id: m.id,
-            name: m.name,
-            photo: m.photo,
-            level: m.level,
-            voice: m.voice,
-            type: 'member',
-            typeLabel: 'Umuririmbyi'
-        });
-    });
+            const allPeopleWithPhotos = [];
+            
+            members.filter(m => (m.status === 'active' || !m.status) && m.photo).forEach(m => {
+                allPeopleWithPhotos.push({
+                    id: m.id,
+                    name: m.name,
+                    photo: m.photo,
+                    level: m.level,
+                    voice: m.voice,
+                    type: 'member',
+                    typeLabel: 'Umuririmbyi'
+                });
+            });
 
-    // 2. Admin / Super Admin (Users)
-    users.filter(u => u.photo && !allPeopleWithPhotos.some(p => p.id === u.uid)).forEach(u => {
-        allPeopleWithPhotos.push({
-            id: u.uid,
-            name: u.name || 'Admin',
-            photo: u.photo,
-            level: 'Admin',
-            voice: '',
-            type: 'admin',
-            typeLabel: u.role === 'super_admin' ? 'Super Admin' : 'Admin'
-        });
-    });
+            users.filter(u => u.photo && !allPeopleWithPhotos.some(p => p.id === u.uid)).forEach(u => {
+                allPeopleWithPhotos.push({
+                    id: u.uid,
+                    name: u.name || 'Admin',
+                    photo: u.photo,
+                    level: 'Admin',
+                    voice: '',
+                    type: 'admin',
+                    typeLabel: u.role === 'super_admin' ? 'Super Admin' : 'Admin'
+                });
+            });
 
-    if (allPeopleWithPhotos.length === 0) {
-        grid.innerHTML = `
-            <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-secondary);">
-                <i class="fas fa-camera" style="font-size:60px;opacity:0.3;display:block;margin-bottom:16px;"></i>
-                <h3>Nta mafoto arabonetse</h3>
-                <p style="font-size:14px;margin-top:8px;">Ongeraho amafoto muri Profile cyangwa mu baririmbyi</p>
-            </div>`;
-        return;
-    }
+            if (allPeopleWithPhotos.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-secondary);">
+                        <i class="fas fa-camera" style="font-size:60px;opacity:0.3;display:block;margin-bottom:16px;"></i>
+                        <h3>Nta mafoto arabonetse</h3>
+                        <p style="font-size:14px;margin-top:8px;">Ongeraho amafoto muri Profile cyangwa mu baririmbyi</p>
+                    </div>`;
+                return;
+            }
 
-    // GARAGAZA AMAFOTO
-    grid.innerHTML = allPeopleWithPhotos.map(p => {
-        const levelClass = p.level === 'Special' ? 'special' : '';
-        const typeIcon = p.type === 'admin' ? '🛡️' : '🎤';
-        
-        return `
-            <div class="photo-card" style="cursor:pointer;" onclick="openPhotoViewer('${p.photo}', '${p.name.replace(/'/g, "\\'")}', '${p.level || ''}', '${p.voice || ''}', '${typeIcon} ${p.typeLabel}')">
-                <img src="${p.photo}" onerror="this.src='https://via.placeholder.com/300x300?text=No+Image'">
-                <div class="photo-info" style="display:flex; flex-direction:column; gap:6px;">
-                    <div class="photo-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.name}</div>
-                    <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                        <span class="level-badge ${levelClass}" style="font-size:10.5px; padding: 4px 10px;">${typeIcon} ${p.level || p.typeLabel}</span>
-                        ${p.voice ? `<span class="voice-badge ${p.voice.toLowerCase()}" style="font-size:10.5px; padding: 4px 10px;">${p.voice}</span>` : ''}
+            grid.innerHTML = allPeopleWithPhotos.map(p => {
+                const levelClass = p.level === 'Special' ? 'special' : '';
+                const typeIcon = p.type === 'admin' ? '🛡️' : '🎤';
+                
+                return `
+                    <div class="photo-card" style="cursor:pointer;" onclick="openPhotoViewer('${p.photo}', '${p.name.replace(/'/g, "\\'")}', '${p.level || ''}', '${p.voice || ''}', '${typeIcon} ${p.typeLabel}')">
+                        <img src="${p.photo}" onerror="this.src='https://via.placeholder.com/300x300?text=No+Image'">
+                        <div class="photo-info" style="display:flex; flex-direction:column; gap:6px;">
+                            <div class="photo-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.name}</div>
+                            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                                <span class="level-badge ${levelClass}" style="font-size:10.5px; padding: 4px 10px;">${typeIcon} ${p.level || p.typeLabel}</span>
+                                ${p.voice ? `<span class="voice-badge ${p.voice.toLowerCase()}" style="font-size:10.5px; padding: 4px 10px;">${p.voice}</span>` : ''}
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-        `;
-    }).join('');
-};
+                `;
+            }).join('');
+        };
+
+        window.openPhotoViewer = function(photoUrl, name, level, voice, typeLabel) {
+            document.getElementById('photoViewerImg').src = photoUrl;
+            document.getElementById('photoViewerName').textContent = name;
+            
+            let badgesHtml = `<span class="level-badge" style="font-size:12px; padding:6px 12px;">${typeLabel} ${level}</span>`;
+            if (voice) {
+                badgesHtml += `<span class="voice-badge ${voice.toLowerCase()}" style="font-size:12px; padding:6px 12px;"><i class="fas fa-microphone"></i> ${voice}</span>`;
+            }
+            
+            document.getElementById('photoViewerBadges').innerHTML = badgesHtml;
+            document.getElementById('photoViewerModal').classList.add('active');
+        };
 
         // ============================================
         // QR CODE
@@ -6373,15 +6191,12 @@ window.filterMembersList = function() {
         // ============================================
         // MEMBER DASHBOARD
         // ============================================
-                  window.renderMyDashboard = function() {
+        window.renderMyDashboard = function() {
             if (currentUserData?.role !== 'member') return;
             
             const memberId = currentUserData.memberId;
             const m = members.find(x => x.id === memberId);
             
-            // ============================================
-            // ✅ FALLBACK: IYO UMURIRIMBYI ATABONETSE
-            // ============================================
             if (!m) {
                 const fallbackName = currentUserData?.name || 'Umuririmbyi';
                 const firstName = fallbackName.split(' ')[0];
@@ -6408,9 +6223,6 @@ window.filterMembersList = function() {
                 return;
             }
             
-            // ============================================
-            // ✅ IYO UMURIRIMBYI ABONETSE (NORMAL FLOW)
-            // ============================================
             const initials = m.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
             const photoHtml = m.photo 
                 ? `<img src="${m.photo}" class="member-profile-photo" onerror="this.outerHTML='<div class=\\'member-profile-avatar\\'>${initials}</div>'">`
@@ -6432,7 +6244,6 @@ window.filterMembersList = function() {
                 </div>
             `;
             
-            // ✅ WELCOME — IZINA + GREETING + ITARIKI
             const firstName = m.name.split(' ')[0];
             const greeting = getGreeting();
             const now = new Date();
@@ -6448,9 +6259,6 @@ window.filterMembersList = function() {
             const dateEl = document.getElementById('memberWelcomeDate');
             if (dateEl) dateEl.textContent = `${daysRw[now.getDay()]}, ${now.getDate()} ${monthsRw[now.getMonth()]} ${now.getFullYear()}`;
 
-            // ============================================
-            // ATTENDANCE CALCULATIONS
-            // ============================================
             const myAttendance = sessions.map(s => {
                 const present = (s.presentMembers || []).find(pm => pm.id === memberId);
                 const late = (s.lateMembers || []).find(pm => pm.id === memberId);
@@ -6547,9 +6355,6 @@ window.filterMembersList = function() {
                 `;
             }
             
-            // ============================================
-            // BIRTHDAYS & WISHES
-            // ============================================
             renderMemberBirthdays();
             
             loadBirthdayWishes().then(() => {
@@ -6562,56 +6367,53 @@ window.filterMembersList = function() {
                         wishesDiv.style.marginTop = '20px';
                         container.parentNode.appendChild(wishesDiv);
                     }
-                    
+                    window.renderMemberWishes(); // ✅ IYI NI YO YARI IBURA
                 }
             });
 
             renderFellowMembers();
         };
-// ============================================
-// RENDER MEMBER WISHES (IYI YARI IBURA)
-// ============================================
-window.renderMemberWishes = function() {
-    const container = document.getElementById('memberWishesContainer');
-    if (!container) return;
-    
-    const wishes = window._allBirthdayWishes || [];
-    
-    if (wishes.length === 0) {
-        container.innerHTML = '';
-        return;
-    }
-    
-    // Erekana wish 5 za vuba
-    const recentWishes = wishes.slice(0, 5);
-    
-    container.innerHTML = `
-        <div class="section-title" style="margin-top: 20px;">
-            <i class="fas fa-gift"></i>
-            <span>Birthday Wishes</span>
-        </div>
-        <div class="saved-list">
-            ${recentWishes.map(w => {
-                const date = w.createdAt?.toDate ? w.createdAt.toDate() : new Date();
-                const dateStr = `${String(date.getDate()).padStart(2,'0')}/${String(date.getMonth()+1).padStart(2,'0')}/${date.getFullYear()}`;
-                return `<div class="announcement-card priority-low" style="border-left-color: #ec4899;">
-                    <div class="announcement-header">
-                        <div class="announcement-title">
-                            <i class="fas fa-birthday-cake" style="color:#ec4899;"></i>
-                            ${w.fromName || 'Unknown'} → ${w.memberName || 'Unknown'}
-                        </div>
-                    </div>
-                    <div class="announcement-message">${escapeHtml(w.message)}</div>
-                    <div class="announcement-footer">
-                        <div class="announcement-footer-left">
-                            <span><i class="fas fa-calendar"></i> ${dateStr}</span>
-                        </div>
-                    </div>
-                </div>`;
-            }).join('')}
-        </div>
-    `;
-};
+
+        window.renderMemberWishes = function() {
+            const container = document.getElementById('memberWishesContainer');
+            if (!container) return;
+            
+            const wishes = window._allBirthdayWishes || [];
+            
+            if (wishes.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            const recentWishes = wishes.slice(0, 5);
+            
+            container.innerHTML = `
+                <div class="section-title" style="margin-top: 20px;">
+                    <i class="fas fa-gift"></i>
+                    <span>Birthday Wishes</span>
+                </div>
+                <div class="saved-list">
+                    ${recentWishes.map(w => {
+                        const date = w.createdAt?.toDate ? w.createdAt.toDate() : new Date();
+                        const dateStr = `${String(date.getDate()).padStart(2,'0')}/${String(date.getMonth()+1).padStart(2,'0')}/${date.getFullYear()}`;
+                        return `<div class="announcement-card priority-low" style="border-left-color: #ec4899;">
+                            <div class="announcement-header">
+                                <div class="announcement-title">
+                                    <i class="fas fa-birthday-cake" style="color:#ec4899;"></i>
+                                    ${w.fromName || 'Unknown'} → ${w.memberName || 'Unknown'}
+                                </div>
+                            </div>
+                            <div class="announcement-message">${escapeHtml(w.message)}</div>
+                            <div class="announcement-footer">
+                                <div class="announcement-footer-left">
+                                    <span><i class="fas fa-calendar"></i> ${dateStr}</span>
+                                </div>
+                            </div>
+                        </div>`;
+                    }).join('')}
+                </div>
+            `;
+        };
 
         // ============================================
         // MEMBER ANNOUNCEMENTS VIEW
@@ -6659,123 +6461,99 @@ window.renderMemberWishes = function() {
         // ============================================
         // MEMBER BIRTHDAYS
         // ============================================
-       window.renderMemberBirthdays = function() {
-    const list = document.getElementById('myBirthdaysList');
-    if (!list) return;
-    
-    const activeMembers = members.filter(m => m.status === 'active' || !m.status);
-    const birthdaysToday = activeMembers.filter(m => isBirthdayToday(m.birthday));
-    
-    if (birthdaysToday.length === 0) {
-        list.innerHTML = `<div class="empty-state">
-            <div class="icon"><i class="fas fa-birthday-cake"></i></div>
-            <h3>Nta birthday uyu munsi</h3>
-            <p>Nta muririmbyi ufite birthday uyu munsi</p>
-        </div>`;
-        return;
-    }
-    
-    list.innerHTML = birthdaysToday.map(m => {
-        const initials = m.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-        const photoHtml = m.photo 
-            ? `<img src="${m.photo}" class="row-photo" onerror="this.outerHTML='<div class=\\'row-avatar\\'>${initials}</div>'">`
-            : `<div class="row-avatar">${initials}</div>`;
-        return `<div class="birthday-card today">
-            ${photoHtml}
-            <div class="birthday-info">
-                <h4>${m.name}</h4>
-                <p><i class="fas fa-microphone"></i> ${m.voice} • ${m.memberId || ''}</p>
-            </div>
-            <button class="birthday-badge" onclick="openBirthdayWishModal('${m.id}', '${m.uid || ''}')" style="border:none;cursor:pointer;">
-                🎉 Happy Birthday!
-            </button>
-        </div>`;
-    }).join('');
-};
+        window.renderMemberBirthdays = function() {
+            const list = document.getElementById('myBirthdaysList');
+            if (!list) return;
+            
+            const activeMembers = members.filter(m => m.status === 'active' || !m.status);
+            const birthdaysToday = activeMembers.filter(m => isBirthdayToday(m.birthday));
+            
+            if (birthdaysToday.length === 0) {
+                list.innerHTML = `<div class="empty-state">
+                    <div class="icon"><i class="fas fa-birthday-cake"></i></div>
+                    <h3>Nta birthday uyu munsi</h3>
+                    <p>Nta muririmbyi ufite birthday uyu munsi</p>
+                </div>`;
+                return;
+            }
+            
+            list.innerHTML = birthdaysToday.map(m => {
+                const initials = m.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                const photoHtml = m.photo 
+                    ? `<img src="${m.photo}" class="row-photo" onerror="this.outerHTML='<div class=\\'row-avatar\\'>${initials}</div>'">`
+                    : `<div class="row-avatar">${initials}</div>`;
+                return `<div class="birthday-card today">
+                    ${photoHtml}
+                    <div class="birthday-info">
+                        <h4>${m.name}</h4>
+                        <p><i class="fas fa-microphone"></i> ${m.voice} • ${m.memberId || ''}</p>
+                    </div>
+                    <button class="birthday-badge" onclick="openBirthdayWishModal('${m.id}', '${m.uid || ''}')" style="border:none;cursor:pointer;">
+                        🎉 Happy Birthday!
+                    </button>
+                </div>`;
+            }).join('');
+        };
+
         // ============================================
         // FELLOW MEMBERS
         // ============================================
-      // ============================================
-// FELLOW MEMBERS (GALLERY + SEARCH + FILTERS)
-// ============================================
-window.renderFellowMembers = function() {
-    const grid = document.getElementById('myFellowMembers');
-    if (!grid) return;
-    
-    // Fata amakuru yo muri Search na Filters
-    const searchTerm = (document.getElementById('fellowSearch')?.value || '').toLowerCase().trim();
-    const voiceFilter = document.getElementById('fellowFilterVoice')?.value || '';
-    const levelFilter = document.getElementById('fellowFilterLevel')?.value || '';
-    
-    // Shakisha abaririmbyi bose bakora (bafite amafoto cyangwa badafite, turabareka bose)
-    let list = members.filter(m => m.status === 'active' || !m.status);
-    
-    // 1. Shakisha (Search)
-    if (searchTerm) {
-        list = list.filter(m => 
-            (m.name || '').toLowerCase().includes(searchTerm) || 
-            (m.memberId || '').toLowerCase().includes(searchTerm) ||
-            (m.number || '').toLowerCase().includes(searchTerm)
-        );
-    }
-    
-    // 2. Hitamo Ijwi (Voice Filter)
-    if (voiceFilter) {
-        list = list.filter(m => m.voice === voiceFilter);
-    }
-    
-    // 3. Hitamo Level (Level Filter)
-    if (levelFilter) {
-        list = list.filter(m => m.level === levelFilter);
-    }
-    
-    // Niba nta muntu wabonetse
-    if (list.length === 0) {
-        grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-secondary);">
-            <i class="fas fa-users-slash" style="font-size:50px;opacity:0.3;display:block;margin-bottom:12px;"></i>
-            <h3>Nta muririmbyi wabonetse</h3>
-            <p style="font-size:13px;margin-top:4px;">Gerageza guhindura ibyo ushakisha cyangwa filters</p>
-        </div>`;
-        return;
-    }
-    
-    // Erekana amafoto mu buryo bwa Gallery nziza
-    grid.innerHTML = list.map(m => {
-        const levelClass = m.level === 'Special' ? 'special' : '';
-        const levelIcon = m.level === 'Special' ? '⭐' : '🎓';
-        
-        // Niba umuririmbyi adafite ifoto, dukoresha placeholder
-        const photoUrl = m.photo || 'https://via.placeholder.com/300x300?text=No+Photo';
-        
-        // Iyo ukanze, ifungura Photo Viewer (Iyi function twayikoresheje kuri Gallery)
-        return `<div class="photo-card" style="cursor:pointer;" onclick="openPhotoViewer('${photoUrl}', '${m.name.replace(/'/g, "\\'")}', '${m.level || ''}', '${m.voice || ''}', '🎤 Umuririmbyi')">
-            <img src="${photoUrl}" onerror="this.src='https://via.placeholder.com/300x300?text=No+Photo'">
-            <div class="photo-info" style="display:flex; flex-direction:column; gap:6px;">
-                <div class="photo-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${m.name}</div>
-                <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                    <span class="level-badge ${levelClass}" style="font-size:10.5px; padding: 4px 10px;">
-                        ${levelIcon} ${m.level || '-'}
-                    </span>
-                    ${m.voice ? `<span class="voice-badge ${m.voice.toLowerCase()}" style="font-size:10.5px; padding: 4px 10px;">
-                        <i class="fas fa-microphone"></i> ${m.voice}
-                    </span>` : ''}
-                </div>
-            </div>
-        </div>`;
-    }).join('');
-};
-window.openPhotoViewer = function(photoUrl, name, level, voice, typeLabel) {
-    document.getElementById('photoViewerImg').src = photoUrl;
-    document.getElementById('photoViewerName').textContent = name;
-    
-    let badgesHtml = `<span class="level-badge" style="font-size:12px; padding:6px 12px;">${typeLabel} ${level}</span>`;
-    if (voice) {
-        badgesHtml += `<span class="voice-badge ${voice.toLowerCase()}" style="font-size:12px; padding:6px 12px;"><i class="fas fa-microphone"></i> ${voice}</span>`;
-    }
-    
-    document.getElementById('photoViewerBadges').innerHTML = badgesHtml;
-    document.getElementById('photoViewerModal').classList.add('active');
-};
+        window.renderFellowMembers = function() {
+            const grid = document.getElementById('myFellowMembers');
+            if (!grid) return;
+            
+            const searchTerm = (document.getElementById('fellowSearch')?.value || '').toLowerCase().trim();
+            const voiceFilter = document.getElementById('fellowFilterVoice')?.value || '';
+            const levelFilter = document.getElementById('fellowFilterLevel')?.value || '';
+            
+            let list = members.filter(m => m.status === 'active' || !m.status);
+            
+            if (searchTerm) {
+                list = list.filter(m => 
+                    (m.name || '').toLowerCase().includes(searchTerm) || 
+                    (m.memberId || '').toLowerCase().includes(searchTerm) ||
+                    (m.number || '').toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            if (voiceFilter) {
+                list = list.filter(m => m.voice === voiceFilter);
+            }
+            
+            if (levelFilter) {
+                list = list.filter(m => m.level === levelFilter);
+            }
+            
+            if (list.length === 0) {
+                grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-secondary);">
+                    <i class="fas fa-users-slash" style="font-size:50px;opacity:0.3;display:block;margin-bottom:12px;"></i>
+                    <h3>Nta muririmbyi wabonetse</h3>
+                    <p style="font-size:13px;margin-top:4px;">Gerageza guhindura ibyo ushakisha cyangwa filters</p>
+                </div>`;
+                return;
+            }
+            
+            grid.innerHTML = list.map(m => {
+                const levelClass = m.level === 'Special' ? 'special' : '';
+                const levelIcon = m.level === 'Special' ? '⭐' : '🎓';
+                const photoUrl = m.photo || 'https://via.placeholder.com/300x300?text=No+Photo';
+                
+                return `<div class="photo-card" style="cursor:pointer;" onclick="openPhotoViewer('${photoUrl}', '${m.name.replace(/'/g, "\\'")}', '${m.level || ''}', '${m.voice || ''}', '🎤 Umuririmbyi')">
+                    <img src="${photoUrl}" onerror="this.src='https://via.placeholder.com/300x300?text=No+Photo'">
+                    <div class="photo-info" style="display:flex; flex-direction:column; gap:6px;">
+                        <div class="photo-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${m.name}</div>
+                        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                            <span class="level-badge ${levelClass}" style="font-size:10.5px; padding: 4px 10px;">
+                                ${levelIcon} ${m.level || '-'}
+                            </span>
+                            ${m.voice ? `<span class="voice-badge ${m.voice.toLowerCase()}" style="font-size:10.5px; padding: 4px 10px;">
+                                <i class="fas fa-microphone"></i> ${m.voice}
+                            </span>` : ''}
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        };
 
         // ============================================
         // BIRTHDAY PAGE
@@ -6787,273 +6565,133 @@ window.openPhotoViewer = function(photoUrl, name, level, voice, typeLabel) {
             renderBirthdayPage();
         };
 
-       window.renderBirthdayPage = function() {
-    const list = document.getElementById('birthdayList');
-    if (!list) return;
-    
-    // KUSANYA ABANTU BOSE (members + admins/users) bafite birthday
-    const allPeople = [];
-    
-    // Abaririmbyi
-    members.filter(m => (m.status === 'active' || !m.status) && m.birthday).forEach(m => {
-        allPeople.push({
-            id: m.id,
-            uid: m.uid || null,
-            name: m.name,
-            photo: m.photo,
-            birthday: m.birthday,
-            voice: m.voice,
-            level: m.level,
-            type: 'member',
-            typeLabel: 'Umuririmbyi'
-        });
-    });
-    
-    // Admin/Users (batari muri members)
-    users.filter(u => u.birthday && !allPeople.some(p => p.uid === u.uid)).forEach(u => {
-        allPeople.push({
-            id: u.uid,
-            uid: u.uid,
-            name: u.name || 'Admin',
-            photo: u.photo,
-            birthday: u.birthday,
-            voice: u.voice || '',
-            level: u.level || '',
-            type: 'admin',
-            typeLabel: u.role === 'super_admin' ? 'Super Admin' : 'Admin'
-        });
-    });
-    
-    // FILTER ukurikije period
-    let filtered = [];
-    if (currentBirthdayPeriod === 'today') {
-        filtered = allPeople.filter(p => isBirthdayToday(p.birthday));
-    } else if (currentBirthdayPeriod === 'week') {
-        filtered = allPeople.filter(p => {
-            const d = daysUntilBirthday(p.birthday);
-            return d >= 0 && d <= 7;
-        });
-    } else if (currentBirthdayPeriod === 'month') {
-        filtered = allPeople.filter(p => {
-            const d = daysUntilBirthday(p.birthday);
-            return d >= 0 && d <= 30;
-        });
-    } else {
-        filtered = [...allPeople];
-    }
-    
-    filtered.sort((a, b) => daysUntilBirthday(a.birthday) - daysUntilBirthday(b.birthday));
-    
-    if (filtered.length === 0) {
-        list.innerHTML = `<div class="empty-state">
-            <div class="icon"><i class="fas fa-birthday-cake"></i></div>
-            <h3>Nta birthday</h3>
-            <p>Nta muntu ufite birthday muri iki gihe</p>
-        </div>`;
-        return;
-    }
-    
-    list.innerHTML = filtered.map(p => {
-        const initials = p.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-        const photoHtml = p.photo 
-            ? `<img src="${p.photo}" class="birthday-photo" onerror="this.outerHTML='<div class=\\'birthday-avatar\\'>${initials}</div>'">`
-            : `<div class="birthday-avatar">${initials}</div>`;
-        const isToday = isBirthdayToday(p.birthday);
-        const days = daysUntilBirthday(p.birthday);
-        const daysText = isToday ? '🎉 Uyu munsi!' : `Mu minsi ${days}`;
-        const typeIcon = p.type === 'admin' ? '🛡️' : '🎤';
-        
-        return `<div class="birthday-card ${isToday ? 'today' : ''}">
-            ${photoHtml}
-            <div class="birthday-info">
-                <h4>${p.name} <span style="font-size:11px;color:var(--primary);font-weight:600;">${typeIcon} ${p.typeLabel}</span></h4>
-                <p><i class="fas fa-calendar"></i> ${formatDate(p.birthday)} • ${daysText}</p>
-                ${p.voice ? `<p><i class="fas fa-microphone"></i> ${p.voice} ${p.level ? '• ' + p.level : ''}</p>` : ''}
-            </div>
-            <button class="birthday-badge" onclick="openBirthdayWishModal('${p.id}', '${p.uid || ''}')" style="border:none;cursor:pointer;">
-                ${isToday ? '🎉 Ohereza Wish' : '🎂 ' + daysText}
-            </button>
-        </div>`;
-    }).join('');
-    
-    // Erekana wish zose zahawe
-    renderAllBirthdayWishes();
-};
-        // ============================================
-        // BIRTHDAY WISH MODAL
-        // ============================================
-       // ============================================
-// BIRTHDAY WISHES — BURI MUNTU ASHOBORA KOHA
-// ============================================
-window.openBirthdayWishModal = function(memberId, uid) {
-    // Shakisha uwo muntu muri members cyangwa users
-    let person = members.find(x => x.id === memberId);
-    let personType = 'member';
-    
-    if (!person && uid) {
-        person = users.find(u => u.uid === uid);
-        personType = 'admin';
-    }
-    if (!person) {
-        person = users.find(u => u.uid === memberId);
-        personType = 'admin';
-    }
-    
-    if (!person) { showToast('Nta muntu wabonetse', 'warning'); return; }
-    
-    currentBirthdayMember = { ...person, type: personType, id: memberId, uid: uid || person.uid };
-    
-    const initials = person.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-    const photoHtml = person.photo 
-        ? `<img src="${person.photo}" style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:4px solid #ec4899;box-shadow:0 10px 30px rgba(236,72,153,0.4);">`
-        : `<div style="width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#ec4899,#f59e0b);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:32px;border:4px solid #ec4899;">${initials}</div>`;
-    
-    const typeIcon = personType === 'admin' ? '🛡️' : '🎤';
-    const typeLabel = personType === 'admin' 
-        ? (person.role === 'super_admin' ? 'Super Admin' : 'Admin')
-        : 'Umuririmbyi';
-    
-    document.getElementById('birthdayWishInfo').innerHTML = `
-        ${photoHtml}
-        <h2 style="font-size:22px;font-weight:800;margin-top:16px;margin-bottom:6px;">${person.name}</h2>
-        <p style="color:var(--text-secondary);font-size:13px;margin-bottom:4px;">${typeIcon} ${typeLabel}</p>
-        <p style="color:var(--text-secondary);font-size:14px;">🎂 ${formatDate(person.birthday)}</p>
-    `;
-    document.getElementById('birthdayWishMessage').value = `🎉 Happy Birthday ${person.name.split(' ')[0]}! Imana ikuhe imyaka myinshi n'ibyiza byinshi. Turagukunda! 🎂`;
-    document.getElementById('birthdayWishModal').classList.add('active');
-};
-
-window.sendBirthdayWish = async function() {
-    if (!currentBirthdayMember) return;
-    const message = document.getElementById('birthdayWishMessage').value.trim();
-    if (!message) { showToast('Andika ubutumwa', 'warning'); return; }
-    
-    const btn = document.getElementById('sendWishBtn');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turaohereza...';
-    
-    try {
-        await addDoc(collection(db, 'birthdayWishes'), {
-            memberId: currentBirthdayMember.id,
-            memberUid: currentBirthdayMember.uid || null,
-            memberName: currentBirthdayMember.name,
-            memberPhoto: currentBirthdayMember.photo || null,
-            memberType: currentBirthdayMember.type || 'member',
-            message: message,
-            fromUid: currentUser.uid,
-            fromName: currentUserData.name,
-            fromPhoto: currentUserData.photo || null,
-            fromRole: currentUserData.role,
-            createdAt: serverTimestamp()
-        });
-        
-        confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
-        showToast(`🎉 Wish yoherejwe kuri ${currentBirthdayMember.name}!`, 'success');
-        closeModal('birthdayWishModal');
-        currentBirthdayMember = null;
-        
-        // Ongera usome wish zose
-        await loadBirthdayWishes();
-        renderAllBirthdayWishes();
-        
-    } catch (error) {
-        showToast('❌ ' + error.message, 'error');
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Ohereza';
-    }
-};
-
-// ============================================
-// LOAD WISHES ZOSE
-// ============================================
-window.loadBirthdayWishes = async function() {
-    try {
-        const q = query(collection(db, 'birthdayWishes'), orderBy('createdAt', 'desc'), limit(50));
-        const snap = await getDocs(q);
-        window._allBirthdayWishes = [];
-        snap.forEach(d => window._allBirthdayWishes.push({ id: d.id, ...d.data() }));
-    } catch (e) {
-        window._allBirthdayWishes = [];
-    }
-};
-
-// ============================================
-// RENDER WISHES ZOSE MURI BIRTHDAY PAGE
-// ============================================
-window.renderAllBirthdayWishes = function() {
-    let wishesContainer = document.getElementById('allBirthdayWishesContainer');
-    if (!wishesContainer) {
-        // Kora container niba itabaho
-        const birthdayList = document.getElementById('birthdayList');
-        if (!birthdayList) return;
-        
-        wishesContainer = document.createElement('div');
-        wishesContainer.id = 'allBirthdayWishesContainer';
-        wishesContainer.style.marginTop = '30px';
-        birthdayList.parentNode.appendChild(wishesContainer);
-    }
-    
-    const wishes = window._allBirthdayWishes || [];
-    
-    if (wishes.length === 0) {
-        wishesContainer.innerHTML = '';
-        return;
-    }
-    
-    wishesContainer.innerHTML = `
-        <div class="section-title" style="margin-bottom:16px;">
-            <i class="fas fa-gift"></i>
-            <span>Wish Zose Zahawe</span>
-            <span style="margin-left:auto;font-size:12px;color:var(--text-secondary);">${wishes.length} wish</span>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:12px;">
-            ${wishes.map(w => {
-                const date = w.createdAt?.toDate ? w.createdAt.toDate() : new Date();
-                const dateStr = `${String(date.getDate()).padStart(2,'0')}/${String(date.getMonth()+1).padStart(2,'0')}/${date.getFullYear()} ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
-                const initials = (w.fromName || '?').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-                const avatarHtml = w.fromPhoto 
-                    ? `<img src="${w.fromPhoto}" style="width:100%;height:100%;object-fit:cover;">` 
-                    : initials;
-                const toInitials = (w.memberName || '?').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-                const toAvatar = w.memberPhoto 
-                    ? `<img src="${w.memberPhoto}" style="width:100%;height:100%;object-fit:cover;">` 
-                    : toInitials;
-                
-                return `<div style="background:linear-gradient(135deg,rgba(236,72,153,0.08),rgba(245,158,11,0.05));border:1px solid rgba(236,72,153,0.25);border-radius:16px;padding:16px 18px;">
-                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap;">
-                        <div class="chat-item-avatar" style="width:36px;height:36px;font-size:12px;">${avatarHtml}</div>
-                        <div style="flex:1;min-width:0;">
-                            <div style="font-size:13px;font-weight:700;">
-                                ${w.fromName || 'Unknown'}
-                                <span style="color:var(--text-secondary);font-weight:500;"> → </span>
-                                <span style="color:#ec4899;">${w.memberName || 'Unknown'}</span>
-                            </div>
-                            <div style="font-size:11px;color:var(--text-secondary);"><i class="fas fa-clock"></i> ${dateStr}</div>
-                        </div>
-                        <div class="chat-item-avatar" style="width:32px;height:32px;font-size:11px;background:linear-gradient(135deg,#ec4899,#f59e0b);">${toAvatar}</div>
-                    </div>
-                    <div style="font-size:14px;line-height:1.6;color:var(--text);padding:10px 14px;background:rgba(255,255,255,0.5);border-radius:10px;border-left:3px solid #ec4899;">
-                        ${escapeHtml(w.message)}
-                    </div>
+        window.renderBirthdayPage = function() {
+            const list = document.getElementById('birthdayList');
+            if (!list) return;
+            
+            const allPeople = [];
+            
+            members.filter(m => (m.status === 'active' || !m.status) && m.birthday).forEach(m => {
+                allPeople.push({
+                    id: m.id,
+                    uid: m.uid || null,
+                    name: m.name,
+                    photo: m.photo,
+                    birthday: m.birthday,
+                    voice: m.voice,
+                    level: m.level,
+                    type: 'member',
+                    typeLabel: 'Umuririmbyi'
+                });
+            });
+            
+            users.filter(u => u.birthday && !allPeople.some(p => p.uid === u.uid)).forEach(u => {
+                allPeople.push({
+                    id: u.uid,
+                    uid: u.uid,
+                    name: u.name || 'Admin',
+                    photo: u.photo,
+                    birthday: u.birthday,
+                    voice: u.voice || '',
+                    level: u.level || '',
+                    type: 'admin',
+                    typeLabel: u.role === 'super_admin' ? 'Super Admin' : 'Admin'
+                });
+            });
+            
+            let filtered = [];
+            if (currentBirthdayPeriod === 'today') {
+                filtered = allPeople.filter(p => isBirthdayToday(p.birthday));
+            } else if (currentBirthdayPeriod === 'week') {
+                filtered = allPeople.filter(p => {
+                    const d = daysUntilBirthday(p.birthday);
+                    return d >= 0 && d <= 7;
+                });
+            } else if (currentBirthdayPeriod === 'month') {
+                filtered = allPeople.filter(p => {
+                    const d = daysUntilBirthday(p.birthday);
+                    return d >= 0 && d <= 30;
+                });
+            } else {
+                filtered = [...allPeople];
+            }
+            
+            filtered.sort((a, b) => daysUntilBirthday(a.birthday) - daysUntilBirthday(b.birthday));
+            
+            if (filtered.length === 0) {
+                list.innerHTML = `<div class="empty-state">
+                    <div class="icon"><i class="fas fa-birthday-cake"></i></div>
+                    <h3>Nta birthday</h3>
+                    <p>Nta muntu ufite birthday muri iki gihe</p>
                 </div>`;
-            }).join('')}
-        </div>
-    `;
-};
-// ============================================
-// MEMBER: REBA WISH ZOSE ZA BIRTHDAY
-// ============================================
-window.renderMyBirthdayWishes = async function() {
-    const container = document.getElementById('myBirthdaysList');
-    if (!container) return;
-    
-    await loadBirthdayWishes();
-    const wishes = window._allBirthdayWishes || [];
-    
-    // Erekana wish zose
-    renderAllBirthdayWishes();
-};
+                return;
+            }
+            
+            list.innerHTML = filtered.map(p => {
+                const initials = p.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                const photoHtml = p.photo 
+                    ? `<img src="${p.photo}" class="birthday-photo" onerror="this.outerHTML='<div class=\\'birthday-avatar\\'>${initials}</div>'">`
+                    : `<div class="birthday-avatar">${initials}</div>`;
+                const isToday = isBirthdayToday(p.birthday);
+                const days = daysUntilBirthday(p.birthday);
+                const daysText = isToday ? '🎉 Uyu munsi!' : `Mu minsi ${days}`;
+                const typeIcon = p.type === 'admin' ? '🛡️' : '🎤';
+                
+                return `<div class="birthday-card ${isToday ? 'today' : ''}">
+                    ${photoHtml}
+                    <div class="birthday-info">
+                        <h4>${p.name} <span style="font-size:11px;color:var(--primary);font-weight:600;">${typeIcon} ${p.typeLabel}</span></h4>
+                        <p><i class="fas fa-calendar"></i> ${formatDate(p.birthday)} • ${daysText}</p>
+                        ${p.voice ? `<p><i class="fas fa-microphone"></i> ${p.voice} ${p.level ? '• ' + p.level : ''}</p>` : ''}
+                    </div>
+                    <button class="birthday-badge" onclick="openBirthdayWishModal('${p.id}', '${p.uid || ''}')" style="border:none;cursor:pointer;">
+                        ${isToday ? '🎉 Ohereza Wish' : '🎂 ' + daysText}
+                    </button>
+                </div>`;
+            }).join('');
+            
+            renderAllBirthdayWishes();
+        };
+
+        // ============================================
+        // BIRTHDAY WISHES
+        // ============================================
+        window.openBirthdayWishModal = function(memberId, uid) {
+            let person = members.find(x => x.id === memberId);
+            let personType = 'member';
+            
+            if (!person && uid) {
+                person = users.find(u => u.uid === uid);
+                personType = 'admin';
+            }
+            if (!person) {
+                person = users.find(u => u.uid === memberId);
+                personType = 'admin';
+            }
+            
+            if (!person) { showToast('Nta muntu wabonetse', 'warning'); return; }
+            
+            currentBirthdayMember = { ...person, type: personType, id: memberId, uid: uid || person.uid };
+            
+            const initials = person.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+            const photoHtml = person.photo 
+                ? `<img src="${person.photo}" style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:4px solid #ec4899;box-shadow:0 10px 30px rgba(236,72,153,0.4);">`
+                : `<div style="width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#ec4899,#f59e0b);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:32px;border:4px solid #ec4899;">${initials}</div>`;
+            
+            const typeIcon = personType === 'admin' ? '🛡️' : '🎤';
+            const typeLabel = personType === 'admin' 
+                ? (person.role === 'super_admin' ? 'Super Admin' : 'Admin')
+                : 'Umuririmbyi';
+            
+            document.getElementById('birthdayWishInfo').innerHTML = `
+                ${photoHtml}
+                <h2 style="font-size:22px;font-weight:800;margin-top:16px;margin-bottom:6px;">${person.name}</h2>
+                <p style="color:var(--text-secondary);font-size:13px;margin-bottom:4px;">${typeIcon} ${typeLabel}</p>
+                <p style="color:var(--text-secondary);font-size:14px;">🎂 ${formatDate(person.birthday)}</p>
+            `;
+            document.getElementById('birthdayWishMessage').value = `🎉 Happy Birthday ${person.name.split(' ')[0]}! Imana ikuhe imyaka myinshi n'ibyiza byinshi. Turagukunda! 🎂`;
+            document.getElementById('birthdayWishModal').classList.add('active');
+        };
 
         window.sendBirthdayWish = async function() {
             if (!currentBirthdayMember) return;
@@ -7067,23 +6705,103 @@ window.renderMyBirthdayWishes = async function() {
             try {
                 await addDoc(collection(db, 'birthdayWishes'), {
                     memberId: currentBirthdayMember.id,
+                    memberUid: currentBirthdayMember.uid || null,
                     memberName: currentBirthdayMember.name,
+                    memberPhoto: currentBirthdayMember.photo || null,
+                    memberType: currentBirthdayMember.type || 'member',
                     message: message,
                     fromUid: currentUser.uid,
                     fromName: currentUserData.name,
+                    fromPhoto: currentUserData.photo || null,
+                    fromRole: currentUserData.role,
                     createdAt: serverTimestamp()
                 });
                 
                 confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
-                showToast(`🎉 Ubutumwa bwoherejwe kuri ${currentBirthdayMember.name}!`, 'success');
+                showToast(`🎉 Wish yoherejwe kuri ${currentBirthdayMember.name}!`, 'success');
                 closeModal('birthdayWishModal');
                 currentBirthdayMember = null;
+                
+                await loadBirthdayWishes();
+                renderAllBirthdayWishes();
+                
             } catch (error) {
                 showToast('❌ ' + error.message, 'error');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-paper-plane"></i> Ohereza';
             }
+        };
+
+        window.loadBirthdayWishes = async function() {
+            try {
+                const q = query(collection(db, 'birthdayWishes'), orderBy('createdAt', 'desc'), limit(50));
+                const snap = await getDocs(q);
+                window._allBirthdayWishes = [];
+                snap.forEach(d => window._allBirthdayWishes.push({ id: d.id, ...d.data() }));
+            } catch (e) {
+                window._allBirthdayWishes = [];
+            }
+        };
+
+        window.renderAllBirthdayWishes = function() {
+            let wishesContainer = document.getElementById('allBirthdayWishesContainer');
+            if (!wishesContainer) {
+                const birthdayList = document.getElementById('birthdayList');
+                if (!birthdayList) return;
+                
+                wishesContainer = document.createElement('div');
+                wishesContainer.id = 'allBirthdayWishesContainer';
+                wishesContainer.style.marginTop = '30px';
+                birthdayList.parentNode.appendChild(wishesContainer);
+            }
+            
+            const wishes = window._allBirthdayWishes || [];
+            
+            if (wishes.length === 0) {
+                wishesContainer.innerHTML = '';
+                return;
+            }
+            
+            wishesContainer.innerHTML = `
+                <div class="section-title" style="margin-bottom:16px;">
+                    <i class="fas fa-gift"></i>
+                    <span>Wish Zose Zahawe</span>
+                    <span style="margin-left:auto;font-size:12px;color:var(--text-secondary);">${wishes.length} wish</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                    ${wishes.map(w => {
+                        const date = w.createdAt?.toDate ? w.createdAt.toDate() : new Date();
+                        const dateStr = `${String(date.getDate()).padStart(2,'0')}/${String(date.getMonth()+1).padStart(2,'0')}/${date.getFullYear()} ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
+                        const initials = (w.fromName || '?').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                        const avatarHtml = w.fromPhoto 
+                            ? `<img src="${w.fromPhoto}" style="width:100%;height:100%;object-fit:cover;">` 
+                            : initials;
+                        const toInitials = (w.memberName || '?').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                        const toAvatar = w.memberPhoto 
+                            ? `<img src="${w.memberPhoto}" style="width:100%;height:100%;object-fit:cover;">` 
+                            : toInitials;
+                        
+                        return `<div style="background:linear-gradient(135deg,rgba(236,72,153,0.08),rgba(245,158,11,0.05));border:1px solid rgba(236,72,153,0.25);border-radius:16px;padding:16px 18px;">
+                            <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap;">
+                                <div class="chat-item-avatar" style="width:36px;height:36px;font-size:12px;">${avatarHtml}</div>
+                                <div style="flex:1;min-width:0;">
+                                    <div style="font-size:13px;font-weight:700;">
+                                        ${w.fromName || 'Unknown'}
+                                        <span style="color:var(--text-secondary);font-weight:500;"> → </span>
+                                        <span style="color:#ec4899;">${w.memberName || 'Unknown'}</span>
+                                    </div>
+                                    <div style="font-size:11px;color:var(--text-secondary);"><i class="fas fa-clock"></i> ${dateStr}</div>
+                                </div>
+                                <div class="chat-item-avatar" style="width:32px;height:32px;font-size:11px;background:linear-gradient(135deg,#ec4899,#f59e0b);">${toAvatar}</div>
+                            </div>
+                            <div style="font-size:14px;line-height:1.6;color:var(--text);padding:10px 14px;background:rgba(255,255,255,0.5);border-radius:10px;border-left:3px solid #ec4899;">
+                                ${escapeHtml(w.message)}
+                            </div>
+                        </div>`;
+                    }).join('')}
+                </div>
+            `;
         };
 
         // ============================================
@@ -7445,56 +7163,55 @@ window.renderMyBirthdayWishes = async function() {
             } catch (error) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Bika Lyrics'; showToast('❌ ' + error.message, 'error'); }
         };
 
-      window.renderLyrics = function() {
-    const grid = document.getElementById('lyricsGrid');
-    const uploadArea = document.getElementById('lyricsUploadArea');
-    if (!grid) return;
-    const typeFilter = document.getElementById('lyricsFilterType')?.value || '';
-    const search = document.getElementById('lyricsSearch')?.value.toLowerCase().trim() || '';
-    document.getElementById('statLyricsTotal').textContent = lyrics.length;
-    document.getElementById('statLyricsPDF').textContent = lyrics.filter(l => l.type === 'pdf').length;
-    document.getElementById('statLyricsPPT').textContent = lyrics.filter(l => l.type === 'ppt').length;
-    document.getElementById('statLyricsWord').textContent = lyrics.filter(l => l.type === 'word').length;
-    let filtered = [...lyrics];
-    if (typeFilter) filtered = filtered.filter(l => l.type === typeFilter);
-    if (search) filtered = filtered.filter(l => (l.title || '').toLowerCase().includes(search) || (l.description || '').toLowerCase().includes(search));
-    if (filtered.length === 0) {
-        if (uploadArea) uploadArea.style.display = (lyrics.length === 0 && currentUserData?.role !== 'member') ? 'block' : 'none';
-        grid.innerHTML = `<div class="uniform-empty" style="grid-column: 1/-1;"><div class="icon"><i class="fas fa-music"></i></div><h3>Nta lyrics zirahari</h3></div>`;
-        return;
-    }
-    if (uploadArea) uploadArea.style.display = 'none';
-    const isMember = currentUserData?.role === 'member';
-    grid.innerHTML = filtered.map(l => {
-        const date = l.uploadedAt?.toDate ? l.uploadedAt.toDate() : new Date();
-        const dateStr = `${String(date.getDate()).padStart(2,'0')}/${String(date.getMonth()+1).padStart(2,'0')}/${date.getFullYear()}`;
-        let iconClass = 'fa-file-alt', typeLabel = 'Text';
-        if (l.type === 'pdf') { iconClass = 'fa-file-pdf'; typeLabel = 'PDF'; }
-        else if (l.type === 'word') { iconClass = 'fa-file-word'; typeLabel = 'Word'; }
-        else if (l.type === 'ppt') { iconClass = 'fa-file-powerpoint'; typeLabel = 'PowerPoint'; }
-        
-        // YAKOSOWE: Nongeyemo buto ya Edit (Iyigaragaramo gusa iyo atari Member)
-        return `<div class="lyrics-card">
-            <div class="lyrics-preview" onclick="viewLyrics('${l.id}')">
-                <i class="fas ${iconClass} lyrics-preview-icon"></i>
-                <div class="lyrics-preview-badge"><i class="fas ${iconClass}"></i> ${typeLabel}</div>
-            </div>
-            <div class="lyrics-info">
-                <div>
-                    <div class="lyrics-title">${l.title}</div>
-                    <div class="lyrics-meta"><span><i class="fas fa-calendar"></i> ${dateStr}</span>${l.description ? `<span><i class="fas fa-info-circle"></i> ${l.description}</span>` : ''}</div>
-                </div>
-                <div class="lyrics-actions">
-                    <button class="btn btn-primary" onclick="viewLyrics('${l.id}')"><i class="fas fa-eye"></i> Reba</button>
-                    ${!isMember ? `
-                        <button class="btn btn-warning" onclick="openEditLyricsModal('${l.id}')"><i class="fas fa-edit"></i> Edit</button>
-                        <button class="btn btn-danger" onclick="deleteLyrics('${l.id}')"><i class="fas fa-trash"></i> Siba</button>
-                    ` : ''}
-                </div>
-            </div>
-        </div>`;
-    }).join('');
-};
+        window.renderLyrics = function() {
+            const grid = document.getElementById('lyricsGrid');
+            const uploadArea = document.getElementById('lyricsUploadArea');
+            if (!grid) return;
+            const typeFilter = document.getElementById('lyricsFilterType')?.value || '';
+            const search = document.getElementById('lyricsSearch')?.value.toLowerCase().trim() || '';
+            document.getElementById('statLyricsTotal').textContent = lyrics.length;
+            document.getElementById('statLyricsPDF').textContent = lyrics.filter(l => l.type === 'pdf').length;
+            document.getElementById('statLyricsPPT').textContent = lyrics.filter(l => l.type === 'ppt').length;
+            document.getElementById('statLyricsWord').textContent = lyrics.filter(l => l.type === 'word').length;
+            let filtered = [...lyrics];
+            if (typeFilter) filtered = filtered.filter(l => l.type === typeFilter);
+            if (search) filtered = filtered.filter(l => (l.title || '').toLowerCase().includes(search) || (l.description || '').toLowerCase().includes(search));
+            if (filtered.length === 0) {
+                if (uploadArea) uploadArea.style.display = (lyrics.length === 0 && currentUserData?.role !== 'member') ? 'block' : 'none';
+                grid.innerHTML = `<div class="uniform-empty" style="grid-column: 1/-1;"><div class="icon"><i class="fas fa-music"></i></div><h3>Nta lyrics zirahari</h3></div>`;
+                return;
+            }
+            if (uploadArea) uploadArea.style.display = 'none';
+            const isMember = currentUserData?.role === 'member';
+            grid.innerHTML = filtered.map(l => {
+                const date = l.uploadedAt?.toDate ? l.uploadedAt.toDate() : new Date();
+                const dateStr = `${String(date.getDate()).padStart(2,'0')}/${String(date.getMonth()+1).padStart(2,'0')}/${date.getFullYear()}`;
+                let iconClass = 'fa-file-alt', typeLabel = 'Text';
+                if (l.type === 'pdf') { iconClass = 'fa-file-pdf'; typeLabel = 'PDF'; }
+                else if (l.type === 'word') { iconClass = 'fa-file-word'; typeLabel = 'Word'; }
+                else if (l.type === 'ppt') { iconClass = 'fa-file-powerpoint'; typeLabel = 'PowerPoint'; }
+                
+                return `<div class="lyrics-card">
+                    <div class="lyrics-preview" onclick="viewLyrics('${l.id}')">
+                        <i class="fas ${iconClass} lyrics-preview-icon"></i>
+                        <div class="lyrics-preview-badge"><i class="fas ${iconClass}"></i> ${typeLabel}</div>
+                    </div>
+                    <div class="lyrics-info">
+                        <div>
+                            <div class="lyrics-title">${l.title}</div>
+                            <div class="lyrics-meta"><span><i class="fas fa-calendar"></i> ${dateStr}</span>${l.description ? `<span><i class="fas fa-info-circle"></i> ${l.description}</span>` : ''}</div>
+                        </div>
+                        <div class="lyrics-actions">
+                            <button class="btn btn-primary" onclick="viewLyrics('${l.id}')"><i class="fas fa-eye"></i> Reba</button>
+                            ${!isMember ? `
+                                <button class="btn btn-warning" onclick="openEditLyricsModal('${l.id}')"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="btn btn-danger" onclick="deleteLyrics('${l.id}')"><i class="fas fa-trash"></i> Siba</button>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        };
 
         window.viewLyrics = function(id) {
             const l = lyrics.find(x => x.id === id);
@@ -7532,8 +7249,6 @@ window.renderMyBirthdayWishes = async function() {
         };
 
         // ============================================
-        // ANNOUNCEMENTS
-               // ============================================
         // ANNOUNCEMENTS
         // ============================================
         window.openAddAnnouncementModal = function() {
@@ -7643,80 +7358,70 @@ window.renderMyBirthdayWishes = async function() {
             }
         };
 
-       function renderChatList() {
-    const chatList = document.getElementById('chatList');
-    if (!chatList) return;
-    
-    // ============================================
-    // 1. ITSINDA RUSANGE
-    // ============================================
-    let html = `
-        <div class="chat-item ${currentChatType === 'group' ? 'active' : ''}" onclick="openGroupChat()">
-            <div class="chat-item-avatar" style="background: var(--gradient-2);"><i class="fas fa-users"></i></div>
-            <div class="chat-item-info">
-                <div class="chat-item-name">Itsinda Rusange</div>
-                <div class="chat-item-preview" id="groupChatPreview">Vugana n'itsinda...</div>
-            </div>
-        </div>
-    `;
-    
-    // ============================================
-    // 2. ABANTU BAFITE UBUTUMWA BUTARASOMWA
-    // ============================================
-    const unreadCounts = window._unreadCounts || {};
-    const unreadUids = Object.keys(unreadCounts).filter(uid => unreadCounts[uid] > 0);
-    
-    if (unreadUids.length > 0) {
-        html += `<div class="nav-label" style="padding: 12px 12px 8px;">Ubutumwa Bushya</div>`;
-        
-        unreadUids.forEach(uid => {
-            // Shakisha umuntu muri members cyangwa users
-            let person = members.find(m => m.uid === uid);
-            if (!person) person = users.find(u => u.uid === uid);
-            if (!person) return;
+        function renderChatList() {
+            const chatList = document.getElementById('chatList');
+            if (!chatList) return;
             
-            const initials = (person.name || '?').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-            const photoHtml = person.photo
-                ? `<img src="${person.photo}" style="width:100%;height:100%;object-fit:cover;">`
-                : initials;
-            
-            const isActive = currentChatType === 'private' && currentPrivateChatUser?.uid === uid;
-            const unreadCount = unreadCounts[uid];
-            
-            html += `
-                <div class="chat-item ${isActive ? 'active' : ''}" 
-                     onclick="openPrivateChat('${uid}', '${(person.name || '').replace(/'/g, "\\'")}', '${person.photo || ''}')">
-                    <div class="chat-item-avatar">${photoHtml}</div>
+            let html = `
+                <div class="chat-item ${currentChatType === 'group' ? 'active' : ''}" onclick="openGroupChat()">
+                    <div class="chat-item-avatar" style="background: var(--gradient-2);"><i class="fas fa-users"></i></div>
                     <div class="chat-item-info">
-                        <div class="chat-item-name">${person.name || 'Unknown'}</div>
-                        <div class="chat-item-preview" style="color: var(--danger); font-weight: 600;">
-                            <i class="fas fa-circle" style="font-size: 6px;"></i> Ubutumwa butarasomwa
-                        </div>
+                        <div class="chat-item-name">Itsinda Rusange</div>
+                        <div class="chat-item-preview" id="groupChatPreview">Vugana n'itsinda...</div>
                     </div>
-                    <div class="chat-item-unread">${unreadCount}</div>
                 </div>
             `;
-        });
-    }
-    
-    // ============================================
-    // 3. SHAKISHA UMUNTU (Admin gusa)
-    // ============================================
-    if (currentUserData?.role === 'admin' || currentUserData?.role === 'super_admin') {
-        html += `
-            <div class="chat-item" onclick="openChatSearchModal()" 
-                 style="border-top: 1px solid var(--border); margin-top: 8px; padding-top: 12px;">
-                <div class="chat-item-avatar" style="background: var(--gradient-1);"><i class="fas fa-search"></i></div>
-                <div class="chat-item-info">
-                    <div class="chat-item-name">Shakisha Umuntu</div>
-                    <div class="chat-item-preview">Vugana n'umuririmbyi ku giti cye</div>
-                </div>
-            </div>
-        `;
-    }
-    
-    chatList.innerHTML = html;
-}
+            
+            const unreadCounts = window._unreadCounts || {};
+            const unreadUids = Object.keys(unreadCounts).filter(uid => unreadCounts[uid] > 0);
+            
+            if (unreadUids.length > 0) {
+                html += `<div class="nav-label" style="padding: 12px 12px 8px;">Ubutumwa Bushya</div>`;
+                
+                unreadUids.forEach(uid => {
+                    let person = members.find(m => m.uid === uid);
+                    if (!person) person = users.find(u => u.uid === uid);
+                    if (!person) return;
+                    
+                    const initials = (person.name || '?').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                    const photoHtml = person.photo
+                        ? `<img src="${person.photo}" style="width:100%;height:100%;object-fit:cover;">`
+                        : initials;
+                    
+                    const isActive = currentChatType === 'private' && currentPrivateChatUser?.uid === uid;
+                    const unreadCount = unreadCounts[uid];
+                    
+                    html += `
+                        <div class="chat-item ${isActive ? 'active' : ''}" 
+                             onclick="openPrivateChat('${uid}', '${(person.name || '').replace(/'/g, "\\'")}', '${person.photo || ''}')">
+                            <div class="chat-item-avatar">${photoHtml}</div>
+                            <div class="chat-item-info">
+                                <div class="chat-item-name">${person.name || 'Unknown'}</div>
+                                <div class="chat-item-preview" style="color: var(--danger); font-weight: 600;">
+                                    <i class="fas fa-circle" style="font-size: 6px;"></i> Ubutumwa butarasomwa
+                                </div>
+                            </div>
+                            <div class="chat-item-unread">${unreadCount}</div>
+                        </div>
+                    `;
+                });
+            }
+            
+            if (currentUserData?.role === 'admin' || currentUserData?.role === 'super_admin') {
+                html += `
+                    <div class="chat-item" onclick="openChatSearchModal()" 
+                         style="border-top: 1px solid var(--border); margin-top: 8px; padding-top: 12px;">
+                        <div class="chat-item-avatar" style="background: var(--gradient-1);"><i class="fas fa-search"></i></div>
+                        <div class="chat-item-info">
+                            <div class="chat-item-name">Shakisha Umuntu</div>
+                            <div class="chat-item-preview">Vugana n'umuririmbyi ku giti cye</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            chatList.innerHTML = html;
+        }
 
         window.openGroupChat = function() {
             currentChatType = 'group';
@@ -7851,66 +7556,65 @@ window.renderMyBirthdayWishes = async function() {
             openPrivateChat(uid, name, photo);
         };
 
-      window.openPrivateChat = function(uid, name, photo) {
-    if (!uid) { 
-        showToast('Iyi member nta account ifite', 'warning'); 
-        return; 
-    }
-    
-    currentChatType = 'private';
-    currentPrivateChatUser = { uid, name, photo };
-    const myUid = currentUser?.uid;
-    currentPrivateChatId = [myUid, uid].sort().join('_');
-    
-    const headerTitle = document.getElementById('chatHeaderTitle');
-    if (headerTitle) {
-        headerTitle.innerHTML = `<span style="cursor:pointer;" onclick="viewUserProfile('${uid}')">${name}</span>`;
-    }
-    
-    const headerSubtitle = document.getElementById('chatHeaderSubtitle');
-    if (headerSubtitle) {
-        headerSubtitle.textContent = 'Private chat';
-    }
-    
-    const headerAvatar = document.querySelector('#chatMain .chat-main-header .chat-item-avatar');
-    if (headerAvatar) {
-        headerAvatar.style.cursor = 'pointer';
-        headerAvatar.setAttribute('onclick', `viewUserProfile('${uid}')`);
-        
-        if (photo) {
-            headerAvatar.innerHTML = `<img src="${photo}" style="width:100%;height:100%;object-fit:cover;">`;
-        } else {
-            const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-            headerAvatar.textContent = initials;
-        }
-        headerAvatar.style.background = 'var(--gradient-1)';
-    }
-    
-    renderChatList();
-    loadPrivateMessages();
-    
-    // ✅ IYI NI YO YARI IBURA: Hita uhamagara markPrivateMessagesAsRead ako kanya
-    setTimeout(() => {
-        if (typeof window.markPrivateMessagesAsRead === 'function') {
-            window.markPrivateMessagesAsRead();
-        }
-    }, 800);
+        window.openPrivateChat = function(uid, name, photo) {
+            if (!uid) { 
+                showToast('Iyi member nta account ifite', 'warning'); 
+                return; 
+            }
+            
+            currentChatType = 'private';
+            currentPrivateChatUser = { uid, name, photo };
+            const myUid = currentUser?.uid;
+            currentPrivateChatId = [myUid, uid].sort().join('_');
+            
+            const headerTitle = document.getElementById('chatHeaderTitle');
+            if (headerTitle) {
+                headerTitle.innerHTML = `<span style="cursor:pointer;" onclick="viewUserProfile('${uid}')">${name}</span>`;
+            }
+            
+            const headerSubtitle = document.getElementById('chatHeaderSubtitle');
+            if (headerSubtitle) {
+                headerSubtitle.textContent = 'Private chat';
+            }
+            
+            const headerAvatar = document.querySelector('#chatMain .chat-main-header .chat-item-avatar');
+            if (headerAvatar) {
+                headerAvatar.style.cursor = 'pointer';
+                headerAvatar.setAttribute('onclick', `viewUserProfile('${uid}')`);
+                
+                if (photo) {
+                    headerAvatar.innerHTML = `<img src="${photo}" style="width:100%;height:100%;object-fit:cover;">`;
+                } else {
+                    const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                    headerAvatar.textContent = initials;
+                }
+                headerAvatar.style.background = 'var(--gradient-1)';
+            }
+            
+            renderChatList();
+            loadPrivateMessages();
+            
+            setTimeout(() => {
+                if (typeof window.markPrivateMessagesAsRead === 'function') {
+                    window.markPrivateMessagesAsRead();
+                }
+            }, 800);
 
-    if (!window._recentChatUids) window._recentChatUids = new Set();
-    window._recentChatUids.add(uid);
-    
-    setTimeout(() => {
-        if (typeof updatePrivateChatHeaderStatus === 'function') {
-            updatePrivateChatHeaderStatus();
-        }
-    }, 100);
-    
-    setTimeout(() => {
-        if (typeof setupTypingListener === 'function') {
-            setupTypingListener();
-        }
-    }, 100);
-};
+            if (!window._recentChatUids) window._recentChatUids = new Set();
+            window._recentChatUids.add(uid);
+            
+            setTimeout(() => {
+                if (typeof updatePrivateChatHeaderStatus === 'function') {
+                    updatePrivateChatHeaderStatus();
+                }
+            }, 100);
+            
+            setTimeout(() => {
+                if (typeof setupTypingListener === 'function') {
+                    setupTypingListener();
+                }
+            }, 100);
+        };
 
         function loadGroupMessages() {
             if (chatUnsubscribe) { chatUnsubscribe(); chatUnsubscribe = null; }
@@ -7949,7 +7653,6 @@ window.renderMyBirthdayWishes = async function() {
                 snap.forEach(d => chatMessages.push({ id: d.id, ...d.data() }));
                 renderChatMessages();
                 
-                // ✅ FIX: Hamagara na window. kugira ngo function iboneke
                 setTimeout(() => {
                     if (typeof window.markPrivateMessagesAsRead === 'function') {
                         window.markPrivateMessagesAsRead();
@@ -8057,7 +7760,7 @@ window.renderMyBirthdayWishes = async function() {
                     fromUid: currentUser.uid,
                     fromName: currentUserData?.name || currentUser.email || 'Unknown',
                     fromPhoto: currentUserData?.photo || null,
-                    readBy: [currentUser.uid],  // ✅ IBI NI BYA NGOMBA
+                    readBy: [currentUser.uid],
                     replyTo: replyTo,
                     createdAt: serverTimestamp()
                 };
@@ -8704,157 +8407,6 @@ window.renderMyBirthdayWishes = async function() {
         };
 
         // ============================================
-        // ATTENDANCE MARKING
-        // ============================================
-        window.markPresent = function(memberId) {
-            currentLateList = currentLateList.filter(t => t.id !== memberId);
-            currentAbsentList = currentAbsentList.filter(t => t.id !== memberId);
-            
-            const i = currentTickList.findIndex(t => t.id === memberId);
-            if (i === -1) {
-                const now = new Date();
-                const time = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
-                currentTickList.push({ id: memberId, time, status: 'present' });
-            } else {
-                currentTickList.splice(i, 1);
-            }
-            
-            const row = document.querySelector(`tr[data-member-id="${memberId}"]`);
-            if (row) {
-                row.classList.remove('late', 'absent');
-                const isNowPresent = currentTickList.some(t => t.id === memberId);
-                row.classList.toggle('checked', isNowPresent);
-                row.querySelector('.status-btn.present').classList.toggle('active', isNowPresent);
-                row.querySelector('.status-btn.late').classList.remove('active');
-                row.querySelector('.status-btn.absent').classList.remove('active');
-            }
-            
-            window.updateCounter();
-        };
-
-        window.openLateModal = function(memberId) {
-            const m = members.find(x => x.id === memberId);
-            if (!m) return;
-            currentLateMemberId = memberId;
-            const nameEl = document.getElementById('lateModalName');
-            if (nameEl) nameEl.textContent = m.name;
-            const timeEl = document.getElementById('lateTime');
-            if (timeEl) timeEl.value = '18:30';
-            const reasonEl = document.getElementById('lateReason');
-            if (reasonEl) reasonEl.value = '';
-            const noteEl = document.getElementById('lateNote');
-            if (noteEl) noteEl.value = '';
-            document.getElementById('lateModal').classList.add('active');
-        };
-
-        window.closeLateModal = function() {
-            document.getElementById('lateModal').classList.remove('active');
-            currentLateMemberId = null;
-        };
-
-        window.saveLate = function() {
-            const time = document.getElementById('lateTime').value;
-            const reason = document.getElementById('lateReason').value;
-            const note = document.getElementById('lateNote').value.trim();
-            if (!time || !reason) { showToast('Uzuza isaha na impamvu', 'warning'); return; }
-            const memberId = currentLateMemberId;
-            if (!memberId) return;
-            
-            currentTickList = currentTickList.filter(t => t.id !== memberId);
-            currentAbsentList = currentAbsentList.filter(t => t.id !== memberId);
-            const existing = currentLateList.findIndex(t => t.id === memberId);
-            if (existing !== -1) currentLateList.splice(existing, 1);
-            currentLateList.push({ id: memberId, time, status: 'late', reason, note });
-            
-            const row = document.querySelector(`tr[data-member-id="${memberId}"]`);
-            if (row) {
-                row.classList.remove('checked', 'absent');
-                row.classList.add('late');
-                row.querySelector('.status-btn.present').classList.remove('active');
-                row.querySelector('.status-btn.late').classList.add('active');
-                row.querySelector('.status-btn.absent').classList.remove('active');
-            }
-            
-            window.closeLateModal();
-            window.updateCounter();
-            const m = members.find(x => x.id === memberId);
-            showToast(`⏰ ${m?.name || 'Umuririmbyi'} yanditswe nka Late`, 'warning');
-        };
-
-        window.openAbsentModal = function(memberId) {
-            const m = members.find(x => x.id === memberId);
-            if (!m) return;
-            currentAbsentMemberId = memberId;
-            const nameEl = document.getElementById('absentModalName');
-            if (nameEl) nameEl.textContent = m.name;
-            const reasonEl = document.getElementById('absentReason');
-            if (reasonEl) reasonEl.value = '';
-            const noteEl = document.getElementById('absentNote');
-            if (noteEl) noteEl.value = '';
-            document.getElementById('absentModal').classList.add('active');
-        };
-
-        window.closeAbsentModal = function() {
-            document.getElementById('absentModal').classList.remove('active');
-            currentAbsentMemberId = null;
-        };
-
-        window.saveAbsent = function() {
-            const reason = document.getElementById('absentReason').value;
-            const note = document.getElementById('absentNote').value.trim();
-            if (!reason) { showToast('Hitamo impamvu', 'warning'); return; }
-            const memberId = currentAbsentMemberId;
-            if (!memberId) return;
-            
-            currentTickList = currentTickList.filter(t => t.id !== memberId);
-            currentLateList = currentLateList.filter(t => t.id !== memberId);
-            const existing = currentAbsentList.findIndex(t => t.id === memberId);
-            if (existing !== -1) currentAbsentList.splice(existing, 1);
-            currentAbsentList.push({ id: memberId, status: 'absent', reason, note });
-            
-            const row = document.querySelector(`tr[data-member-id="${memberId}"]`);
-            if (row) {
-                row.classList.remove('checked', 'late');
-                row.classList.add('absent');
-                row.querySelector('.status-btn.present').classList.remove('active');
-                row.querySelector('.status-btn.late').classList.remove('active');
-                row.querySelector('.status-btn.absent').classList.add('active');
-            }
-            
-            window.closeAbsentModal();
-            window.updateCounter();
-            const m = members.find(x => x.id === memberId);
-            showToast(`❌ ${m?.name || 'Umuririmbyi'} yanditswe nka Ntabwo`, 'error');
-        };
-
-        window.updateCounter = function() {
-            const activeCount = members.filter(m => m.status === 'active' || !m.status).length;
-            const counterText = document.getElementById('counterText');
-            if (counterText) counterText.textContent = `${currentTickList.length} / ${activeCount}`;
-            const submitCount = document.getElementById('submitCount');
-            if (submitCount) submitCount.textContent = currentTickList.length;
-            const submitLate = document.getElementById('submitLate');
-            if (submitLate) submitLate.textContent = currentLateList.length;
-            const submitAbsent = document.getElementById('submitAbsent');
-            if (submitAbsent) submitAbsent.textContent = currentAbsentList.length;
-            const submitTotal = document.getElementById('submitTotal');
-            if (submitTotal) submitTotal.textContent = activeCount;
-        };
-
-        window.filterMembersList = function() {
-            const searchEl = document.getElementById('searchMember');
-            if (!searchEl) return;
-            const search = searchEl.value.toLowerCase().trim();
-            document.querySelectorAll('#membersTableBody tr').forEach(row => {
-                const name = (row.querySelector('.name')?.textContent || '').toLowerCase();
-                const number = (row.querySelectorAll('td')[2]?.textContent || '').toLowerCase();
-                const memberId = (row.querySelector('.id')?.textContent || '').toLowerCase();
-                const matches = !search || name.includes(search) || number.includes(search) || memberId.includes(search);
-                row.style.display = matches ? '' : 'none';
-            });
-        };
-
-        // ============================================
         // REPLY
         // ============================================
         window.setReply = function(id, message, fromName) {
@@ -9034,4 +8586,4 @@ window.renderMyBirthdayWishes = async function() {
         };
     </script>
 </body>
-</html> 
+</html>
