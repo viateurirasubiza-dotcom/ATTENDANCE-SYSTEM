@@ -1,0 +1,5 @@
+
+User-agent: *
+Allow: /
+
+Sitemap: https://hcfc-choir.vercel.app/sitemap.xml
