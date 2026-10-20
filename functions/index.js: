@@ -1,5 +1,6 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+
 admin.initializeApp();
 
 // ✅ Iyi function ihamagarwa iyo message nshya yongeweho muri groupChats
@@ -9,25 +10,32 @@ exports.sendGroupChatNotification = functions.firestore
         const message = snap.data();
         const messageId = context.params.messageId;
         
-        // ✅ Ntukoresha notification kuri message yawe
         if (!message.fromUid || !message.message) {
             console.log('⚠️ Message nta fromUid cyangwa message');
             return null;
         }
         
         try {
-            // ✅ Bona users bose bafite FCM token
-            const usersSnap = await admin.firestore()
-                .collection('users')
-                .where('fcmToken', '!=', null)
-                .get();
+            // ✅ Bona users BOSE (nta filter ya query)
+            const usersSnap = await admin.firestore().collection('users').get();
             
             const tokens = [];
             usersSnap.forEach(doc => {
                 const user = doc.data();
-                // ✅ Ntukoresha notification kuri sender
                 if (user.fcmToken && doc.id !== message.fromUid) {
                     tokens.push(user.fcmToken);
+                }
+            });
+            
+            // ✅ Reba NA members (abo batari muri users)
+            const membersSnap = await admin.firestore().collection('members').get();
+            membersSnap.forEach(doc => {
+                const member = doc.data();
+                if (member.fcmToken && member.uid && member.uid !== message.fromUid) {
+                    // Reba niba token itarasanzwe muri tokens
+                    if (!tokens.includes(member.fcmToken)) {
+                        tokens.push(member.fcmToken);
+                    }
                 }
             });
             
@@ -38,8 +46,8 @@ exports.sendGroupChatNotification = functions.firestore
             
             console.log(`📤 Kohereza notification kuri ${tokens.length} users`);
             
-            // ✅ Yohereza notification kuri tokens zose
-            const response = await admin.messaging().sendMulticast({
+            // ✅ Koresha sendEachForMulticast (v12+)
+            const response = await admin.messaging().sendEachForMulticast({
                 tokens: tokens,
                 notification: {
                     title: `💬 ${message.fromName || 'Umuririmbyi'}`,
