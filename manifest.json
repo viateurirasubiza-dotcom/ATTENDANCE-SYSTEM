@@ -1,0 +1,21 @@
+{
+    "name": "HCFC CHOIR",
+    "short_name": "HCFC",
+    "description": "Héritiers du Ciel Family Choir - Attendance System",
+    "start_url": "/index.html",
+    "display": "standalone",
+    "background_color": "#0a1929",
+    "theme_color": "#38bdf8",
+    "icons": [
+        {
+            "src": "/favicon.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/favicon.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
