@@ -28,7 +28,7 @@
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="apple-touch-icon" href="/icon-512.png">
+    <link rel="apple-touch-icon" href="/favicon.png">
 <link rel="apple-touch-icon" href="/favicon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/favicon.png">
 <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png">
@@ -8852,17 +8852,24 @@ window.registerFCMToken = async function() {
     }
     
     try {
-        // ✅ Ntukasabe permission (isanzwe isabwe muri enterApp)
         if (Notification.permission !== 'granted') {
             console.log('❌ Notification permission ntabwo yatanzwe');
             return;
         }
         
-        // ✅ Bona FCM token
-        const swRegistration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+        // 1. Andika Service Worker (niba itarandikwa)
+        const swRegistration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
+            scope: '/firebase-cloud-messaging-push-scope'  // ✅ Scope yihariye irinda amakimbirane
+        });
+        
+        // 2. TEGEREZA ko Service Worker irangiza gukora (ACTIVATE)
+        await navigator.serviceWorker.ready;
+        console.log('✅ Service Worker yiteguye gukora');
+        
+        // 3. Noneho fata token, utange registration yawe bwite
         const token = await getToken(messaging, {
             vapidKey: firebaseConfig.vapidKey,
-            serviceWorkerRegistration: swRegistration
+            serviceWorkerRegistration: swRegistration  // ✅ Iyi ni yo nkuru
         });
         
         if (!token) {
@@ -8872,14 +8879,13 @@ window.registerFCMToken = async function() {
         
         console.log('✅ FCM token:', token.substring(0, 30) + '...');
         
-        // ✅ Bika token muri users collection
+        // Bika token muri Firestore (nk'uko byari biri)
         await updateDoc(doc(db, 'users', currentUser.uid), {
             fcmToken: token,
             fcmTokenUpdatedAt: serverTimestamp(),
             notificationsEnabled: true
         });
         
-        // ✅ Niba ari member, bika na we muri members collection
         if (currentUserData?.role === 'member' && currentUserData?.memberId) {
             try {
                 await updateDoc(doc(db, 'members', currentUserData.memberId), {
@@ -8894,7 +8900,6 @@ window.registerFCMToken = async function() {
         console.log('✅ FCM token yabitswe');
         showToast('✅ Notifications zakijijwe!', 'success');
         
-        // ✅ Bika token muri localStorage
         try {
             localStorage.setItem('hcfc_fcm_token', token);
         } catch(e) {}
