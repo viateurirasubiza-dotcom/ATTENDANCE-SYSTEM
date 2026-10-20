@@ -15,19 +15,23 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-// ✅ Iyi ni yo yakira notification iyo app ifunze
+// ✅ Iyi ni yo yakira notification iyo app ifunze (background)
 messaging.onBackgroundMessage((payload) => {
     console.log('📬 Background message received:', payload);
     
     const notificationTitle = payload.notification?.title || '💬 Ubutumwa bushya';
     const notificationOptions = {
         body: payload.notification?.body || 'Ufite ubutumwa bushya muri HCFC CHOIR',
-        icon: payload.notification?.icon || '/favicon.png',
-        badge: '/favicon.png',
-        tag: 'hcfc-group-chat',
+        icon: payload.notification?.icon || '/icon-512.png',
+        badge: '/icon-512.png',
+        tag: 'hcfc-group-chat',  // Iyi ituma notifications nshya zisimbuza iya kera
         data: payload.data || {},
         vibrate: [200, 100, 200],
-        requireInteraction: true
+        requireInteraction: false,  // ✅ Izakuraho yonyine
+        actions: [
+            { action: 'open', title: 'Fungura' },
+            { action: 'close', title: 'Funga' }
+        ]
     };
     
     return self.registration.showNotification(notificationTitle, notificationOptions);
@@ -36,6 +40,9 @@ messaging.onBackgroundMessage((payload) => {
 // ✅ Iyo ukanda kuri notification, fungura app
 self.addEventListener('notificationclick', (event) => {
     event.notification.close();
+    
+    // Niba yakanze "Funga" — ntacyo ikora
+    if (event.action === 'close') return;
     
     event.waitUntil(
         clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
