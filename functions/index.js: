@@ -1,0 +1,86 @@
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+admin.initializeApp();
+
+// ✅ Iyi function ihamagarwa iyo message nshya yongeweho muri groupChats
+exports.sendGroupChatNotification = functions.firestore
+    .document('groupChats/{messageId}')
+    .onCreate(async (snap, context) => {
+        const message = snap.data();
+        const messageId = context.params.messageId;
+        
+        // ✅ Ntukoresha notification kuri message yawe
+        if (!message.fromUid || !message.message) {
+            console.log('⚠️ Message nta fromUid cyangwa message');
+            return null;
+        }
+        
+        try {
+            // ✅ Bona users bose bafite FCM token
+            const usersSnap = await admin.firestore()
+                .collection('users')
+                .where('fcmToken', '!=', null)
+                .get();
+            
+            const tokens = [];
+            usersSnap.forEach(doc => {
+                const user = doc.data();
+                // ✅ Ntukoresha notification kuri sender
+                if (user.fcmToken && doc.id !== message.fromUid) {
+                    tokens.push(user.fcmToken);
+                }
+            });
+            
+            if (tokens.length === 0) {
+                console.log('⚠️ Nta FCM token yabonetse');
+                return null;
+            }
+            
+            console.log(`📤 Kohereza notification kuri ${tokens.length} users`);
+            
+            // ✅ Yohereza notification kuri tokens zose
+            const response = await admin.messaging().sendMulticast({
+                tokens: tokens,
+                notification: {
+                    title: `💬 ${message.fromName || 'Umuririmbyi'}`,
+                    body: message.message.substring(0, 100)
+                },
+                data: {
+                    type: 'group_chat',
+                    messageId: messageId,
+                    fromUid: message.fromUid,
+                    fromName: message.fromName || ''
+                },
+                webpush: {
+                    fcmOptions: {
+                        link: '/index.html#chat'
+                    },
+                    notification: {
+                        icon: message.fromPhoto || '/favicon.png',
+                        badge: '/favicon.png',
+                        tag: 'hcfc-group-chat',
+                        requireInteraction: true
+                    }
+                }
+            });
+            
+            console.log(`✅ Notification yoherejwe: ${response.successCount} success, ${response.failureCount} failed`);
+            
+            // ✅ Kuraho tokens zitarakora
+            if (response.failureCount > 0) {
+                const failedTokens = [];
+                response.responses.forEach((resp, idx) => {
+                    if (!resp.success) {
+                        failedTokens.push(tokens[idx]);
+                    }
+                });
+                console.log('❌ Failed tokens:', failedTokens);
+            }
+            
+            return null;
+            
+        } catch(e) {
+            console.error('❌ Notification error:', e);
+            return null;
+        }
+    });
