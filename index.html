@@ -4506,65 +4506,59 @@ body {
         // ============================================
         // UNREAD COUNT
         // ============================================
-        window.startUnreadListener = function() {
-            if (!currentUser) return;
-            const myUid = currentUser.uid;
+     window.startUnreadListener = function() {
+    if (!currentUser) return;
+    const myUid = currentUser.uid;
+    
+    if (unreadListener) {
+        try { unreadListener(); } catch(e) {}
+        unreadListener = null;
+    }
+    
+    // ✅ Koresha groupChats aho gukoresha privateChats
+    const q = query(
+        collection(db, 'groupChats'),
+        orderBy('createdAt', 'desc'),
+        limit(100)   // ✅ Gusa messages 100 za vuba
+    );
+    
+    unreadListener = onSnapshot(q, (snap) => {
+        try {
+            let count = 0;
             
-            if (unreadListener) {
-                try { unreadListener(); } catch(e) {}
-                unreadListener = null;
-            }
-            
-            const q = query(
-                collection(db, 'privateChats'), 
-                where('participants', 'array-contains', myUid)
-            );
-            
-            unreadListener = onSnapshot(q, (snap) => {
-                try {
-                    let count = 0;
-                    const unreadByUid = {};
-                    
-                    snap.forEach(d => {
-                        const data = d.data();
-                        const readBy = Array.isArray(data.readBy) ? data.readBy : [];
-                        const participants = Array.isArray(data.participants) ? data.participants : [];
-                        
-                        if (data.fromUid !== myUid && !readBy.includes(myUid)) {
-                            count++;
-                            const otherUid = participants.find(u => u !== myUid);
-                            if (otherUid) {
-                                unreadByUid[otherUid] = (unreadByUid[otherUid] || 0) + 1;
-                            }
-                        }
-                    });
-                    
-                    window._unreadCounts = unreadByUid;
-                    
-                    if (currentChatType === 'private' && currentPrivateChatUser) {
-                        const currentChatUnread = unreadByUid[currentPrivateChatUser.uid] || 0;
-                        count = Math.max(0, count - currentChatUnread);
-                    }
-                    
-                    window.updateChatBadges(count);
-                    
-                    if (typeof renderChatList === 'function') {
-                        try { renderChatList(); } catch(e) {}
-                    }
-                    
-                    console.log(`📬 Unread count: ${count}`, unreadByUid);
-                    
-                } catch (innerError) {
-                    console.error('❌ Error in unread listener callback:', innerError);
-                }
-            }, (error) => {
-                console.error('❌ Unread listener error:', error);
-                if (error.code === 'permission-denied') {
-                    window.updateChatBadges(0);
+            snap.forEach(d => {
+                const data = d.data();
+                const readBy = Array.isArray(data.readBy) ? data.readBy : [];
+                
+                // ✅ Messages ntarasomwa kandi zitari zanjye
+                if (data.fromUid !== myUid && !readBy.includes(myUid)) {
+                    count++;
                 }
             });
-        };
-
+            
+            // ✅ Niba uri muri group chat, kuraho notification
+            if (currentChatType === 'group' && document.getElementById('page-chat')?.classList.contains('active')) {
+                count = 0;   // Uri muri chat — ntukeneye notification
+            }
+            
+            window.updateChatBadges(count);
+            
+            if (typeof renderChatList === 'function') {
+                try { renderChatList(); } catch(e) {}
+            }
+            
+            console.log(`📬 Group unread: ${count}`);
+            
+        } catch (innerError) {
+            console.error('❌ Error in unread callback:', innerError);
+        }
+    }, (error) => {
+        console.error('❌ Unread listener error:', error);
+        if (error.code === 'permission-denied') {
+            window.updateChatBadges(0);
+        }
+    });
+};
         window.updateChatBadges = function(count) {
             const badge = document.getElementById('chatBadge');
             const sidebarBadge = document.getElementById('sidebarChatCount');
@@ -4577,56 +4571,80 @@ body {
                 sidebarBadge.style.display = count > 0 ? 'flex' : 'none';
             }
         };
-
-        // READ RECEIPTS
-        window.markPrivateMessagesAsRead = async function() {
-            if (!currentUser || !currentPrivateChatId) return;
-            if (window._isMarkingRead) return;
+window.startUnreadListener = function() {
+    if (!currentUser) return;
+    const myUid = currentUser.uid;
+    
+    if (unreadListener) {
+        try { unreadListener(); } catch(e) {}
+        unreadListener = null;
+    }
+    
+    let lastGroupCount = 0;   // ✅ Kubika count ya mbere
+    
+    const q = query(
+        collection(db, 'groupChats'),
+        orderBy('createdAt', 'desc'),
+        limit(100)
+    );
+    
+    unreadListener = onSnapshot(q, (snap) => {
+        try {
+            let count = 0;
+            let latestMessage = null;
             
-            const myUid = currentUser.uid;
-            window._isMarkingRead = true;
+            snap.forEach(d => {
+                const data = d.data();
+                const readBy = Array.isArray(data.readBy) ? data.readBy : [];
+                
+                if (data.fromUid !== myUid && !readBy.includes(myUid)) {
+                    count++;
+                    if (!latestMessage || (data.createdAt?.toMillis?.() || 0) > (latestMessage.createdAt?.toMillis?.() || 0)) {
+                        latestMessage = data;
+                    }
+                }
+            });
             
-            try {
-                const q = query(
-                    collection(db, 'privateChats'),
-                    where('chatId', '==', currentPrivateChatId)
-                );
-                const snap = await getDocs(q);
-                
-                const promises = [];
-                
-                snap.forEach(d => {
-                    const data = d.data();
-                    const readBy = Array.isArray(data.readBy) ? data.readBy : [];
-                    
-                    if (data.fromUid !== myUid && !readBy.includes(myUid)) {
-                        const ref = doc(db, 'privateChats', d.id);
-                        promises.push(updateDoc(ref, { readBy: arrayUnion(myUid) }));
-                    }
-                });
-                
-                if (promises.length === 0) {
-                    if (typeof window.updateChatBadges === 'function') {
-                        window.updateChatBadges(0);
-                    }
-                    return;
+            window._groupUnreadCount = count;
+            
+            // ✅ Browser notification iyo count yazamutse
+            if (count > lastGroupCount && Notification.permission === 'granted' && latestMessage) {
+                const isInChatPage = document.getElementById('page-chat')?.classList.contains('active');
+                if (!isInChatPage) {
+                    new Notification(`💬 ${latestMessage.fromName}`, {
+                        body: latestMessage.message.substring(0, 100),
+                        icon: latestMessage.fromPhoto || '/favicon.png',
+                        tag: 'hcfc-group-chat',
+                        requireInteraction: false
+                    });
                 }
-                
-                await Promise.all(promises);
-                console.log(`✅ Marked ${promises.length} messages as read`);
-                
-                if (typeof window.updateChatBadges === 'function') {
-                    window.updateChatBadges(0);
-                }
-                
-            } catch(e) {
-                console.error("❌ Error marking as read:", e);
-            } finally {
-                window._isMarkingRead = false;
             }
-        };
-
-        // ============================================
+            lastGroupCount = count;
+            
+            // ✅ Niba uri muri chat page, kuraho badge gusa
+            const isInChatPage = document.getElementById('page-chat')?.classList.contains('active');
+            if (currentChatType === 'group' && isInChatPage) {
+                count = 0;
+            }
+            
+            window.updateChatBadges(count);
+            
+            if (typeof renderChatList === 'function') {
+                try { renderChatList(); } catch(e) {}
+            }
+            
+        } catch (innerError) {
+            console.error('❌ Error in unread callback:', innerError);
+        }
+    }, (error) => {
+        console.error('❌ Unread listener error:', error);
+        if (error.code === 'permission-denied') {
+            window.updateChatBadges(0);
+        }
+    });
+};
+        // READ RECEIPTS
+       
         // TYPING INDICATOR
         // ============================================
         function setupTypingListener() {
@@ -5020,36 +5038,54 @@ body {
             document.getElementById('sidebar').classList.toggle('open'); 
         };
 
-        window.switchPage = function(page, element) {
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            if (element) element.classList.add('active');
-            
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            const pageEl = document.getElementById('page-' + page);
-            if (pageEl) pageEl.classList.add('active');
-            
-            if (page === 'members') renderMembers();
-            if (page === 'pending') renderPending();
-            if (page === 'users') renderUsers();
-            if (page === 'my-dashboard') renderMyDashboard();
-            if (page === 'attendance') renderAttendancePage();
-            if (page === 'voices') renderVoicesPage();
-            if (page === 'photos') renderPhotosPage();
-            if (page === 'reports') initReportsPage();
-            if (page === 'profile') updateProfileUI();
-            if (page === 'uniform') {
-                if (currentUniformTab === 'checklist') renderChecklist();
-                else renderUniforms();
-            }
-            if (page === 'lyrics') renderLyrics();
-            if (page === 'announcements') renderAnnouncements();
-            if (page === 'birthday') renderBirthdayPage();
-            if (page === 'recycle-bin') renderRecycleBin();
-            if (page === 'chat') initChatPage();
-            
-            if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        };
+      window.switchPage = function(page, element) {
+    // ✅ Bika page ya mbere mbere yo guhindura
+    const previousPage = window._currentPage || 'dashboard';
+    
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    if (element) element.classList.add('active');
+    
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const pageEl = document.getElementById('page-' + page);
+    if (pageEl) pageEl.classList.add('active');
+    
+    // ✅ Bika page nshya
+    window._currentPage = page;
+    
+    if (page === 'members') renderMembers();
+    if (page === 'pending') renderPending();
+    if (page === 'users') renderUsers();
+    if (page === 'my-dashboard') renderMyDashboard();
+    if (page === 'attendance') renderAttendancePage();
+    if (page === 'voices') renderVoicesPage();
+    if (page === 'photos') renderPhotosPage();
+    if (page === 'reports') initReportsPage();
+    if (page === 'profile') updateProfileUI();
+    if (page === 'uniform') {
+        if (currentUniformTab === 'checklist') renderChecklist();
+        else renderUniforms();
+    }
+    if (page === 'lyrics') renderLyrics();
+    if (page === 'announcements') renderAnnouncements();
+    if (page === 'birthday') renderBirthdayPage();
+    if (page === 'recycle-bin') renderRecycleBin();
+    
+    // ✅ IYO USOHOTSE MURI CHAT — markGroupMessagesAsRead
+    if (previousPage === 'chat' && page !== 'chat') {
+        if (typeof window.markGroupMessagesAsRead === 'function') {
+            setTimeout(() => {
+                window.markGroupMessagesAsRead();
+                console.log('📬 Marked group messages as read (left chat page)');
+            }, 300);
+        }
+    }
+    
+    // ✅ IYO WINJIYE MURI CHAT — initChatPage (irimo markAsRead)
+    if (page === 'chat') initChatPage();
+    
+    if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+};
 
         function updateClock() {
             const now = new Date();
@@ -6067,64 +6103,79 @@ body {
         // ============================================
         // PHOTOS
         // ============================================
-        window.renderPhotosPage = function() {
-            const grid = document.getElementById('photoGrid');
-            if (!grid) return;
+       window.renderPhotosPage = function() {
+    const grid = document.getElementById('photoGrid');
+    if (!grid) return;
 
-            const allPeopleWithPhotos = [];
-            
-            members.filter(m => (m.status === 'active' || !m.status) && m.photo).forEach(m => {
-                allPeopleWithPhotos.push({
-                    id: m.id,
-                    name: m.name,
-                    photo: m.photo,
-                    level: m.level,
-                    voice: m.voice,
-                    type: 'member',
-                    typeLabel: 'Umuririmbyi'
-                });
+    const allPeopleWithPhotos = [];
+    const seenKeys = new Set();   // ✅ Gukurikirana abasanzwe bongeweho
+
+    // 1️⃣ Banza: Abaririmbyi (members) bafite ifoto
+    members
+        .filter(m => (m.status === 'active' || !m.status) && m.photo)
+        .forEach(m => {
+            // Urufunguzo: email niba ihari, ubundi member doc id
+            const key = (m.email || '').toLowerCase().trim() || m.id;
+            if (seenKeys.has(key)) return;   // ✅ Ntazongerwaho kabiri
+            seenKeys.add(key);
+
+            allPeopleWithPhotos.push({
+                id: m.id,
+                name: m.name,
+                photo: m.photo,
+                level: m.level,
+                voice: m.voice,
+                type: 'member',
+                typeLabel: 'Umuririmbyi'
             });
+        });
 
-            users.filter(u => u.photo && !allPeopleWithPhotos.some(p => p.id === u.uid)).forEach(u => {
-                allPeopleWithPhotos.push({
-                    id: u.uid,
-                    name: u.name || 'Admin',
-                    photo: u.photo,
-                    level: 'Admin',
-                    voice: '',
-                    type: 'admin',
-                    typeLabel: u.role === 'super_admin' ? 'Super Admin' : 'Admin'
-                });
+    // 2️⃣ Hanyuma: Admins (users) bafite ifoto — gusa abatari basanzwe
+    users
+        .filter(u => u.photo)
+        .forEach(u => {
+            const key = (u.email || '').toLowerCase().trim() || u.uid;
+            if (seenKeys.has(key)) return;   // ✅ Ibi ni byo bikuraho duplication
+            seenKeys.add(key);
+
+            allPeopleWithPhotos.push({
+                id: u.uid,
+                name: u.name || 'Admin',
+                photo: u.photo,
+                level: 'Admin',
+                voice: '',
+                type: 'admin',
+                typeLabel: u.role === 'super_admin' ? 'Super Admin' : 'Admin'
             });
+        });
 
-            if (allPeopleWithPhotos.length === 0) {
-                grid.innerHTML = `
-                    <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-secondary);">
-                        <i class="fas fa-camera" style="font-size:60px;opacity:0.3;display:block;margin-bottom:16px;"></i>
-                        <h3>Nta mafoto arabonetse</h3>
-                        <p style="font-size:14px;margin-top:8px;">Ongeraho amafoto muri Profile cyangwa mu baririmbyi</p>
-                    </div>`;
-                return;
-            }
+    if (allPeopleWithPhotos.length === 0) {
+        grid.innerHTML = `
+            <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-secondary);">
+                <i class="fas fa-camera" style="font-size:60px;opacity:0.3;display:block;margin-bottom:16px;"></i>
+                <h3>Nta mafoto arabonetse</h3>
+                <p style="font-size:14px;margin-top:8px;">Ongeraho amafoto muri Profile cyangwa mu baririmbyi</p>
+            </div>`;
+        return;
+    }
 
-            grid.innerHTML = allPeopleWithPhotos.map(p => {
-                const levelClass = p.level === 'Special' ? 'special' : '';
-                const typeIcon = p.type === 'admin' ? '🛡️' : '🎤';
-                
-                return `
-                    <div class="photo-card" style="cursor:pointer;" onclick="openPhotoViewer('${p.photo}', '${p.name.replace(/'/g, "\\'")}', '${p.level || ''}', '${p.voice || ''}', '${typeIcon} ${p.typeLabel}')">
-                        <img src="${p.photo}" onerror="this.src='https://via.placeholder.com/300x300?text=No+Image'">
-                        <div class="photo-info" style="display:flex; flex-direction:column; gap:6px;">
-                            <div class="photo-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.name}</div>
-                            <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                                <span class="level-badge ${levelClass}" style="font-size:10.5px; padding: 4px 10px;">${typeIcon} ${p.level || p.typeLabel}</span>
-                                ${p.voice ? `<span class="voice-badge ${p.voice.toLowerCase()}" style="font-size:10.5px; padding: 4px 10px;">${p.voice}</span>` : ''}
-                            </div>
-                        </div>
+    grid.innerHTML = allPeopleWithPhotos.map(p => {
+        const levelClass = p.level === 'Special' ? 'special' : '';
+        const typeIcon = p.type === 'admin' ? '🛡️' : '🎤';
+
+        return `
+            <div class="photo-card" style="cursor:pointer;" onclick="openPhotoViewer('${p.photo}', '${p.name.replace(/'/g, "\\'")}', '${p.level || ''}', '${p.voice || ''}', '${typeIcon} ${p.typeLabel}')">
+                <img src="${p.photo}" onerror="this.src='https://via.placeholder.com/300x300?text=No+Image'">
+                <div class="photo-info" style="display:flex; flex-direction:column; gap:6px;">
+                    <div class="photo-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.name}</div>
+                    <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                        <span class="level-badge ${levelClass}" style="font-size:10.5px; padding: 4px 10px;">${typeIcon} ${p.level || p.typeLabel}</span>
+                        ${p.voice ? `<span class="voice-badge ${p.voice.toLowerCase()}" style="font-size:10.5px; padding: 4px 10px;">${p.voice}</span>` : ''}
                     </div>
-                `;
-            }).join('');
-        };
+                </div>
+            </div>`;
+    }).join('');
+};
 
         window.openPhotoViewer = function(photoUrl, name, level, voice, typeLabel) {
             document.getElementById('photoViewerImg').src = photoUrl;
@@ -7341,105 +7392,109 @@ body {
             if (element) element.classList.add('active');
             renderChatList();
         };
-
-        window.initChatPage = function() {
-            renderChatList();
-            
-            const chatInput = document.getElementById('chatInput');
-            if (chatInput && !chatInput.dataset.init) {
-                chatInput.dataset.init = 'true';
-                chatInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') sendChatMessage();
-                });
-            }
-            
-            if (currentChatType === 'group') {
-                openGroupChat();
-            }
-        };
-
-        function renderChatList() {
-            const chatList = document.getElementById('chatList');
-            if (!chatList) return;
-            
-            let html = `
-                <div class="chat-item ${currentChatType === 'group' ? 'active' : ''}" onclick="openGroupChat()">
-                    <div class="chat-item-avatar" style="background: var(--gradient-2);"><i class="fas fa-users"></i></div>
-                    <div class="chat-item-info">
-                        <div class="chat-item-name">Itsinda Rusange</div>
-                        <div class="chat-item-preview" id="groupChatPreview">Vugana n'itsinda...</div>
-                    </div>
-                </div>
-            `;
-            
-            const unreadCounts = window._unreadCounts || {};
-            const unreadUids = Object.keys(unreadCounts).filter(uid => unreadCounts[uid] > 0);
-            
-            if (unreadUids.length > 0) {
-                html += `<div class="nav-label" style="padding: 12px 12px 8px;">Ubutumwa Bushya</div>`;
-                
-                unreadUids.forEach(uid => {
-                    let person = members.find(m => m.uid === uid);
-                    if (!person) person = users.find(u => u.uid === uid);
-                    if (!person) return;
-                    
-                    const initials = (person.name || '?').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-                    const photoHtml = person.photo
-                        ? `<img src="${person.photo}" style="width:100%;height:100%;object-fit:cover;">`
-                        : initials;
-                    
-                    const isActive = currentChatType === 'private' && currentPrivateChatUser?.uid === uid;
-                    const unreadCount = unreadCounts[uid];
-                    
-                    html += `
-                        <div class="chat-item ${isActive ? 'active' : ''}" 
-                             onclick="openPrivateChat('${uid}', '${(person.name || '').replace(/'/g, "\\'")}', '${person.photo || ''}')">
-                            <div class="chat-item-avatar">${photoHtml}</div>
-                            <div class="chat-item-info">
-                                <div class="chat-item-name">${person.name || 'Unknown'}</div>
-                                <div class="chat-item-preview" style="color: var(--danger); font-weight: 600;">
-                                    <i class="fas fa-circle" style="font-size: 6px;"></i> Ubutumwa butarasomwa
-                                </div>
-                            </div>
-                            <div class="chat-item-unread">${unreadCount}</div>
-                        </div>
-                    `;
-                });
-            }
-            
-            if (currentUserData?.role === 'admin' || currentUserData?.role === 'super_admin') {
-                html += `
-                    <div class="chat-item" onclick="openChatSearchModal()" 
-                         style="border-top: 1px solid var(--border); margin-top: 8px; padding-top: 12px;">
-                        <div class="chat-item-avatar" style="background: var(--gradient-1);"><i class="fas fa-search"></i></div>
-                        <div class="chat-item-info">
-                            <div class="chat-item-name">Shakisha Umuntu</div>
-                            <div class="chat-item-preview">Vugana n'umuririmbyi ku giti cye</div>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            chatList.innerHTML = html;
+window.initChatPage = function() {
+    renderChatList();
+    
+    const chatInput = document.getElementById('chatInput');
+    if (chatInput && !chatInput.dataset.init) {
+        chatInput.dataset.init = 'true';
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendChatMessage();
+        });
+    }
+    
+    if (currentChatType === 'group') {
+        openGroupChat();
+    }
+    
+    // ✅ Hamagara markAsRead iyo winjiye muri chat page
+    setTimeout(() => {
+        if (typeof window.markGroupMessagesAsRead === 'function') {
+            window.markGroupMessagesAsRead();
+            console.log('📬 Marked group messages as read (entered chat page)');
         }
-
-        window.openGroupChat = function() {
-            currentChatType = 'group';
-            currentPrivateChatId = null;
-            currentPrivateChatUser = null;
-            
-            document.getElementById('chatHeaderTitle').textContent = 'Itsinda Rusange';
-            document.getElementById('chatHeaderSubtitle').textContent = 'Abaririmbyi bose';
-            
-            const headerAvatar = document.querySelector('#chatMain .chat-main-header .chat-item-avatar');
-            if (headerAvatar) {
-                headerAvatar.innerHTML = '<i class="fas fa-users"></i>';
-                headerAvatar.style.background = 'var(--gradient-2)';
-            }
-            
-            loadGroupMessages();
-        };
-
+    }, 600);
+    
+    setTimeout(() => {
+        if (typeof window.markGroupMessagesAsRead === 'function') {
+            window.markGroupMessagesAsRead();
+        }
+    }, 2000);
+};
+function renderChatList() {
+    const chatList = document.getElementById('chatList');
+    if (!chatList) return;
+    
+    const groupUnread = window._groupUnreadCount || 0;
+    
+    let html = `
+        <div class="chat-item ${currentChatType === 'group' ? 'active' : ''}" onclick="openGroupChat()">
+            <div class="chat-item-avatar" style="background: var(--gradient-2);"><i class="fas fa-users"></i></div>
+            <div class="chat-item-info">
+                <div class="chat-item-name">Itsinda Rusange</div>
+                <div class="chat-item-preview">
+                    ${groupUnread > 0 
+                        ? `<span style="color: var(--danger); font-weight: 600;">${groupUnread} ubutumwa bushya</span>` 
+                        : 'Vugana n\'itsinda...'}
+                </div>
+            </div>
+            ${groupUnread > 0 
+                ? `<div class="chat-item-unread">${groupUnread}</div>` 
+                : ''}
+        </div>
+    `;
+    
+    // ✅ Kuraho "Ubutumwa Bushya" na "Shakisha Umuntu" — nta private chat ihari
+    // (niba ushaka kubika private chat, subiza aha)
+    
+    chatList.innerHTML = html;
+}
+window.openGroupChat = function() {
+    currentChatType = 'group';
+    currentPrivateChatId = null;
+    currentPrivateChatUser = null;
+    
+    document.getElementById('chatHeaderTitle').textContent = 'Itsinda Rusange';
+    document.getElementById('chatHeaderSubtitle').textContent = 'Abaririmbyi bose';
+    
+    const headerAvatar = document.querySelector('#chatMain .chat-main-header .chat-item-avatar');
+    if (headerAvatar) {
+        headerAvatar.innerHTML = '<i class="fas fa-users"></i>';
+        headerAvatar.style.background = 'var(--gradient-2)';
+        headerAvatar.removeAttribute('onclick');
+        headerAvatar.style.cursor = 'default';
+    }
+    
+    loadGroupMessages();
+    
+    // ✅ Hamagara markAsRead nyuma yo kubona messages
+    setTimeout(() => {
+        if (typeof window.markGroupMessagesAsRead === 'function') {
+            window.markGroupMessagesAsRead();
+        }
+    }, 800);
+    
+    setTimeout(() => {
+        if (typeof window.markGroupMessagesAsRead === 'function') {
+            window.markGroupMessagesAsRead();
+        }
+    }, 2500);
+};
+// ✅ Shyiramo iyi muri enterApp() cyangwa ahandi hose nyuma ya startUnreadListener()
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') {
+        // Iyo usohotse muri tab, markAsRead
+        if (typeof window.markGroupMessagesAsRead === 'function') {
+            window.markGroupMessagesAsRead();
+        }
+    } else if (document.visibilityState === 'visible') {
+        // Iyo winjiye muri tab, reba niba uri muri chat page
+        const isInChatPage = document.getElementById('page-chat')?.classList.contains('active');
+        if (isInChatPage && typeof window.markGroupMessagesAsRead === 'function') {
+            setTimeout(() => window.markGroupMessagesAsRead(), 500);
+        }
+    }
+});
         // ============================================
         // CHAT SEARCH MODAL
         // ============================================
@@ -7556,66 +7611,7 @@ body {
             openPrivateChat(uid, name, photo);
         };
 
-        window.openPrivateChat = function(uid, name, photo) {
-            if (!uid) { 
-                showToast('Iyi member nta account ifite', 'warning'); 
-                return; 
-            }
-            
-            currentChatType = 'private';
-            currentPrivateChatUser = { uid, name, photo };
-            const myUid = currentUser?.uid;
-            currentPrivateChatId = [myUid, uid].sort().join('_');
-            
-            const headerTitle = document.getElementById('chatHeaderTitle');
-            if (headerTitle) {
-                headerTitle.innerHTML = `<span style="cursor:pointer;" onclick="viewUserProfile('${uid}')">${name}</span>`;
-            }
-            
-            const headerSubtitle = document.getElementById('chatHeaderSubtitle');
-            if (headerSubtitle) {
-                headerSubtitle.textContent = 'Private chat';
-            }
-            
-            const headerAvatar = document.querySelector('#chatMain .chat-main-header .chat-item-avatar');
-            if (headerAvatar) {
-                headerAvatar.style.cursor = 'pointer';
-                headerAvatar.setAttribute('onclick', `viewUserProfile('${uid}')`);
-                
-                if (photo) {
-                    headerAvatar.innerHTML = `<img src="${photo}" style="width:100%;height:100%;object-fit:cover;">`;
-                } else {
-                    const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-                    headerAvatar.textContent = initials;
-                }
-                headerAvatar.style.background = 'var(--gradient-1)';
-            }
-            
-            renderChatList();
-            loadPrivateMessages();
-            
-            setTimeout(() => {
-                if (typeof window.markPrivateMessagesAsRead === 'function') {
-                    window.markPrivateMessagesAsRead();
-                }
-            }, 800);
-
-            if (!window._recentChatUids) window._recentChatUids = new Set();
-            window._recentChatUids.add(uid);
-            
-            setTimeout(() => {
-                if (typeof updatePrivateChatHeaderStatus === 'function') {
-                    updatePrivateChatHeaderStatus();
-                }
-            }, 100);
-            
-            setTimeout(() => {
-                if (typeof setupTypingListener === 'function') {
-                    setupTypingListener();
-                }
-            }, 100);
-        };
-
+        
         function loadGroupMessages() {
             if (chatUnsubscribe) { chatUnsubscribe(); chatUnsubscribe = null; }
             
@@ -7634,36 +7630,7 @@ body {
             });
         }
 
-        function loadPrivateMessages() {
-            if (chatUnsubscribe) { chatUnsubscribe(); chatUnsubscribe = null; }
-            if (!currentPrivateChatId) return;
-            
-            const messagesEl = document.getElementById('chatMessages');
-            messagesEl.innerHTML = `<div style="text-align:center;padding:20px;color:var(--text-secondary);"><i class="fas fa-spinner fa-spin"></i> Turazana...</div>`;
-            
-            const q = query(
-                collection(db, 'privateChats'), 
-                where('chatId', '==', currentPrivateChatId),
-                orderBy('createdAt', 'asc'), 
-                limit(100)
-            );
-            
-            chatUnsubscribe = onSnapshot(q, (snap) => {
-                chatMessages = [];
-                snap.forEach(d => chatMessages.push({ id: d.id, ...d.data() }));
-                renderChatMessages();
-                
-                setTimeout(() => {
-                    if (typeof window.markPrivateMessagesAsRead === 'function') {
-                        window.markPrivateMessagesAsRead();
-                    }
-                }, 400);
-                
-            }, (error) => {
-                console.error('Chat error:', error);
-                messagesEl.innerHTML = `<div class="chat-empty"><i class="fas fa-exclamation-triangle"></i><h3>Ikibazo cyabaye</h3><p>${error.message}</p></div>`;
-            });
-        }
+        
 
         function renderChatMessages() {
             const messagesEl = document.getElementById('chatMessages');
@@ -7727,74 +7694,54 @@ body {
         // SEND CHAT MESSAGE (GROUP + PRIVATE) — VERSION YUZUYE
         // ============================================
         window.sendChatMessage = async function() {
-            const input = document.getElementById('chatInput');
-            if (!input) return;
-            
-            const message = input.value.trim();
-            if (!message) return;
-            
-            if (!currentUser) {
-                showToast('❌ Ntabwo winjiye muri sisitemu neza. Ongera uinjire.', 'error');
-                return;
-            }
-            
-            if (currentChatType === 'private' && !currentPrivateChatUser) {
-                showToast('❌ Nta muntu watoranyijwe', 'warning');
-                return;
-            }
-            
-            let replyTo = null;
-            if (window._replyingTo) {
-                replyTo = {
-                    id: window._replyingTo.id,
-                    message: window._replyingTo.message,
-                    fromName: window._replyingTo.fromName
-                };
-            }
-            
-            input.value = '';
-            
-            try {
-                const chatData = {
-                    message: message,
-                    fromUid: currentUser.uid,
-                    fromName: currentUserData?.name || currentUser.email || 'Unknown',
-                    fromPhoto: currentUserData?.photo || null,
-                    readBy: [currentUser.uid],
-                    replyTo: replyTo,
-                    createdAt: serverTimestamp()
-                };
-                
-                if (currentChatType === 'group') {
-                    await addDoc(collection(db, 'groupChats'), chatData);
-                } else {
-                    chatData.chatId = currentPrivateChatId;
-                    chatData.participants = [currentUser.uid, currentPrivateChatUser.uid];
-                    chatData.toUid = currentPrivateChatUser.uid;
-                    chatData.toName = currentPrivateChatUser.name;
-                    
-                    await addDoc(collection(db, 'privateChats'), chatData);
-                }
-                
-                window._replyingTo = null;
-                const replyPreview = document.getElementById('replyPreviewBar');
-                if (replyPreview) replyPreview.style.display = 'none';
-                
-                if (currentChatType === 'private' && typeof window.markPrivateMessagesAsRead === 'function') {
-                    setTimeout(() => {
-                        window.markPrivateMessagesAsRead();
-                    }, 500);
-                }
-                
-                console.log('✅ Message sent:', currentChatType);
-                
-            } catch (error) {
-                console.error("❌ Error sending message:", error);
-                showToast('❌ ' + error.message, 'error');
-                input.value = message;
-            }
+    const input = document.getElementById('chatInput');
+    if (!input) return;
+    
+    const message = input.value.trim();
+    if (!message) return;
+    
+    if (!currentUser) {
+        showToast('❌ Ntabwo winjiye muri sisitemu neza.', 'error');
+        return;
+    }
+    
+    let replyTo = null;
+    if (window._replyingTo) {
+        replyTo = {
+            id: window._replyingTo.id,
+            message: window._replyingTo.message,
+            fromName: window._replyingTo.fromName
         };
-
+    }
+    
+    input.value = '';
+    
+    try {
+        const chatData = {
+            message: message,
+            fromUid: currentUser.uid,
+            fromName: currentUserData?.name || currentUser.email || 'Unknown',
+            fromPhoto: currentUserData?.photo || null,
+            readBy: [currentUser.uid],   // ✅ Sender gusa
+            replyTo: replyTo,
+            createdAt: serverTimestamp()
+        };
+        
+        // ✅ Group gusa — nta private
+        await addDoc(collection(db, 'groupChats'), chatData);
+        
+        window._replyingTo = null;
+        const replyPreview = document.getElementById('replyPreviewBar');
+        if (replyPreview) replyPreview.style.display = 'none';
+        
+        console.log('✅ Message sent to group');
+        
+    } catch (error) {
+        console.error("❌ Error sending message:", error);
+        showToast('❌ ' + error.message, 'error');
+        input.value = message;
+    }
+};
         // ============================================
         // REPORTS
         // ============================================
@@ -8584,6 +8531,103 @@ body {
             if (hour < 21) return { text: 'Muraho', icon: '🌆', sub: 'Umugoroba mwiza' };
             return { text: 'Ijoro ryiza', icon: '🌙', sub: 'Ijoro ryiza' };
         };
+// ✅ Shyiramo iyi function
+window.requestNotificationPermission = async function() {
+    if (!('Notification' in window)) return;
+    if (Notification.permission === 'default') {
+        await Notification.requestPermission();
+    }
+};
+
+// ✅ Muri enterApp(), nyuma ya startUnreadListener()
+setTimeout(() => window.requestNotificationPermission(), 3000);
+window.markGroupMessagesAsRead = async function() {
+    if (!currentUser) return;
+    
+    const myUid = currentUser.uid;
+    
+    const now = Date.now();
+    if (window._lastMarkRead && (now - window._lastMarkRead) < 1000) return;
+    window._lastMarkRead = now;
+    
+    try {
+        const q = query(
+            collection(db, 'groupChats'),
+            orderBy('createdAt', 'desc'),
+            limit(100)
+        );
+        const snap = await getDocs(q);
+        
+        const promises = [];
+        
+        snap.forEach(d => {
+            const data = d.data();
+            const readBy = Array.isArray(data.readBy) ? data.readBy : [];
+            
+            // ✅ Gusa messages ntarasomwa kandi zitari zanjye
+            if (data.fromUid !== myUid && !readBy.includes(myUid)) {
+                const ref = doc(db, 'groupChats', d.id);
+                const update = data.readBy 
+                    ? { readBy: arrayUnion(myUid) }
+                    : { readBy: [data.fromUid, myUid] };
+                promises.push(updateDoc(ref, update));
+            }
+        });
+        
+        if (promises.length === 0) {
+            console.log('✅ Nta message nshya yo kwandika nka read');
+            return;
+        }
+        
+        await Promise.all(promises);
+        console.log(`✅ Marked ${promises.length} group messages as read`);
+        
+        // ✅ Ongeraho: hagarika badge ako kanya
+        window.updateChatBadges(0);
+        window._groupUnreadCount = 0;
+        
+    } catch(e) {
+        console.error("❌ Error marking as read:", e);
+    }
+};
+window.migrateOldMessages = async function() {
+    if (!currentUser) return;
+    const myUid = currentUser.uid;
+    
+    try {
+        const q = query(
+            collection(db, 'groupChats'),
+            orderBy('createdAt', 'desc'),
+            limit(500)   // Gusa 500 za vuba
+        );
+        const snap = await getDocs(q);
+        
+        const promises = [];
+        
+        snap.forEach(d => {
+            const data = d.data();
+            
+            // ✅ Niba readBy itabaho, ibike
+            if (!Array.isArray(data.readBy)) {
+                const ref = doc(db, 'groupChats', d.id);
+                // Message yawe → [myUid], message y'undi → [] (ntarasomwa)
+                const newReadBy = data.fromUid === myUid ? [myUid] : [];
+                promises.push(updateDoc(ref, { readBy: newReadBy }));
+            }
+        });
+        
+        if (promises.length === 0) {
+            console.log('✅ Nta message ya kera yo guhindura');
+            return;
+        }
+        
+        await Promise.all(promises);
+        console.log(`✅ Migrated ${promises.length} old messages`);
+        
+    } catch(e) {
+        console.error('❌ Migration error:', e);
+    }
+};
     </script>
 </body>
 </html>
