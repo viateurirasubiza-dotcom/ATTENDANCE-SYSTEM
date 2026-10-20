@@ -4599,8 +4599,6 @@ window.startUnreadListener = function() {
         unreadListener = null;
     }
     
-    let lastGroupCount = 0;   // ✅ Kubika count ya mbere
-    
     const q = query(
         collection(db, 'groupChats'),
         orderBy('createdAt', 'desc'),
@@ -4610,7 +4608,6 @@ window.startUnreadListener = function() {
     unreadListener = onSnapshot(q, (snap) => {
         try {
             let count = 0;
-            let latestMessage = null;
             
             snap.forEach(d => {
                 const data = d.data();
@@ -4618,29 +4615,12 @@ window.startUnreadListener = function() {
                 
                 if (data.fromUid !== myUid && !readBy.includes(myUid)) {
                     count++;
-                    if (!latestMessage || (data.createdAt?.toMillis?.() || 0) > (latestMessage.createdAt?.toMillis?.() || 0)) {
-                        latestMessage = data;
-                    }
                 }
             });
             
             window._groupUnreadCount = count;
             
-            // ✅ Browser notification iyo count yazamutse
-            if (count > lastGroupCount && Notification.permission === 'granted' && latestMessage) {
-                const isInChatPage = document.getElementById('page-chat')?.classList.contains('active');
-                if (!isInChatPage) {
-                    new Notification(`💬 ${latestMessage.fromName}`, {
-                        body: latestMessage.message.substring(0, 100),
-                        icon: latestMessage.fromPhoto || '/favicon.png',
-                        tag: 'hcfc-group-chat',
-                        requireInteraction: false
-                    });
-                }
-            }
-            lastGroupCount = count;
-            
-            // ✅ Niba uri muri chat page, kuraho badge gusa
+            // ✅ Niba uri muri chat page, kuraho badge
             const isInChatPage = document.getElementById('page-chat')?.classList.contains('active');
             if (currentChatType === 'group' && isInChatPage) {
                 count = 0;
@@ -8581,21 +8561,68 @@ document.addEventListener('visibilitychange', () => {
             }
         });
 
-        window.forceLogout = async function() {
-            if (!confirm('Urabyemeza ko ushaka gusohoka?')) return;
+      window.forceLogout = async function() {
+    if (!confirm('Urabyemeza ko ushaka gusohoka?')) return;
+    
+    try {
+        // 1. Kuraho typing indicator
+        if (typeof stopTypingListener === 'function') {
+            try { stopTypingListener(); } catch(e) {}
+        }
+        
+        // 2. Kuraho chat listener
+        if (typeof chatUnsubscribe === 'function' && chatUnsubscribe) {
+            try { chatUnsubscribe(); } catch(e) {}
+        }
+        
+        // 3. Kuraho unread listener
+        if (typeof unreadListener === 'function' && unreadListener) {
+            try { unreadListener(); } catch(e) {}
+        }
+        
+        // 4. Hindura presence (isOnline: false)
+        if (currentUser) {
             try {
-                if (typeof chatUnsubscribe === 'function' && chatUnsubscribe) chatUnsubscribe();
-                if (typeof unreadListener === 'function' && unreadListener) unreadListener();
-                await signOut(auth);
-                window.location.reload();
-            } catch (error) {
-                console.error("Logout error:", error);
-                alert('Kubasohoka byanze: ' + error.message);
-                localStorage.clear();
-                sessionStorage.clear();
-                window.location.reload();
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    isOnline: false,
+                    lastSeen: serverTimestamp()
+                });
+            } catch(e) {
+                console.warn('⚠️ Presence update error:', e);
             }
-        };
+        }
+        
+        // 5. Kuraho FCM token (kugira ngo ntibone notifications)
+        if (currentUser) {
+            try {
+                await updateDoc(doc(db, 'users', currentUser.uid), { 
+                    fcmToken: null,
+                    fcmTokenUpdatedAt: serverTimestamp()
+                });
+                if (currentUserData?.role === 'member' && currentUserData?.memberId) {
+                    await updateDoc(doc(db, 'members', currentUserData.memberId), { 
+                        fcmToken: null 
+                    });
+                }
+            } catch(e) {
+                console.warn('⚠️ FCM token remove error:', e);
+            }
+        }
+        
+        // 6. Sign out
+        await signOut(auth);
+        
+        // 7. Subiza app mu buryo bwa mbere
+        window.location.reload();
+        
+    } catch (error) {
+        console.error("Logout error:", error);
+        alert('Kubasohoka byanze: ' + error.message);
+        try { localStorage.clear(); } catch(e) {}
+        try { sessionStorage.clear(); } catch(e) {}
+        window.location.reload();
+    }
+};
 
         // ============================================
         // LYRICS EDIT
@@ -8731,7 +8758,6 @@ window.requestNotificationPermission = async function() {
 setTimeout(() => window.requestNotificationPermission(), 3000);
 window.markGroupMessagesAsRead = async function() {
     if (!currentUser) return;
-    
     const myUid = currentUser.uid;
     
     const now = Date.now();
@@ -8742,7 +8768,7 @@ window.markGroupMessagesAsRead = async function() {
         const q = query(
             collection(db, 'groupChats'),
             orderBy('createdAt', 'desc'),
-            limit(100)
+            limit(50)
         );
         const snap = await getDocs(q);
         
@@ -8752,7 +8778,6 @@ window.markGroupMessagesAsRead = async function() {
             const data = d.data();
             const readBy = Array.isArray(data.readBy) ? data.readBy : [];
             
-            // ✅ Gusa messages ntarasomwa kandi zitari zanjye
             if (data.fromUid !== myUid && !readBy.includes(myUid)) {
                 const ref = doc(db, 'groupChats', d.id);
                 const update = data.readBy 
@@ -8763,14 +8788,12 @@ window.markGroupMessagesAsRead = async function() {
         });
         
         if (promises.length === 0) {
-            console.log('✅ Nta message nshya yo kwandika nka read');
             return;
         }
         
         await Promise.all(promises);
-        console.log(`✅ Marked ${promises.length} group messages as read`);
+        console.log(`✅ Marked ${promises.length} messages as read`);
         
-        // ✅ Ongeraho: hagarika badge ako kanya
         window.updateChatBadges(0);
         window._groupUnreadCount = 0;
         
@@ -8822,24 +8845,23 @@ window.registerFCMToken = async function() {
         console.warn('⚠️ Messaging ntabwo ihari');
         return;
     }
-    
     if (!currentUser) {
         console.warn('⚠️ Nta user winjiye');
         return;
     }
     
     try {
-        // ✅ Saba uruhushya rwa notification
-        const permission = await Notification.requestPermission();
-        if (permission !== 'granted') {
-            console.log('❌ Notification permission yanzwe');
+        // ✅ Ntukasabe permission (isanzwe isabwe muri enterApp)
+        if (Notification.permission !== 'granted') {
+            console.log('❌ Notification permission ntabwo yatanzwe');
             return;
         }
         
         // ✅ Bona FCM token
+        const swRegistration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
         const token = await getToken(messaging, {
             vapidKey: firebaseConfig.vapidKey,
-            serviceWorkerRegistration: await navigator.serviceWorker.register('/firebase-messaging-sw.js')
+            serviceWorkerRegistration: swRegistration
         });
         
         if (!token) {
@@ -8849,34 +8871,49 @@ window.registerFCMToken = async function() {
         
         console.log('✅ FCM token:', token.substring(0, 30) + '...');
         
-        // ✅ Bika token muri Firestore kuri user
-        const userRef = doc(db, 'users', currentUser.uid);
-        await updateDoc(userRef, {
+        // ✅ Bika token muri users collection
+        await updateDoc(doc(db, 'users', currentUser.uid), {
             fcmToken: token,
             fcmTokenUpdatedAt: serverTimestamp(),
             notificationsEnabled: true
         });
         
-        // ✅ Niba ari member, bika na we muri member doc
+        // ✅ Niba ari member, bika na we muri members collection
         if (currentUserData?.role === 'member' && currentUserData?.memberId) {
-            await updateDoc(doc(db, 'members', currentUserData.memberId), {
-                fcmToken: token,
-                fcmTokenUpdatedAt: serverTimestamp()
-            });
+            try {
+                await updateDoc(doc(db, 'members', currentUserData.memberId), {
+                    fcmToken: token,
+                    fcmTokenUpdatedAt: serverTimestamp()
+                });
+            } catch(e) {
+                console.warn('⚠️ Member FCM save error:', e);
+            }
         }
         
         console.log('✅ FCM token yabitswe');
         showToast('✅ Notifications zakijijwe!', 'success');
         
+        // ✅ Bika token muri localStorage
+        try {
+            localStorage.setItem('hcfc_fcm_token', token);
+        } catch(e) {}
+        
     } catch(e) {
         console.error('❌ FCM token error:', e);
-        showToast('❌ Notification ntabwo zakijijwe: ' + e.message, 'error');
+        if (e.code === 'messaging/permission-blocked') {
+            console.log('ℹ️ Notification permission yanzwe');
+        } else {
+            showToast('❌ Notification ntabwo zakijijwe', 'warning');
+        }
     }
 };
-
 // ✅ Iyi ni yo yakira notification iyo app ifunguye (foreground)
+let foregroundListenerSet = false;
+
 window.setupForegroundNotifications = function() {
     if (!messaging) return;
+    if (foregroundListenerSet) return; // ✅ Ntukongere listener
+    foregroundListenerSet = true;
     
     onMessage(messaging, (payload) => {
         console.log('📬 Foreground message:', payload);
@@ -8885,17 +8922,23 @@ window.setupForegroundNotifications = function() {
         const body = payload.notification?.body || '';
         
         // ✅ Erekana toast
-        showToast(`${title}: ${body}`, 'info');
+        showToast(`💬 ${title}: ${body}`, 'info');
         
-        // ✅ Erekana browser notification (niba permission yatanzwe)
+        // ✅ Erekana browser notification (iyo app iri foreground)
         if (Notification.permission === 'granted') {
-            new Notification(title, {
-                body: body,
-                icon: payload.notification?.icon || '/favicon.png',
-                tag: 'hcfc-group-chat'
-            });
+            try {
+                new Notification(title, {
+                    body: body,
+                    icon: payload.notification?.icon || '/favicon.png',
+                    tag: 'hcfc-group-chat-' + Date.now()
+                });
+            } catch(e) {
+                console.warn('⚠️ Notification error:', e);
+            }
         }
     });
+    
+    console.log('✅ Foreground notifications setup (once)');
 };
     </script>
 </body>
