@@ -20,14 +20,19 @@ messaging.onBackgroundMessage((payload) => {
     console.log('📬 Background message received:', payload);
     
     const notificationTitle = payload.notification?.title || '💬 Ubutumwa bushya';
+    
+    // ✅ Koresha favicon.png (niba icon-512 itabaho)
+    const iconUrl = payload.notification?.icon || '/favicon.png';
+    const badgeUrl = '/favicon.png';
+    
     const notificationOptions = {
         body: payload.notification?.body || 'Ufite ubutumwa bushya muri HCFC CHOIR',
-        icon: payload.notification?.icon || '/icon-512.png',
-        badge: '/icon-512.png',
-        tag: 'hcfc-group-chat',  // Iyi ituma notifications nshya zisimbuza iya kera
+        icon: iconUrl,
+        badge: badgeUrl,
+        tag: 'hcfc-group-chat',
         data: payload.data || {},
         vibrate: [200, 100, 200],
-        requireInteraction: false,  // ✅ Izakuraho yonyine
+        requireInteraction: false,
         actions: [
             { action: 'open', title: 'Fungura' },
             { action: 'close', title: 'Funga' }
