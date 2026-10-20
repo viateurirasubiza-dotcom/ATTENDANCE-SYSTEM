@@ -2824,6 +2824,10 @@ body {
                             <h1>🛡️ Abakoresha</h1>
                             <p>Genzura abakoresha sisitemu</p>
                         </div>
+    <button class="btn" style="background: linear-gradient(135deg, #8b5cf6, #a78bfa); color: white;" onclick="openAddComptableModal()">
+        <i class="fas fa-calculator"></i> Ongeraho Comptable
+    </button>
+</div>
                         <button class="btn btn-primary" onclick="openAddAdminModal()">
                             <i class="fas fa-user-plus"></i> Ongeraho Admin
                         </button>
@@ -4259,98 +4263,203 @@ try {
         }
 
         window.handleLogin = async function() {
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value;
-            const btn = document.getElementById('loginBtn');
-            if (!email || !password) { showAuthError('Uzuza email na ijambo ry\'ibanga'); return; }
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turakwinjiza...</span>';
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-            } catch (error) {
-                showAuthError('Email cyangwa ijambo ry\'ibanga sibyo');
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> <span>INJIRA</span>';
-            }
-        };
-
-        window.handleSignup = async function() {
-            const name = document.getElementById('signupName').value.trim();
-            const email = document.getElementById('signupEmail').value.trim().toLowerCase();
-            const password = document.getElementById('signupPassword').value;
-            const confirm = document.getElementById('signupConfirm').value;
-            const btn = document.getElementById('signupBtn');
-            
-            if (!name || !email || !password || !confirm) { showAuthError('Uzuza ibisabwa byose'); return; }
-            if (password !== confirm) { showAuthError('Amagambo y\'ibanga ntabwo ahura'); return; }
-            if (password.length < 6) { showAuthError('Ijambo ry\'ibanga rigomba kuba nibura 6'); return; }
-            
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turakwiyandikisha...</span>';
-            
-            try {
-                const inviteSnap = await getDocs(
-                    query(collection(db, 'adminInvitations'), 
-                          where('email', '==', email),
-                          where('status', '==', 'pending'))
-                );
-                let invitation = null;
-                inviteSnap.forEach(d => invitation = { id: d.id, ...d.data() });
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const btn = document.getElementById('loginBtn');
+    if (!email || !password) { showAuthError('Uzuza email na ijambo ry\'ibanga'); return; }
+    
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turakwinjiza...</span>';
+    
+    try {
+        // 1. Injira muri Firebase Auth
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        
+        // 2. Reba niba ari Comptable muri `users` collection
+        try {
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
                 
-                const usersSnap = await getDocs(collection(db, 'users'));
-                const isFirstAdmin = usersSnap.empty;
-                
-                if (!invitation && !isFirstAdmin) {
-                    showAuthError('❌ Ntabwo watumiwе nka Admin.');
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fas fa-user-shield"></i> <span>KORA ADMIN</span>';
+                // ✅ Niba ari Comptable, jyana kuri comptable.html
+                if (userData.role === 'comptable') {
+                    console.log('💰 Comptable yinjiye — jyana kuri comptable.html');
+                    window.location.href = 'comptable.html';
                     return;
                 }
                 
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-                
-                let photoURL = null;
-                if (signupPhotoFile) photoURL = await uploadToCloudinary(signupPhotoFile, 'choir_profiles');
-                await updateProfile(user, { displayName: name, photoURL: photoURL });
-                
-                const role = isFirstAdmin ? 'super_admin' : 'admin';
-                const permissions = invitation?.permissions || {
-                    approveMembers: true, manageUniform: true, manageLyrics: true, manageAttendance: true
-                };
-                
-                await setDoc(doc(db, 'users', user.uid), { 
-                    uid: user.uid, name, email, phone: '', photo: photoURL, role,
-                    canApproveMembers: permissions.approveMembers !== false,
-                    canApproveAdmins: isFirstAdmin,
-                    canManageUniform: permissions.manageUniform !== false,
-                    canManageLyrics: permissions.manageLyrics !== false,
-                    canManageAttendance: permissions.manageAttendance !== false,
-                    choirName: 'Choir Imanzi', 
-                    invitedBy: invitation?.invitedBy || null,
-                    createdAt: serverTimestamp() 
-                });
-                
-                if (invitation) {
-                    await updateDoc(doc(db, 'adminInvitations', invitation.id), {
-                        status: 'accepted',
-                        acceptedAt: serverTimestamp(),
-                        acceptedBy: user.uid
-                    });
+                // ✅ Niba ari Admin/Super Admin, jyana kuri dashboard (index.html ihita ibikora)
+                if (userData.role === 'admin' || userData.role === 'super_admin') {
+                    console.log('🛡️ Admin yinjiye — jyana kuri dashboard');
+                    // onAuthStateChanged izahita ibona
+                    return;
                 }
-                
-                showToast(isFirstAdmin ? '✅ Uri Super Admin!' : '✅ Wakiriwe nka Admin!', 'success');
-                
-            } catch (error) {
-                let msg = 'Ikibazo cyabaye';
-                if (error.code === 'auth/email-already-in-use') msg = 'Email isanzwe ikoreshwa';
-                if (error.code === 'auth/invalid-email') msg = 'Email ntariyo';
-                if (error.code === 'auth/weak-password') msg = 'Ijambo ry\'ibanga ni nini cyane';
-                showAuthError(msg);
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-user-shield"></i> <span>KORA ADMIN</span>';
             }
-        };
+        } catch(e) {
+            console.warn('⚠️ Error checking role:', e);
+        }
+        
+        // Niba atari comptable, `onAuthStateChanged` izahita imujyana kuri dashboard
+    } catch (error) {
+        showAuthError('Email cyangwa ijambo ry\'ibanga sibyo');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> <span>INJIRA</span>';
+    }
+};
+       window.handleSignup = async function() {
+    const name = document.getElementById('signupName').value.trim();
+    const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+    const password = document.getElementById('signupPassword').value;
+    const confirm = document.getElementById('signupConfirm').value;
+    const btn = document.getElementById('signupBtn');
+    
+    // ============================================
+    // 1. VALIDATION
+    // ============================================
+    if (!name || !email || !password || !confirm) {
+        showAuthError('Uzuza ibisabwa byose');
+        return;
+    }
+    if (password !== confirm) {
+        showAuthError('Amagambo y\'ibanga ntabwo ahura');
+        return;
+    }
+    if (password.length < 6) {
+        showAuthError('Ijambo ry\'ibanga rigomba kuba nibura 6');
+        return;
+    }
+    
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Turakwiyandikisha...</span>';
+    
+    try {
+        // ============================================
+        // 2. REBA NIBA ARI FIRST ADMIN
+        // ============================================
+        const usersSnap = await getDocs(collection(db, 'users'));
+        const isFirstAdmin = usersSnap.empty;
+        
+        // ============================================
+        // 3. KORA USER MURI FIREBASE AUTH
+        // ============================================
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        
+        // ============================================
+        // 4. SOMA INVITATION (uri signed in ubu)
+        // ============================================
+        const inviteSnap = await getDocs(
+            query(collection(db, 'adminInvitations'), 
+                  where('email', '==', email),
+                  where('status', '==', 'pending'))
+        );
+        let invitation = null;
+        inviteSnap.forEach(d => invitation = { id: d.id, ...d.data() });
+        
+        // ============================================
+        // 5. GENZURA NIBA ATUMIWЕ
+        // ============================================
+        if (!invitation && !isFirstAdmin) {
+            showAuthError('❌ Ntabwo watumiwе nka Admin cyangwa Comptable.');
+            await signOut(auth);
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-user-shield"></i> <span>KORA CONTI</span>';
+            return;
+        }
+        
+        // ============================================
+        // 6. FATA ROLE N'UBURENGANZIRA
+        // ============================================
+        // Role ishobora kuba: 'super_admin', 'admin', 'comptable'
+        const role = isFirstAdmin ? 'super_admin' : (invitation?.role || 'admin');
+        const permissions = invitation?.permissions || {};
+        
+        // ============================================
+        // 7. BIKA USER MURI FIRESTORE
+        // ============================================
+        let photoURL = null;
+        if (signupPhotoFile) {
+            try {
+                photoURL = await uploadToCloudinary(signupPhotoFile, 'choir_profiles');
+            } catch(e) {
+                console.warn('⚠️ Photo upload error:', e);
+            }
+        }
+        
+        await updateProfile(user, { displayName: name, photoURL: photoURL });
+        
+        // Bika user muri `users` collection n'role ye
+        await setDoc(doc(db, 'users', user.uid), { 
+            uid: user.uid, 
+            name, 
+            email, 
+            phone: '', 
+            photo: photoURL, 
+            role: role,  // ✅ 'super_admin', 'admin', cyangwa 'comptable'
+            
+            // ============================================
+            // Comptable permissions
+            // ============================================
+            canManageFinance: permissions.canManageFinance === true,
+            canManageContributions: permissions.canManageContributions === true,
+            canManageExpenses: permissions.canManageExpenses === true,
+            canViewReports: permissions.canViewReports === true,
+            
+            // ============================================
+            // Admin permissions
+            // ============================================
+            canApproveMembers: role === 'admin' || isFirstAdmin,
+            canApproveAdmins: isFirstAdmin,
+            canManageUniform: role === 'admin' || isFirstAdmin,
+            canManageLyrics: role === 'admin' || isFirstAdmin,
+            canManageAttendance: role === 'admin' || isFirstAdmin,
+            
+            // ============================================
+            // General
+            // ============================================
+            choirName: 'Choir Imanzi', 
+            invitedBy: invitation?.invitedBy || null,
+            invitedByName: invitation?.invitedByName || null,
+            createdAt: serverTimestamp() 
+        });
+        
+        // ============================================
+        // 8. HINDURA INVITATION STATUS
+        // ============================================
+        if (invitation) {
+            await updateDoc(doc(db, 'adminInvitations', invitation.id), {
+                status: 'accepted',
+                acceptedAt: serverTimestamp(),
+                acceptedBy: user.uid,
+                acceptedByName: name
+            });
+        }
+        
+        // ============================================
+        // 9. TOAST YO KWEMEZA
+        // ============================================
+        let roleLabel = 'Admin';
+        if (role === 'super_admin') roleLabel = 'Super Admin';
+        if (role === 'comptable') roleLabel = 'Comptable';
+        
+        showToast(`✅ Wakiriwe nka ${roleLabel}!`, 'success');
+        console.log(`✅ User created: ${name} (${email}) — Role: ${role}`);
+        
+    } catch (error) {
+        console.error('❌ Signup error:', error);
+        
+        let msg = 'Ikibazo cyabaye';
+        if (error.code === 'auth/email-already-in-use') msg = 'Email isanzwe ikoreshwa';
+        if (error.code === 'auth/invalid-email') msg = 'Email ntariyo';
+        if (error.code === 'auth/weak-password') msg = 'Ijambo ry\'ibanga ni nini cyane';
+        if (error.code === 'auth/operation-not-allowed') msg = 'Email/Password ntabwo yemewe muri Firebase Console';
+        
+        showAuthError('❌ ' + msg);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-user-shield"></i> <span>KORA CONTI</span>';
+    }
+};
 
         window.handleLogout = async function() {
             if (!confirm('Urabyemeza ko ushaka gusohoka?')) return;
@@ -4824,7 +4933,7 @@ window.startUnreadListener = function() {
             }, 1000);
         }
 
-       async function enterApp() {
+      async function enterApp() {
     const authScreen = document.getElementById('authScreen');
     const appEl = document.getElementById('app');
     const ls = document.getElementById('loadingScreen');
@@ -4837,6 +4946,16 @@ window.startUnreadListener = function() {
     const isAdmin = role === 'admin' || role === 'super_admin';
     const isSuperAdmin = role === 'super_admin';
     const isMember = role === 'member';
+    const isComptable = role === 'comptable'; // ✅ NSHYA
+    
+    // ============================================
+    // ✅ NSHYA: Niba ari Comptable, jyana kuri comptable.html
+    // ============================================
+    if (isComptable) {
+        console.log('💰 Comptable — redirect to comptable.html');
+        window.location.href = 'comptable.html';
+        return;
+    }
     
     // ============================================
     // 1. HIDE/SHOW ELEMENTS BY ROLE
@@ -8945,6 +9064,154 @@ window.setupForegroundNotifications = function() {
     });
     
     console.log('✅ Foreground notifications setup (once)');
+};
+// ============================================
+// ONGERAHO COMPTABLE
+// ============================================
+window.openAddComptableModal = function() {
+    if (currentUserData?.role !== 'super_admin') {
+        showToast('Super Admin gusa!', 'error');
+        return;
+    }
+    
+    // Siba modal ya kera niba ihari
+    const existingModal = document.getElementById('addComptableModal');
+    if (existingModal) existingModal.remove();
+    
+    // Kora modal nshya
+    const modalHTML = `
+        <div class="modal-overlay" id="addComptableModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3><i class="fas fa-calculator"></i> Ongeraho Comptable</h3>
+                    <button class="close-btn" onclick="closeModal('addComptableModal')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <p style="margin-bottom: 16px; color: var(--text-secondary); font-size: 14px;">
+                    Comptable mushya azashobora gucunga amafaranga y'itsinda.
+                </p>
+                <div class="form-group">
+                    <label>Email ya Comptable <span style="color: var(--danger);">*</span></label>
+                    <input type="email" class="form-control" id="newComptableEmail" placeholder="comptable@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Amazina <span style="color: var(--danger);">*</span></label>
+                    <input type="text" class="form-control" id="newComptableName" placeholder="Amazina ya Comptable">
+                </div>
+                <div class="form-group">
+                    <label>Uruhare</label>
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 8px;">
+                        <label style="display: flex; align-items: center; gap: 10px; font-weight: 500; cursor: pointer;">
+                            <input type="checkbox" id="permComptableFinance" checked style="width: 18px; height: 18px;">
+                            <span>✅ Gucunga Amafaranga (Finance)</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 10px; font-weight: 500; cursor: pointer;">
+                            <input type="checkbox" id="permComptableContributions" checked style="width: 18px; height: 18px;">
+                            <span>✅ Gucunga Contributions</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 10px; font-weight: 500; cursor: pointer;">
+                            <input type="checkbox" id="permComptableExpenses" checked style="width: 18px; height: 18px;">
+                            <span>✅ Gucunga Expenses</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 10px; font-weight: 500; cursor: pointer;">
+                            <input type="checkbox" id="permComptableReports" checked style="width: 18px; height: 18px;">
+                            <span>✅ Kubona Raporo</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-outline" onclick="closeModal('addComptableModal')">Hagarika</button>
+                    <button class="btn btn-primary" id="addComptableBtn" onclick="addNewComptable()">
+                        <i class="fas fa-save"></i> Ongeraho Comptable
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Ongeraho modal muri body
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // Erekana modal
+    document.getElementById('addComptableModal').classList.add('active');
+    
+    // Ongeraho event ya click kuri overlay (kugira ngo ifunge)
+    document.getElementById('addComptableModal').addEventListener('click', function(e) {
+        if (e.target === this) this.classList.remove('active');
+    });
+};
+// ============================================
+// BIKA COMPTABLE MUSHya
+// ============================================
+window.addNewComptable = async function() {
+    if (currentUserData?.role !== 'super_admin') {
+        showToast('Super Admin gusa!', 'error');
+        return;
+    }
+    
+    const email = document.getElementById('newComptableEmail').value.trim().toLowerCase();
+    const name = document.getElementById('newComptableName').value.trim();
+    
+    if (!email || !name) {
+        showToast('Uzuza email na amazina', 'warning');
+        return;
+    }
+    
+    const permissions = {
+        canManageFinance: document.getElementById('permComptableFinance').checked,
+        canManageContributions: document.getElementById('permComptableContributions').checked,
+        canManageExpenses: document.getElementById('permComptableExpenses').checked,
+        canViewReports: document.getElementById('permComptableReports').checked
+    };
+    
+    const btn = document.getElementById('addComptableBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turabika...';
+    
+    try {
+        // Reba niba user asanzwe ari muri `users` (nka member cyangwa admin)
+        const existingUser = users.find(u => u.email && u.email.toLowerCase() === email);
+        
+        if (existingUser) {
+            // ✅ User asanzwe ari muri users — hindura role ye
+            await updateDoc(doc(db, 'users', existingUser.uid), {
+                role: 'comptable',
+                ...permissions,
+                promotedBy: currentUser.uid,
+                promotedByName: currentUserData.name,
+                promotedAt: serverTimestamp()
+            });
+            showToast(`✅ ${existingUser.name} ubu ni Comptable!`, 'success');
+        } else {
+            // ✅ User mushya — bika muri `adminInvitations`
+            await addDoc(collection(db, 'adminInvitations'), {
+                email, 
+                name, 
+                role: 'comptable',
+                permissions: permissions,
+                invitedBy: currentUser.uid,
+                invitedByName: currentUserData.name,
+                status: 'pending',
+                createdAt: serverTimestamp()
+            });
+            showToast(`✅ ${name} yatumiwe! Azajya yiyandikishe nka Comptable.`, 'success');
+        }
+        
+        closeModal('addComptableModal');
+        
+        // Ongera usome users na invitations
+        await loadAdminInvitations();
+        await loadUsers();
+        renderUsers();
+        
+    } catch (error) {
+        console.error('❌ Error:', error);
+        showToast('❌ ' + error.message, 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Ongeraho Comptable';
+    }
 };
     </script>
 </body>
