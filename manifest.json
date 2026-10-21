@@ -3,6 +3,7 @@
   "short_name": "HCFC",
   "description": "Héritiers du Ciel Family Choir - Attendance System",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0a1929",
   "theme_color": "#38bdf8",
@@ -18,7 +19,13 @@
       "src": "/favicon.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
