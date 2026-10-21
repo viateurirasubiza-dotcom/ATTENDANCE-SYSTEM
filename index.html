@@ -9661,36 +9661,70 @@ enterApp();
             }
         });
 
-        // ============================================
-        // PWA INSTALL BUTTON
-        // ============================================
-        let deferredPrompt = null;
-        const installBtn = document.getElementById('installAppBtn');
+// ============================================
+// PWA INSTALL BUTTON — IKORA KENSHI
+// ============================================
+let deferredPrompt = null;
+const installBtn = document.getElementById('installAppBtn');
 
-        window.addEventListener('beforeinstallprompt', (e) => {
+// 1. Reba niba app isanzwe ishyizweho (standalone mode)
+if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+    if (installBtn) installBtn.style.display = 'none';
+}
+
+// 2. beforeinstallprompt — buto igaragara
+window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
+    console.log('✅ beforeinstallprompt yabonetse');
     if (installBtn) {
         installBtn.hidden = false;
-        installBtn.style.display = 'flex';  // 👈 GARAGAZA BURI GIHE
+        installBtn.style.display = 'flex';
     }
 });
-        if (installBtn) {
-            installBtn.addEventListener('click', async () => {
-                if (!deferredPrompt) return;
-                const result = await deferredPrompt.prompt();
-                console.log(`Ubutumwa bwakiriwe: ${result.outcome}`);
-                deferredPrompt = null;
-                installBtn.hidden = true;
-            });
+
+// 3. Click handler — ikora kenshi
+if (installBtn) {
+    installBtn.addEventListener('click', async () => {
+        // 3a. Reba niba app isanzwe ishyizweho
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+            showToast('✅ App isanzwe ishyizweho kuri telefone!', 'success');
+            return;
         }
+        
+        // 3b. Niba nta deferredPrompt, werekane ubutumwa
+        if (!deferredPrompt) {
+            showToast('📱 Kanda menu ya browser (⋮) hanyuma uhitemo "Install app" cyangwa "Add to Home Screen"', 'info');
+            return;
+        }
+        
+        // 3c. Fungura install prompt
+        try {
+            const result = await deferredPrompt.prompt();
+            console.log(`📲 Ubutumwa bwakiriwe: ${result.outcome}`);
+            
+            if (result.outcome === 'accepted') {
+                showToast('✅ App ishyirwa kuri telefone...', 'success');
+                installBtn.style.display = 'none';
+                deferredPrompt = null;  // Hisha gusa niba yemeye
+            } else {
+                showToast('ℹ️ Ntabwo washyize app. Ushobora kongera ugerageza.', 'info');
+                // NTUKUREHO deferredPrompt — reka ibeho kugira ngo buto ikore kenshi
+            }
+        } catch (error) {
+            console.error('❌ Install error:', error);
+            showToast('❌ Ikibazo cyabaye. Ongera ugerageze.', 'error');
+        }
+    });
+}
 
-        window.addEventListener('appinstalled', () => {
-            if (installBtn) installBtn.hidden = true;
-            deferredPrompt = null;
-            showToast('✅ App yashyizweho kuri telefone!', 'success');
-        });
-
+// 4. appinstalled — buto irahishwa
+window.addEventListener('appinstalled', () => {
+    console.log('✅ App yashyizweho!');
+    if (installBtn) installBtn.style.display = 'none';
+    deferredPrompt = null;
+    showToast('✅ App yashyizweho kuri telefone!', 'success');
+});
         // ============================================
         // MEMBER PAYMENT SYSTEM
         // ============================================
