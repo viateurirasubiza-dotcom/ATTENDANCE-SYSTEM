@@ -3894,7 +3894,7 @@ body {
         </div>
     </div>
 
- <button id="installAppBtn" hidden title="Shyira App kuri Telefone" style="
+<button id="installAppBtn" title="Shyira App kuri Telefone" style="
     position: fixed;
     bottom: 20px;
     right: 20px;
@@ -9672,6 +9672,17 @@ if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.
     if (installBtn) installBtn.style.display = 'none';
 }
 
+// ============================================
+// PWA INSTALL BUTTON — IKORA KENSHI
+// ============================================
+let deferredPrompt = null;
+const installBtn = document.getElementById('installAppBtn');
+
+// 1. Reba niba app isanzwe ishyizweho (standalone mode)
+if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+    if (installBtn) installBtn.style.display = 'none';
+}
+
 // 2. beforeinstallprompt — buto igaragara
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
@@ -9706,7 +9717,7 @@ if (installBtn) {
             if (result.outcome === 'accepted') {
                 showToast('✅ App ishyirwa kuri telefone...', 'success');
                 installBtn.style.display = 'none';
-                deferredPrompt = null;  // Hisha gusa niba yemeye
+                deferredPrompt = null;
             } else {
                 showToast('ℹ️ Ntabwo washyize app. Ushobora kongera ugerageza.', 'info');
                 // NTUKUREHO deferredPrompt — reka ibeho kugira ngo buto ikore kenshi
