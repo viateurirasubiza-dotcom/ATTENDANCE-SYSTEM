@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#38bdf8">
-    <link rel="icon" type="image/jpeg" href="/favicon-maskable.jpg">
+    <link rel="icon" type="image/png" href="/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HCFC CHOIR | Héritiers du Ciel Family Choir</title>
     <meta name="description" content="Bienvenue sur HCFC CHOIR, la plateforme des Héritiers du Ciel Family Choir pour les informations du chœur, les activités et la gestion des présences.">
@@ -28,10 +28,9 @@
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-   <link rel="icon" type="image/jpeg" href="/favicon-maskable.jpg">
-<link rel="apple-touch-icon" href="/favicon-maskable.jpg">
-<link rel="icon" type="image/jpeg" sizes="192x192" href="/favicon-maskable.jpg">
-<link rel="icon" type="image/jpeg" sizes="512x512" href="/favicon-maskable.jpg">
+    <link rel="apple-touch-icon" href="/favicon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png">
     <script>
         (function() {
             try {
@@ -658,7 +657,7 @@ body {
     position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6);
     backdrop-filter: blur(8px); display: none;
     align-items: center; justify-content: center;
-    z-index: 1000; padding: 20px;
+    z-index: 10000; padding: 20px;
 }
 .modal-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -2402,7 +2401,38 @@ body {
 #notifStatus.active { display: block; }
 #notifStatus.granted { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); color: var(--success); }
 #notifStatus.denied { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: var(--danger); }
-    </style>
+    /* ============================================
+   PWA INSTALL BUTTON (CIRCLE)
+   ============================================ */
+@keyframes installBtnPulse {
+    0%, 100% {
+        box-shadow: 0 10px 30px rgba(56, 189, 248, 0.5);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 15px 40px rgba(56, 189, 248, 0.8);
+        transform: scale(1.08);
+    }
+}
+
+#installAppBtn:hover {
+    transform: scale(1.15) rotate(10deg) !important;
+    box-shadow: 0 20px 50px rgba(56, 189, 248, 0.9) !important;
+}
+
+#installAppBtn:active {
+    transform: scale(0.95) !important;
+}
+
+#installAppBtn i {
+    animation: installIconBounce 1.5s ease-in-out infinite;
+}
+
+@keyframes installIconBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+</style>
 </head>
 <body>
 
@@ -3864,13 +3894,30 @@ body {
         </div>
     </div>
 
-    <!-- Toast Container -->
-    <div class="toast-container" id="toastContainer"></div>
-
-    <!-- PWA Install Button -->
-    <button id="installAppBtn" hidden style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; padding: 14px 20px; border-radius: 50px; background: var(--gradient-1); color: white; border: none; font-weight: 800; box-shadow: 0 10px 30px rgba(56,189,248,0.5); cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: inherit; font-size: 14px;">
-        <i class="fas fa-download"></i> Shyira App kuri Telefone
-    </button>
+ <button id="installAppBtn" hidden title="Shyira App kuri Telefone" style="
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--gradient-1);
+    color: white;
+    border: none;
+    font-weight: 800;
+    box-shadow: 0 10px 30px rgba(56,189,248,0.5);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+    font-size: 24px;
+    transition: all 0.3s ease;
+    animation: installBtnPulse 2s ease-in-out infinite;
+">
+    <i class="fas fa-download"></i>
+</button>
 
     <!-- ===== MODALS ===== -->
     <!-- Forgot Password -->
@@ -9621,13 +9668,13 @@ enterApp();
         const installBtn = document.getElementById('installAppBtn');
 
         window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            if (installBtn) {
-                installBtn.hidden = false;
-            }
-        });
-
+    e.preventDefault();
+    deferredPrompt = e;
+    if (installBtn) {
+        installBtn.hidden = false;
+        installBtn.style.display = 'flex';  // 👈 GARAGAZA BURI GIHE
+    }
+});
         if (installBtn) {
             installBtn.addEventListener('click', async () => {
                 if (!deferredPrompt) return;
