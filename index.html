@@ -9662,40 +9662,70 @@ enterApp();
                 }
             }
         });
-
-
 // ============================================
-// PWA INSTALL BUTTON — IKORA KENSHI
+// SERVICE WORKER REGISTRATION (NGOMBWA KURI PWA)
+// ============================================
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js', {
+            scope: '/'
+        })
+        .then((registration) => {
+            console.log('✅ Service Worker yanditswe:', registration.scope);
+            
+            // Reba updates
+            registration.addEventListener('updatefound', () => {
+                const newWorker = registration.installing;
+                newWorker.addEventListener('statechange', () => {
+                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        console.log('🔄 Service Worker nshya iteguye — refresh page');
+                    }
+                });
+            });
+        })
+        .catch((error) => {
+            console.error('❌ Service Worker yananiwe:', error);
+        });
+    });
+}
+// ============================================
+// PWA INSTALL BUTTON — IKORA KENSHI (FIXED)
 // ============================================
 let deferredPrompt = null;
 const installBtn = document.getElementById('installAppBtn');
 
-// 1. Reba niba app isanzwe ishyizweho (standalone mode)
-if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+// 1. Reba niba app isanzwe ishyizweho
+function isAppInstalled() {
+    return window.matchMedia('(display-mode: standalone)').matches 
+        || window.navigator.standalone === true;
+}
+
+// Hisha button niba app isanzwe ishyizweho
+if (isAppInstalled()) {
     if (installBtn) installBtn.style.display = 'none';
 }
 
-// 2. beforeinstallprompt — buto igaragara
+// 2. Capture beforeinstallprompt
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
-    console.log('✅ beforeinstallprompt yabonetse');
+    console.log('✅ beforeinstallprompt yabonetse — buto yiteguye');
     if (installBtn) {
         installBtn.hidden = false;
         installBtn.style.display = 'flex';
     }
 });
 
-// 3. Click handler — ikora kenshi (n'ubutumwa bwiza)
+// 3. Click handler
 if (installBtn) {
     installBtn.addEventListener('click', async () => {
         // 3a. Reba niba app isanzwe ishyizweho
-        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-            showToast('✅ App isanzwe ishyizweho kuri telefone! Fungura ukoresheje icon ya HCFC CHOIR kuri home screen.', 'success');
+        if (isAppInstalled()) {
+            showToast('✅ App isanzwe ishyizweho! Fungura ukoresheje icon ya HCFC CHOIR.', 'success');
             return;
         }
         
-        // 3b. Niba nta deferredPrompt, werekane ubutumwa bwiza
+        // 3b. Niba nta deferredPrompt — werekane amabwiriza
         if (!deferredPrompt) {
             showToast('📱 Kanda menu ya browser (⋮) hanyuma uhitemo "Install app" cyangwa "Add to Home Screen"', 'info');
             return;
@@ -9703,17 +9733,17 @@ if (installBtn) {
         
         // 3c. Fungura install prompt
         try {
-            const result = await deferredPrompt.prompt();
-            console.log(`📲 Ubutumwa bwakiriwe: ${result.outcome}`);
+            deferredPrompt.prompt();
+            const result = await deferredPrompt.userChoice;
+            console.log(`📲 User choice: ${result.outcome}`);
             
             if (result.outcome === 'accepted') {
                 showToast('✅ App ishyirwa kuri telefone...', 'success');
                 installBtn.style.display = 'none';
-                deferredPrompt = null;
             } else {
                 showToast('ℹ️ Ntabwo washyize app. Ushobora kongera ugerageza.', 'info');
-                // NTUKUREHO deferredPrompt — reka ibeho kugira ngo buto ikore kenshi
             }
+            // NTUKUREHO deferredPrompt — reka ibeho kugira ngo buto ikore kenshi
         } catch (error) {
             console.error('❌ Install error:', error);
             showToast('❌ Ikibazo cyabaye. Ongera ugerageze.', 'error');
@@ -9721,7 +9751,7 @@ if (installBtn) {
     });
 }
 
-// 4. appinstalled — buto irahishwa
+// 4. appinstalled
 window.addEventListener('appinstalled', () => {
     console.log('✅ App yashyizweho!');
     if (installBtn) installBtn.style.display = 'none';
