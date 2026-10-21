@@ -9684,16 +9684,16 @@ window.addEventListener('beforeinstallprompt', (e) => {
     }
 });
 
-// 3. Click handler — ikora kenshi
+// 3. Click handler — ikora kenshi (n'ubutumwa bwiza)
 if (installBtn) {
     installBtn.addEventListener('click', async () => {
         // 3a. Reba niba app isanzwe ishyizweho
         if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-            showToast('✅ App isanzwe ishyizweho kuri telefone!', 'success');
+            showToast('✅ App isanzwe ishyizweho kuri telefone! Fungura ukoresheje icon ya HCFC CHOIR kuri home screen.', 'success');
             return;
         }
         
-        // 3b. Niba nta deferredPrompt, werekane ubutumwa
+        // 3b. Niba nta deferredPrompt, werekane ubutumwa bwiza
         if (!deferredPrompt) {
             showToast('📱 Kanda menu ya browser (⋮) hanyuma uhitemo "Install app" cyangwa "Add to Home Screen"', 'info');
             return;
