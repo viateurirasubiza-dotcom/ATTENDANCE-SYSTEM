@@ -19,8 +19,8 @@ messaging.onBackgroundMessage((payload) => {
     const notificationTitle = payload.notification?.title || '💬 Ubutumwa bushya';
     const notificationOptions = {
         body: payload.notification?.body || 'Ufite ubutumwa bushya muri HCFC CHOIR',
-        icon: payload.notification?.icon || '/favicon.png',  // ✅ Favicon
-        badge: '/favicon.png',  // ✅ Favicon
+        icon: payload.notification?.icon || '/favicon-maskable.jpg',  // ✅ YAHINDUWE
+        badge: '/favicon-maskable.jpg',  // ✅ YAHINDUWE
         tag: 'hcfc-group-chat',
         data: payload.data || {},
         vibrate: [200, 100, 200],
