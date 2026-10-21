@@ -2,8 +2,8 @@
 <html lang="rw">
 <head>
     <meta charset="UTF-8">
-       <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#38bdf8">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#38bdf8">
     <link rel="icon" type="image/png" href="/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HCFC CHOIR | Héritiers du Ciel Family Choir</title>
@@ -29,9 +29,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="apple-touch-icon" href="/favicon.png">
-<link rel="apple-touch-icon" href="/favicon.png">
-<link rel="icon" type="image/png" sizes="192x192" href="/favicon.png">
-<link rel="icon" type="image/png" sizes="512x512" href="/favicon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png">
     <script>
         (function() {
             try {
@@ -493,6 +492,7 @@ body {
 .role-badge.super_admin { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
 .role-badge.admin { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
 .role-badge.member { background: rgba(100, 116, 139, 0.15); color: #64748b; }
+.role-badge.comptable { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
 
 .layout { display: flex; min-height: calc(100vh - 71px); }
 .sidebar {
@@ -2223,6 +2223,7 @@ body {
 .mb-2 { margin-bottom: 8px; }
 .mb-4 { margin-bottom: 16px; }
 .mt-4 { margin-top: 16px; }
+
 /* ============================================
    LOGIN BUTTON ANIMATION
    ============================================ */
@@ -2250,14 +2251,12 @@ body {
     box-shadow: 0 15px 35px rgba(56, 189, 248, 0.8) !important;
 }
 
-/* Iyi ni yo ihindura amabara (Gradient Move) */
 @keyframes gradientPulse {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
 
-/* Iyi ni yo ituma buto ijugumira hejuru n'hası (Floating) */
 @keyframes floatBtn {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-5px); }
@@ -2269,8 +2268,9 @@ body {
     -webkit-overflow-scrolling: touch;
     display: block;
 }
+
 /* ============================================
-   MEMBER WELCOME ANIMATION - MURAKAZA NEZA
+   MEMBER WELCOME ANIMATION
    ============================================ */
 .member-welcome-header {
     margin-bottom: 24px;
@@ -2556,7 +2556,10 @@ body {
                 <div class="nav-item member-only" onclick="switchPage('my-dashboard', this)" style="display: none;">
                     <i class="fas fa-home"></i><span>Ahabanza</span>
                 </div>
-                                <div class="nav-item admin-only" onclick="openCreateModal()">
+                <div class="nav-item member-only" onclick="switchPage('my-finance', this)" style="display: none;">
+                    <i class="fas fa-wallet"></i><span>Amafaranga Yanjye</span>
+                </div>
+                <div class="nav-item admin-only" onclick="openCreateModal()">
                     <i class="fas fa-calendar-plus"></i><span>Kora Attendance</span>
                 </div>
                 <div class="nav-item admin-only" onclick="openQRRegisterModal()">
@@ -2597,6 +2600,10 @@ body {
                 <div class="nav-item admin-only" onclick="switchPage('finance', this)">
                     <i class="fas fa-wallet"></i><span>Comptable</span>
                 </div>
+                <div class="nav-item admin-only" onclick="switchPage('payment-requests', this)">
+                    <i class="fas fa-money-check-alt"></i><span>Kwemeza Ubwishyu</span>
+                    <span class="count warning" id="sidebarPaymentReqCount" style="display:none;">0</span>
+                </div>
                 <div class="nav-item admin-only" onclick="switchPage('contributions', this)">
                     <i class="fas fa-hand-holding-usd"></i><span>Contributions</span>
                     <span class="count warning" id="sidebarContribCount" style="display:none;">0</span>
@@ -2616,6 +2623,9 @@ body {
                 <div class="nav-item" onclick="switchPage('lyrics', this)">
                     <i class="fas fa-music"></i><span>Lyrics</span>
                 </div>
+<div class="nav-item admin-only" onclick="switchPage('social-media', this)">
+    <i class="fas fa-globe"></i><span>Social Media</span>
+</div>
                 <div class="nav-item" onclick="switchPage('announcements', this)">
                     <i class="fas fa-bullhorn"></i><span>Amatangazo</span>
                     <span class="count warning" id="sidebarAnnouncementCount" style="display: none;">0</span>
@@ -2738,6 +2748,12 @@ body {
     </div>
 
     <div class="member-profile-card" id="memberProfileCard"></div>
+    <!-- Button yo kwishyura -->
+    <div style="margin-top: 20px; margin-bottom: 24px; display: flex; gap: 12px; flex-wrap: wrap;">
+        <button class="btn btn-primary" onclick="openPaymentModal()" style="padding: 14px 24px; font-size: 15px; border-radius: 14px; box-shadow: 0 8px 25px rgba(56,189,248,0.4); width: 100%;">
+            <i class="fas fa-hand-holding-usd"></i> Gutanga Umusanzu / Kwishyura
+        </button>
+    </div>
 
     <div class="stats-grid">
         <div class="stat-card success">
@@ -2768,6 +2784,11 @@ body {
         <span class="count warning" id="memberAnnouncementCount" style="margin-left: auto; display: none;">0</span>
     </div>
     <div class="saved-list" id="memberAnnouncementsList"></div>
+ <div class="section-title" style="margin-top: 30px;">
+        <i class="fas fa-globe"></i>
+        <span>Dukurikire kuri Social Media</span>
+    </div>
+    <div id="memberSocialLinks"></div>
 
     <div class="section-title" style="margin-top: 30px;">
         <i class="fas fa-history"></i>
@@ -2821,6 +2842,57 @@ body {
 
 </div>
 
+                <!-- ============ MEMBER FINANCE ============ -->
+<div class="page" id="page-my-finance">
+    <div class="page-header">
+        <div>
+            <h1>💰 Amafaranga Yanjye</h1>
+            <p>Reba amafaranga watanze n'ubwishyu bwawe</p>
+        </div>
+    </div>
+
+    <div class="readonly-notice">
+        <i class="fas fa-eye"></i>
+        <span>Iyi ni <strong>amafaranga yawe</strong> — ureba gusa. Ntushobora kuyahindura hano.</span>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card success">
+            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-value" id="myTotalPaid">0 RWF</div>
+            <div class="stat-label">Amafaranga Watanze</div>
+        </div>
+        <div class="stat-card warning">
+            <div class="stat-icon"><i class="fas fa-clock"></i></div>
+            <div class="stat-value" id="myPendingPaid">0 RWF</div>
+            <div class="stat-label">Ategereje Kwemezwa</div>
+        </div>
+        <div class="stat-card danger">
+            <div class="stat-icon"><i class="fas fa-hand-holding-usd"></i></div>
+            <div class="stat-value" id="myTotalDebt">0 RWF</div>
+            <div class="stat-label">Amafaranga Ugomba</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-receipt"></i></div>
+            <div class="stat-value" id="myTxCount">0</div>
+            <div class="stat-label">Ubwishyu Bwawe</div>
+        </div>
+    </div>
+
+    <div class="section-title" style="margin-top: 30px;">
+        <i class="fas fa-hand-holding-usd"></i>
+        <span>Contributions Zikora</span>
+        <span class="count warning" id="myActiveContribsCount" style="margin-left: auto; display: none;">0</span>
+    </div>
+    <div class="saved-list" id="myContributionsList"></div>
+
+    <div class="section-title" style="margin-top: 30px;">
+        <i class="fas fa-history"></i>
+        <span>Amateka y'Ubwishyu Bwawe</span>
+    </div>
+    <div class="saved-list" id="myTransactionsList"></div>
+</div>
+
                 <!-- ============ CREATE ATTENDANCE ============ -->
                 <div class="page" id="page-create">
                     <div class="page-header">
@@ -2846,7 +2918,7 @@ body {
                         <i class="fas fa-search"></i>
                         <input type="text" id="searchMember" placeholder="Shakisha umuririmbyi..." oninput="filterMembersList()">
                     </div>
-                                    <div class="attendance-table">
+                    <div class="attendance-table">
                         <div class="table-responsive-wrapper" style="width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;">
                             <table style="min-width: 650px; width: 100%;">
                                 <thead>
@@ -3501,6 +3573,39 @@ body {
                     <div class="saved-list" id="recentTransactionsList"></div>
                 </div>
 
+                <!-- ============ PAYMENT REQUESTS ============ -->
+                <div class="page" id="page-payment-requests">
+                    <div class="page-header">
+                        <div>
+                            <h1>💰 Kwemeza Ubwishyu</h1>
+                            <p>Reba kandi wemeze ubwishyu bw'abanyamuryango</p>
+                        </div>
+                        <button class="btn btn-outline" onclick="renderPaymentRequests()">
+                            <i class="fas fa-sync"></i> Refresh
+                        </button>
+                    </div>
+
+                    <div class="stats-grid" style="margin-bottom: 24px;">
+                        <div class="stat-card warning">
+                            <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                            <div class="stat-value" id="statPendingPayments">0</div>
+                            <div class="stat-label">Bitegereje</div>
+                        </div>
+                        <div class="stat-card success">
+                            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                            <div class="stat-value" id="statConfirmedPayments">0</div>
+                            <div class="stat-label">Byemejwe</div>
+                        </div>
+                        <div class="stat-card danger">
+                            <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+                            <div class="stat-value" id="statRejectedPayments">0</div>
+                            <div class="stat-label">Byanzwe</div>
+                        </div>
+                    </div>
+
+                    <div class="saved-list" id="paymentRequestsList"></div>
+                </div>
+
                 <!-- ============ CONTRIBUTIONS ============ -->
                 <div class="page" id="page-contributions">
                     <div class="page-header">
@@ -3698,7 +3803,25 @@ body {
                         <button class="btn btn-primary" onclick="changePassword()"><i class="fas fa-key"></i> Hindura</button>
                     </div>
                 </div>
+<!-- ============ SOCIAL MEDIA (ADMIN) ============ -->
+<div class="page" id="page-social-media">
+    <div class="page-header">
+        <div>
+            <h1>🌐 Social Media</h1>
+            <p>Shyiraho link za Choir kuri platforms zitandukanye</p>
+        </div>
+        <button class="btn btn-primary" onclick="openAddSocialModal()">
+            <i class="fas fa-plus"></i> Ongeraho Link
+        </button>
+    </div>
 
+    <div class="readonly-notice" style="margin-bottom: 20px;">
+        <i class="fas fa-info-circle"></i>
+        <span>Izi link zizagaragara muri dashboard y'abaririmbyi bose. Kanda "Reba" kugira ngo ugenzure.</span>
+    </div>
+
+    <div class="saved-list" id="socialMediaList"></div>
+</div>
                 <!-- ============ SETTINGS ============ -->
                 <div class="page" id="page-settings">
                     <div class="page-header">
@@ -3713,7 +3836,6 @@ body {
                         <button class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save"></i> Bika</button>
                     </div>
                     
-                    <!-- NOTIFICATIONS SETTINGS -->
                     <div class="settings-card">
                         <h3><i class="fas fa-bell"></i> Notifications</h3>
                         <p style="font-size:13px;color:var(--text-secondary);margin-bottom:14px;">
@@ -3744,8 +3866,12 @@ body {
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- PWA Install Button -->
+    <button id="installAppBtn" hidden style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; padding: 14px 20px; border-radius: 50px; background: var(--gradient-1); color: white; border: none; font-weight: 800; box-shadow: 0 10px 30px rgba(56,189,248,0.5); cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: inherit; font-size: 14px;">
+        <i class="fas fa-download"></i> Shyira App kuri Telefone
+    </button>
+
     <!-- ===== MODALS ===== -->
-    
     <!-- Forgot Password -->
     <div class="modal-overlay" id="forgotPasswordModal">
         <div class="modal">
@@ -3959,6 +4085,120 @@ body {
             </div>
         </div>
     </div>
+<!-- ===== ADMIN PERMISSIONS MODAL ===== -->
+<div class="modal-overlay" id="adminPermissionsModal">
+    <div class="modal" style="max-width: 600px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-user-shield"></i> Uburenganzira bwa <span id="permAdminName">-</span></h3>
+            <button class="close-btn" onclick="closeModal('adminPermissionsModal')"><i class="fas fa-times"></i></button>
+        </div>
+
+        <input type="hidden" id="permAdminUid">
+
+        <div class="readonly-notice" style="margin-bottom: 20px;">
+            <i class="fas fa-info-circle"></i>
+            <span>Hitamo ibintu uyu Admin ashobora kubona muri dashboard ye. Ibindi byose bizahishwa.</span>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg); border-radius: 12px; cursor: pointer;">
+                <input type="checkbox" id="permViewMembers" style="width: 20px; height: 20px; cursor: pointer;">
+                <div>
+                    <strong style="font-size: 14px;">👥 Abaririmbyi (Members)</strong>
+                    <p style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Kubona no gucunga abaririmbyi</p>
+                </div>
+            </label>
+
+            <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg); border-radius: 12px; cursor: pointer;">
+                <input type="checkbox" id="permViewAttendance" style="width: 20px; height: 20px; cursor: pointer;">
+                <div>
+                    <strong style="font-size: 14px;">📅 Ubwitabire (Attendance)</strong>
+                    <p style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Kora attendance no kureba amateka</p>
+                </div>
+            </label>
+
+            <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg); border-radius: 12px; cursor: pointer;">
+                <input type="checkbox" id="permViewUniform" style="width: 20px; height: 20px; cursor: pointer;">
+                <div>
+                    <strong style="font-size: 14px;">👔 Uniform</strong>
+                    <p style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Gucunga uniform z'abaririmbyi</p>
+                </div>
+            </label>
+
+            <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg); border-radius: 12px; cursor: pointer;">
+                <input type="checkbox" id="permViewLyrics" style="width: 20px; height: 20px; cursor: pointer;">
+                <div>
+                    <strong style="font-size: 14px;">🎵 Lyrics</strong>
+                    <p style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Kongeraho no gucunga lyrics</p>
+                </div>
+            </label>
+
+            <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg); border-radius: 12px; cursor: pointer;">
+                <input type="checkbox" id="permViewFinance" style="width: 20px; height: 20px; cursor: pointer;">
+                <div>
+                    <strong style="font-size: 14px;">💰 Comptable (Finance)</strong>
+                    <p style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Transactions, contributions, payment requests</p>
+                </div>
+            </label>
+
+            <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg); border-radius: 12px; cursor: pointer;">
+                <input type="checkbox" id="permViewAnnouncements" style="width: 20px; height: 20px; cursor: pointer;">
+                <div>
+                    <strong style="font-size: 14px;">📢 Amatangazo</strong>
+                    <p style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Kongeraho matangazo</p>
+                </div>
+            </label>
+
+            <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg); border-radius: 12px; cursor: pointer;">
+                <input type="checkbox" id="permViewBirthday" style="width: 20px; height: 20px; cursor: pointer;">
+                <div>
+                    <strong style="font-size: 14px;">🎂 Birthday</strong>
+                    <p style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Kureba birthday z'abaririmbyi</p>
+                </div>
+            </label>
+
+            <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg); border-radius: 12px; cursor: pointer;">
+                <input type="checkbox" id="permViewReports" style="width: 20px; height: 20px; cursor: pointer;">
+                <div>
+                    <strong style="font-size: 14px;">📈 Raporo</strong>
+                    <p style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Kora raporo z'ubwitabire</p>
+                </div>
+            </label>
+
+            <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg); border-radius: 12px; cursor: pointer;">
+                <input type="checkbox" id="permViewSocialMedia" style="width: 20px; height: 20px; cursor: pointer;">
+                <div>
+                    <strong style="font-size: 14px;">🌐 Social Media</strong>
+                    <p style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Gucunga link za social media</p>
+                </div>
+            </label>
+
+            <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg); border-radius: 12px; cursor: pointer;">
+                <input type="checkbox" id="permViewPending" style="width: 20px; height: 20px; cursor: pointer;">
+                <div>
+                    <strong style="font-size: 14px;">⏳ Abakandida (Pending)</strong>
+                    <p style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Kwemeza abaririmbyi bashya</p>
+                </div>
+            </label>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 16px;">
+            <button class="btn btn-outline btn-sm" onclick="selectAllAdminPermissions(true)" style="flex: 1;">
+                <i class="fas fa-check-double"></i> Hitamo Byose
+            </button>
+            <button class="btn btn-outline btn-sm" onclick="selectAllAdminPermissions(false)" style="flex: 1;">
+                <i class="fas fa-times"></i> Kuraho Byose
+            </button>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="closeModal('adminPermissionsModal')">Hagarika</button>
+            <button class="btn btn-primary" id="saveAdminPermBtn" onclick="saveAdminPermissions()">
+                <i class="fas fa-save"></i> Bika Uburenganzira
+            </button>
+        </div>
+    </div>
+</div>
 
 <!-- Photo Viewer Modal -->
 <div class="modal-overlay" id="photoViewerModal" style="background: rgba(0,0,0,0.9); padding: 20px;">
@@ -4279,6 +4519,53 @@ body {
         </div>
     </div>
 
+<!-- ===== MODAL YO KWISHYURA (MEMBER) ===== -->
+<div class="modal-overlay" id="memberPaymentModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3><i class="fas fa-hand-holding-usd"></i> Gutanga Umusanzu</h3>
+            <button class="close-btn" onclick="closeModal('memberPaymentModal')"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <div class="form-group">
+            <label>Ubwoko bw'Ubwishyu <span>*</span></label>
+            <select class="form-control" id="memberPayType">
+                <option value="contribution">💵 Umusanzu (Contribution)</option>
+                <option value="uniform">👔 Uniform</option>
+                <option value="event">🎉 Ibikorwa by'Itsinda</option>
+                <option value="other">📦 Ibindi</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Amafaranga (RWF) <span>*</span></label>
+            <input type="number" class="form-control" id="memberPayAmount" placeholder="Urugero: 5000" min="0">
+        </div>
+        
+        <div class="form-group">
+            <label>Uburyo bwo Kwishyura <span>*</span></label>
+            <select class="form-control" id="memberPayMethod">
+                <option value="MoMo">📱 MTN Mobile Money</option>
+                <option value="Airtel">📱 Airtel Money</option>
+                <option value="Bank">🏦 Banki</option>
+                <option value="Cash">💵 Amafaranga mu ntoki</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Ibisobanuro (Optional)</label>
+            <input type="text" class="form-control" id="memberPayDescription" placeholder="Urugero: Umusanzu wa Mutarama">
+        </div>
+        
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="closeModal('memberPaymentModal')">Hagarika</button>
+            <button class="btn btn-primary" id="memberPayBtn" onclick="submitMemberPayment()">
+                <i class="fas fa-paper-plane"></i> Ohereza kwa Comptable
+            </button>
+        </div>
+    </div>
+</div>
+
     <!-- ===== ADD TRANSACTION MODAL ===== -->
     <div class="modal-overlay" id="addTransactionModal">
         <div class="modal">
@@ -4342,7 +4629,52 @@ body {
             </div>
         </div>
     </div>
+<!-- ===== ADD SOCIAL MEDIA MODAL ===== -->
+<div class="modal-overlay" id="addSocialModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3><i class="fas fa-globe"></i> Ongeraho Social Media Link</h3>
+            <button class="close-btn" onclick="closeModal('addSocialModal')"><i class="fas fa-times"></i></button>
+        </div>
 
+        <div class="form-group">
+            <label>Platform <span>*</span></label>
+            <select class="form-control" id="socialPlatform" onchange="updateSocialPlatformUI()">
+                <option value="youtube">▶️ YouTube</option>
+                <option value="instagram">📸 Instagram</option>
+                <option value="facebook">📘 Facebook</option>
+                <option value="tiktok">🎵 TikTok</option>
+                <option value="twitter">🐦 X (Twitter)</option>
+                <option value="whatsapp">💬 WhatsApp</option>
+                <option value="telegram">✈️ Telegram</option>
+                <option value="website">🌐 Website</option>
+                <option value="other">📦 Ikindi</option>
+            </select>
+        </div>
+
+        <div class="form-group" id="socialCustomNameGroup" style="display:none;">
+            <label>Izina ry'Platform <span>*</span></label>
+            <input type="text" class="form-control" id="socialCustomName" placeholder="Urugero: Spotify">
+        </div>
+
+        <div class="form-group">
+            <label>Link <span>*</span></label>
+            <input type="url" class="form-control" id="socialUrl" placeholder="https://...">
+        </div>
+
+        <div class="form-group">
+            <label>Ibisobanuro (optional)</label>
+            <input type="text" class="form-control" id="socialDescription" placeholder="Urugero: YouTube y'itsinda">
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="closeModal('addSocialModal')">Hagarika</button>
+            <button class="btn btn-primary" id="saveSocialBtn" onclick="saveSocialLink()">
+                <i class="fas fa-save"></i> Bika
+            </button>
+        </div>
+    </div>
+</div>
     <!-- ===== ADD CONTRIBUTION MODAL ===== -->
     <div class="modal-overlay" id="addContributionModal">
         <div class="modal" style="max-width: 600px;">
@@ -5074,20 +5406,21 @@ try {
                 }
                 
                 if (loadingTextEl) loadingTextEl.textContent = 'Turazana amakuru...';
-                await loadMembers();
-                await loadSessions();
-                await loadUniforms();
-                await loadUniformAssignments();
-                await loadLyrics();
-                await loadUsers();
-                await loadAnnouncements();
-                await loadAdminInvitations();
-                await loadTransactions();
-                await loadContributions();
-                console.log('✅ All data loaded');
-                
-                await new Promise(resolve => setTimeout(resolve, 300));
-                enterApp();
+           await loadMembers();
+await loadSessions();
+await loadUniforms();
+await loadUniformAssignments();
+await loadLyrics();
+await loadUsers();
+await loadAnnouncements();
+await loadAdminInvitations();
+await loadTransactions();
+await loadContributions();
+await loadSocialMedia();  // 👈 IYI NI YO YARI IBURAYE
+console.log('✅ All data loaded');
+
+await new Promise(resolve => setTimeout(resolve, 300));
+enterApp();
                 
             } else {
                 currentUser = null;
@@ -5107,7 +5440,7 @@ try {
             }, 1000);
         }
 
-       async function enterApp() {
+     async function enterApp() {
     const authScreen = document.getElementById('authScreen');
     const appEl = document.getElementById('app');
     const ls = document.getElementById('loadingScreen');
@@ -5117,10 +5450,13 @@ try {
     if (ls) { ls.classList.add('hidden'); ls.style.display = 'none'; }
     
     const role = currentUserData?.role;
-    const isAdmin = role === 'admin' || role === 'super_admin';
+    const isAdmin = role === 'admin' || role === 'super_admin' || role === 'comptable';
     const isSuperAdmin = role === 'super_admin';
     const isMember = role === 'member';
     
+    // ============================================
+    // 1. HIDE/SHOW MEMBER vs ADMIN
+    // ============================================
     if (isMember) {
         document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
         document.querySelectorAll('.super-admin-only').forEach(el => el.style.display = 'none');
@@ -5140,8 +5476,81 @@ try {
         }
     }
     
+    // ============================================
+    // 2. PERMISSION FILTERING (KURI ADMIN GUSA)
+    // ============================================
+    if (!isSuperAdmin && !isMember) {
+        const perms = currentUserData?.permissions || {};
+        
+        // Iyi mapping ihurira na data-page attribute kuri buri nav-item
+        const pagePermissionMap = {
+            'members': 'viewMembers',
+            'attendance': 'viewAttendance',
+            'uniform': 'viewUniform',
+            'lyrics': 'viewLyrics',
+            'finance': 'viewFinance',
+            'contributions': 'viewFinance',
+            'transactions': 'viewFinance',
+            'payment-requests': 'viewFinance',
+            'finance-reports': 'viewFinance',
+            'announcements': 'viewAnnouncements',
+            'birthday': 'viewBirthday',
+            'reports': 'viewReports',
+            'social-media': 'viewSocialMedia',
+            'pending': 'viewPending'
+        };
+        
+        // Hisha nav-items zidasabwa
+        Object.keys(pagePermissionMap).forEach(page => {
+            const requiredPerm = pagePermissionMap[page];
+            if (perms[requiredPerm] === false) {
+                // Hisha nav-item
+                const navItem = document.querySelector(`.nav-item[data-page="${page}"]`);
+                if (navItem) navItem.style.display = 'none';
+            }
+        });
+        
+        // Hisha "Kora Attendance" button (admin-only nav-item itari data-page)
+        const createAttendanceBtn = document.querySelector('.nav-item[onclick*="openCreateModal"]');
+        if (createAttendanceBtn && perms.viewAttendance === false) {
+            createAttendanceBtn.style.display = 'none';
+        }
+        
+        // Hisha "QR Code Mushya" button
+        const qrBtn = document.querySelector('.nav-item[onclick*="openQRRegisterModal"]');
+        if (qrBtn && perms.viewMembers === false) {
+            qrBtn.style.display = 'none';
+        }
+        
+        // Hisha "Kwemeza Ubwishyu" badge niba finance yabujijwe
+        if (perms.viewFinance === false) {
+            const payReqBadge = document.getElementById('sidebarPaymentReqCount');
+            if (payReqBadge) payReqBadge.style.display = 'none';
+            const contribBadge = document.getElementById('sidebarContribCount');
+            if (contribBadge) contribBadge.style.display = 'none';
+        }
+        
+        // Hisha "Abakandida" badge niba pending yabujijwe
+        if (perms.viewPending === false) {
+            const pendingBadge = document.getElementById('sidebarPendingCount');
+            if (pendingBadge) pendingBadge.style.display = 'none';
+        }
+        
+        // Hisha "Amatangazo" badge niba announcements yabujijwe
+        if (perms.viewAnnouncements === false) {
+            const annBadge = document.getElementById('sidebarAnnouncementCount');
+            if (annBadge) annBadge.style.display = 'none';
+        }
+    }
+    
+    // ============================================
+    // 3. UPDATE PROFILE UI
+    // ============================================
     updateProfileUI();
     
+    // ============================================
+    // 4. TANGIRA PAGE ITEGUYE
+    // ============================================
     if (isMember) {
         switchPage('my-dashboard', null);
     } else {
@@ -5152,14 +5561,23 @@ try {
         try { renderPhotosPage(); } catch(e) { console.error(e); }
     }
     
+    // ============================================
+    // 5. PRESENCE
+    // ============================================
     try { 
         initPresence(); 
     } catch(e) { console.error('❌ Presence error:', e); }
     
+    // ============================================
+    // 6. UNREAD LISTENER
+    // ============================================
     try { 
         startUnreadListener(); 
     } catch(e) { console.error('❌ Unread listener error:', e); }
     
+    // ============================================
+    // 7. FCM NOTIFICATIONS
+    // ============================================
     try {
         if ('Notification' in window && Notification.permission === 'default') {
             setTimeout(async () => {
@@ -5187,11 +5605,14 @@ try {
         console.error('❌ FCM setup error:', e);
     }
     
+    // ============================================
+    // 8. SET DATE
+    // ============================================
     const today = new Date().toISOString().split('T')[0];
     const sd = document.getElementById('sessionDate');
     if (sd) sd.value = today;
     
-    console.log('🎉 enterApp completed for:', currentUserData?.name, '| Role:', role);
+    console.log('🎉 enterApp completed for:', currentUserData?.name, '| Role:', role, '| Permissions:', currentUserData?.permissions);
 }
 
         // ============================================
@@ -5338,6 +5759,7 @@ try {
             const roleLabels = {
                 super_admin: 'Super Admin',
                 admin: 'Admin',
+                comptable: 'Comptable',
                 member: 'Umuririmbyi'
             };
             
@@ -5503,6 +5925,8 @@ try {
             if (page === 'pending') renderPending();
             if (page === 'users') renderUsers();
             if (page === 'my-dashboard') renderMyDashboard();
+            if (page === 'my-finance') renderMyFinance();
+            if (page === 'payment-requests') renderPaymentRequests();
             if (page === 'attendance') renderAttendancePage();
             if (page === 'voices') renderVoicesPage();
             if (page === 'photos') renderPhotosPage();
@@ -6249,38 +6673,48 @@ try {
         // ============================================
         // RECYCLE BIN
         // ============================================
-        window.renderRecycleBin = function() {
-            const tbody = document.getElementById('recycleBody');
-            if (!tbody) return;
-            const deleted = members.filter(m => m.status === 'deleted');
-            const cnt = document.getElementById('recycleCount');
-            if (cnt) cnt.textContent = deleted.length;
-            
-            const sbCnt = document.getElementById('sidebarRecycleCount');
-            if (sbCnt) {
-                sbCnt.textContent = deleted.length;
-                sbCnt.style.display = deleted.length > 0 ? '' : 'none';
-            }
-            
-            if (deleted.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-secondary);"><i class="fas fa-check-circle" style="font-size:40px;opacity:0.3;display:block;margin-bottom:10px;"></i>Nta baririmbyi basibwe</td></tr>`;
-                return;
-            }
-            tbody.innerHTML = deleted.map(m => {
-                const initials = m.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-                const photoHtml = m.photo ? `<img src="${m.photo}" class="row-photo" onerror="this.outerHTML='<div class=\\'row-avatar\\'>${initials}</div>'">` : `<div class="row-avatar">${initials}</div>`;
-                const delDate = m.deletedAt?.toDate ? m.deletedAt.toDate() : null;
-                const levelClass = m.level === 'Special' ? 'special' : '';
-                return `<tr>
-                    <td><div class="member-cell-row">${photoHtml}<div class="row-info"><div class="name">${m.name}</div><div class="id">${m.memberId || ''}</div></div></div></td>
-                    <td><strong>${m.number || '-'}</strong></td>
-                    <td><span class="level-badge ${levelClass}">${m.level === 'Special' ? '⭐' : '🎓'} ${m.level || '-'}</span></td>
-                    <td><span class="voice-badge ${(m.voice || '').toLowerCase()}"><i class="fas fa-microphone"></i> ${m.voice}</span></td>
-                    <td>${delDate ? formatDate(delDate) : '-'}</td>
-                    <td><button class="btn btn-success btn-sm" onclick="openRestoreModal('${m.id}')"><i class="fas fa-trash-restore"></i> Subiza</button></td>
-                </tr>`;
-            }).join('');
-        };
+      window.renderRecycleBin = function() {
+    const tbody = document.getElementById('recycleBody');
+    if (!tbody) return;
+    const deleted = members.filter(m => m.status === 'deleted');
+    const cnt = document.getElementById('recycleCount');
+    if (cnt) cnt.textContent = deleted.length;
+    
+    const sbCnt = document.getElementById('sidebarRecycleCount');
+    if (sbCnt) {
+        sbCnt.textContent = deleted.length;
+        sbCnt.style.display = deleted.length > 0 ? '' : 'none';
+    }
+    
+    if (deleted.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-secondary);"><i class="fas fa-check-circle" style="font-size:40px;opacity:0.3;display:block;margin-bottom:10px;"></i>Nta baririmbyi basibwe</td></tr>`;
+        return;
+    }
+    
+    tbody.innerHTML = deleted.map(m => {
+        const initials = m.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        const photoHtml = m.photo ? `<img src="${m.photo}" class="row-photo" onerror="this.outerHTML='<div class=\\'row-avatar\\'>${initials}</div>'">` : `<div class="row-avatar">${initials}</div>`;
+        const delDate = m.deletedAt?.toDate ? m.deletedAt.toDate() : null;
+        const levelClass = m.level === 'Special' ? 'special' : '';
+        return `<tr>
+            <td><div class="member-cell-row">${photoHtml}<div class="row-info"><div class="name">${m.name}</div><div class="id">${m.memberId || ''}</div></div></div></td>
+            <td><strong>${m.number || '-'}</strong></td>
+            <td><span class="level-badge ${levelClass}">${m.level === 'Special' ? '⭐' : '🎓'} ${m.level || '-'}</span></td>
+            <td><span class="voice-badge ${(m.voice || '').toLowerCase()}"><i class="fas fa-microphone"></i> ${m.voice}</span></td>
+            <td>${delDate ? formatDate(delDate) : '-'}</td>
+            <td>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                    <button class="btn btn-success btn-sm" onclick="openRestoreModal('${m.id}')">
+                        <i class="fas fa-trash-restore"></i> Subiza
+                    </button>
+                    <button class="btn btn-danger btn-sm" onclick="permanentDeleteMember('${m.id}')">
+                        <i class="fas fa-times-circle"></i> Siba Burundu
+                    </button>
+                </div>
+            </td>
+        </tr>`;
+    }).join('');
+};
 
         window.openRestoreModal = function(id) {
             const m = members.find(x => x.id === id);
@@ -6333,7 +6767,7 @@ try {
         // ============================================
         window.renderPending = function() {
             const role = currentUserData?.role;
-            if (role !== 'admin' && role !== 'super_admin') return;
+            if (role !== 'admin' && role !== 'super_admin' && role !== 'comptable') return;
             const tbody = document.getElementById('pendingBody');
             if (!tbody) return;
             const pending = members.filter(m => m.status === 'pending');
@@ -6398,32 +6832,43 @@ try {
         // ============================================
         // USERS
         // ============================================
-        window.renderUsers = async function() {
-            if (currentUserData?.role !== 'super_admin') return;
-            await loadUsers();
-            const tbody = document.getElementById('usersBody');
-            if (!tbody) return;
-            document.getElementById('usersCount').textContent = users.length;
-            if (users.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text-secondary);">Nta bakoresha</td></tr>`;
-                return;
-            }
-            tbody.innerHTML = users.map(u => {
-                const roleBadge = u.role === 'super_admin' ? `<span class="role-badge super_admin">Super Admin</span>` : u.role === 'admin' ? `<span class="role-badge admin">Admin</span>` : `<span class="role-badge member">Member</span>`;
-                const isSelf = u.uid === currentUser.uid;
-                return `<tr>
-                    <td><strong>${u.name || '-'}</strong></td>
-                    <td>${u.email || '-'}</td>
-                    <td>${roleBadge}</td>
-                    <td><div style="display:flex;gap:6px;">
-                        ${!isSelf && u.role === 'member' ? `<button class="action-btn promote" onclick="promoteToAdmin('${u.uid}')" title="Kora Admin"><i class="fas fa-user-shield"></i></button>` : ''}
-                        ${!isSelf && u.role === 'admin' ? `<button class="action-btn delete" onclick="demoteToMember('${u.uid}')" title="Kuraho Admin"><i class="fas fa-user-minus"></i></button>` : ''}
-                        ${!isSelf && u.role !== 'super_admin' ? `<button class="action-btn delete" onclick="deleteUser('${u.uid}')" title="Siba"><i class="fas fa-trash"></i></button>` : ''}
-                    </div></td>
-                </tr>`;
-            }).join('');
-        };
-
+       window.renderUsers = async function() {
+    if (currentUserData?.role !== 'super_admin') return;
+    await loadUsers();
+    const tbody = document.getElementById('usersBody');
+    if (!tbody) return;
+    document.getElementById('usersCount').textContent = users.length;
+    if (users.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text-secondary);">Nta bakoresha</td></tr>`;
+        return;
+    }
+    tbody.innerHTML = users.map(u => {
+        const roleBadge = u.role === 'super_admin' 
+            ? `<span class="role-badge super_admin">Super Admin</span>` 
+            : u.role === 'admin' 
+            ? `<span class="role-badge admin">Admin</span>` 
+            : u.role === 'comptable'
+            ? `<span class="role-badge comptable">Comptable</span>`
+            : `<span class="role-badge member">Member</span>`;
+        const isSelf = u.uid === currentUser.uid;
+        return `<tr>
+            <td><strong>${u.name || '-'}</strong></td>
+            <td>${u.email || '-'}</td>
+            <td>${roleBadge}</td>
+            <td><div style="display:flex;gap:6px;flex-wrap:wrap;">
+                ${!isSelf && u.role === 'member' ? `<button class="action-btn promote" onclick="promoteToAdmin('${u.uid}')" title="Kora Admin"><i class="fas fa-user-shield"></i></button>` : ''}
+                
+                ${!isSelf && (u.role === 'admin' || u.role === 'comptable') ? 
+                    `<button class="action-btn" onclick="openAdminPermissionsModal('${u.uid}')" title="Hindura Uburenganzira" style="background: rgba(139,92,246,0.15); color: #8b5cf6; border-color: #8b5cf6;"><i class="fas fa-key"></i></button>` 
+                    : ''}
+                
+                ${!isSelf && u.role === 'admin' ? `<button class="action-btn delete" onclick="demoteToMember('${u.uid}')" title="Kuraho Admin"><i class="fas fa-user-minus"></i></button>` : ''}
+                
+                ${!isSelf && u.role !== 'super_admin' ? `<button class="action-btn delete" onclick="deleteUser('${u.uid}')" title="Siba"><i class="fas fa-trash"></i></button>` : ''}
+            </div></td>
+        </tr>`;
+    }).join('');
+};
         window.openAddAdminModal = function() {
             if (currentUserData?.role !== 'super_admin') { showToast('Super Admin gusa!', 'error'); return; }
             document.getElementById('newAdminEmail').value = '';
@@ -6676,157 +7121,158 @@ try {
         // ============================================
         // MEMBER DASHBOARD
         // ============================================
-        window.renderMyDashboard = function() {
-            if (currentUserData?.role !== 'member') return;
-            
-            const memberId = currentUserData.memberId;
-            const m = members.find(x => x.id === memberId);
-            
-            if (!m) {
-                document.getElementById('memberProfileCard').innerHTML = `
-                    <div class="readonly-notice">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        Nta makuru abonetse. Vugana n'Admin.
-                    </div>
-                `;
-                return;
+       window.renderMyDashboard = function() {
+    if (currentUserData?.role !== 'member') return;
+    
+    const memberId = currentUserData.memberId;
+    const m = members.find(x => x.id === memberId);
+    
+    if (!m) {
+        document.getElementById('memberProfileCard').innerHTML = `
+            <div class="readonly-notice">
+                <i class="fas fa-exclamation-triangle"></i>
+                Nta makuru abonetse. Vugana n'Admin.
+            </div>
+        `;
+        return;
+    }
+    
+    const initials = m.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    const photoHtml = m.photo 
+        ? `<img src="${m.photo}" class="member-profile-photo" onerror="this.outerHTML='<div class=\\'member-profile-avatar\\'>${initials}</div>'">`
+        : `<div class="member-profile-avatar">${initials}</div>`;
+    const levelClass = m.level === 'Special' ? 'special' : '';
+    const levelIcon = m.level === 'Special' ? '⭐' : '🎓';
+    
+    document.getElementById('memberProfileCard').innerHTML = `
+        ${photoHtml}
+        <div class="member-profile-info">
+            <h2>${m.name}</h2>
+            <div class="member-profile-meta">
+                <span><i class="fas fa-id-badge"></i> ${m.memberId || '-'}</span>
+                <span><i class="fas fa-phone"></i> ${m.number || '-'}</span>
+                <span class="level-badge ${levelClass}">${levelIcon} ${m.level || '-'}</span>
+                <span class="voice-badge ${(m.voice||'').toLowerCase()}"><i class="fas fa-microphone"></i> ${m.voice}</span>
+                ${m.birthday ? `<span><i class="fas fa-birthday-cake"></i> ${formatDate(m.birthday)}</span>` : ''}
+            </div>
+        </div>
+    `;
+    
+    const firstName = m.name.split(' ')[0];
+    const greeting = getGreeting();
+    const now = new Date();
+    const daysRw = ['Ku cyumweru', 'Kuwa mbere', 'Kuwa kabiri', 'Kuwa gatatu', 'Kuwa kane', 'Kuwa gatanu', 'Kuwa gatandatu'];
+    const monthsRw = ['Mutarama', 'Gashyantare', 'Werurwe', 'Mata', 'Gicurasi', 'Kamena', 'Nyakanga', 'Kanama', 'Nzeli', 'Ukwakira', 'Ugushyingo', 'Ukuboza'];
+
+    const welcomeNameEl = document.getElementById('memberWelcomeName');
+    if (welcomeNameEl) welcomeNameEl.textContent = firstName;
+
+    const greetingEl = document.getElementById('memberWelcomeGreeting');
+    if (greetingEl) greetingEl.innerHTML = `<span class="greeting-icon">${greeting.icon}</span> ${greeting.text} · ${greeting.sub}`;
+
+    const dateEl = document.getElementById('memberWelcomeDate');
+    if (dateEl) dateEl.textContent = `${daysRw[now.getDay()]}, ${now.getDate()} ${monthsRw[now.getMonth()]} ${now.getFullYear()}`;
+
+    const myAttendance = sessions.map(s => {
+        const present = (s.presentMembers || []).find(pm => pm.id === memberId);
+        const late = (s.lateMembers || []).find(pm => pm.id === memberId);
+        const absent = (s.absentMembers || []).find(pm => pm.id === memberId);
+        
+        let status = 'absent';
+        let time = null;
+        let reason = null;
+        let note = null;
+        
+        if (present) { status = 'present'; time = present.time; }
+        else if (late) { status = 'late'; time = late.time; reason = late.reason; note = late.note; }
+        else if (absent) { status = 'absent'; reason = absent.reason; note = absent.note; }
+        
+        return { session: s, status, time, reason, note };
+    });
+    
+    const attended = myAttendance.filter(a => a.status === 'present').length;
+    const lateCount = myAttendance.filter(a => a.status === 'late').length;
+    const absentCount = myAttendance.filter(a => a.status === 'absent').length;
+    const total = sessions.length;
+    const pct = total > 0 ? Math.round((attended / total) * 100) : 0;
+    
+    document.getElementById('myAttended').textContent = attended;
+    document.getElementById('myAbsent').textContent = absentCount;
+    document.getElementById('myLate').textContent = lateCount;
+    document.getElementById('myPercent').textContent = pct + '%';
+    
+    const annCountEl = document.getElementById('memberAnnouncementCount');
+    if (annCountEl) {
+        annCountEl.textContent = announcements.length;
+        annCountEl.style.display = announcements.length > 0 ? '' : 'none';
+    }
+    renderMemberAnnouncements();
+    
+    const recentAttendance = myAttendance.slice(0, 10);
+    const list = document.getElementById('myAttendanceList');
+    
+    if (recentAttendance.length === 0) {
+        list.innerHTML = `<div class="empty-state">
+            <div class="icon"><i class="fas fa-calendar-times"></i></div>
+            <h3>Nta teraniro rirahari</h3>
+        </div>`;
+    } else {
+        list.innerHTML = recentAttendance.map(a => {
+            let statusHtml = '';
+            if (a.status === 'present') {
+                statusHtml = `<span class="status-pill present"><i class="fas fa-check-circle"></i> Waje ${a.time ? '• ' + a.time : ''}</span>`;
+            } else if (a.status === 'late') {
+                statusHtml = `<span class="status-pill late"><i class="fas fa-clock"></i> Watinze ${a.time ? '• ' + a.time : ''}<br><span style="font-size:11px;opacity:0.8;">${a.reason || ''}</span></span>`;
+            } else {
+                statusHtml = `<span class="status-pill absent"><i class="fas fa-times-circle"></i> Ntabwo waje<br><span style="font-size:11px;opacity:0.8;">${a.reason || ''}</span></span>`;
             }
-            
-            const initials = m.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-            const photoHtml = m.photo 
-                ? `<img src="${m.photo}" class="member-profile-photo" onerror="this.outerHTML='<div class=\\'member-profile-avatar\\'>${initials}</div>'">`
-                : `<div class="member-profile-avatar">${initials}</div>`;
-            const levelClass = m.level === 'Special' ? 'special' : '';
-            const levelIcon = m.level === 'Special' ? '⭐' : '🎓';
-            
-            document.getElementById('memberProfileCard').innerHTML = `
-                ${photoHtml}
-                <div class="member-profile-info">
-                    <h2>${m.name}</h2>
-                    <div class="member-profile-meta">
-                        <span><i class="fas fa-id-badge"></i> ${m.memberId || '-'}</span>
-                        <span><i class="fas fa-phone"></i> ${m.number || '-'}</span>
-                        <span class="level-badge ${levelClass}">${levelIcon} ${m.level || '-'}</span>
-                        <span class="voice-badge ${(m.voice||'').toLowerCase()}"><i class="fas fa-microphone"></i> ${m.voice}</span>
-                        ${m.birthday ? `<span><i class="fas fa-birthday-cake"></i> ${formatDate(m.birthday)}</span>` : ''}
-                    </div>
+            return `<div class="my-attendance-row">
+                <div class="info">
+                    <h4>${a.session.name}</h4>
+                    <p>
+                        <i class="fas fa-calendar"></i> ${formatDate(a.session.date)} 
+                        • <i class="fas fa-clock"></i> ${a.session.time}
+                    </p>
                 </div>
-            `;
-            
-            const firstName = m.name.split(' ')[0];
-            const greeting = getGreeting();
-            const now = new Date();
-            const daysRw = ['Ku cyumweru', 'Kuwa mbere', 'Kuwa kabiri', 'Kuwa gatatu', 'Kuwa kane', 'Kuwa gatanu', 'Kuwa gatandatu'];
-            const monthsRw = ['Mutarama', 'Gashyantare', 'Werurwe', 'Mata', 'Gicurasi', 'Kamena', 'Nyakanga', 'Kanama', 'Nzeli', 'Ukwakira', 'Ugushyingo', 'Ukuboza'];
-
-            const welcomeNameEl = document.getElementById('memberWelcomeName');
-            if (welcomeNameEl) welcomeNameEl.textContent = firstName;
-
-            const greetingEl = document.getElementById('memberWelcomeGreeting');
-            if (greetingEl) greetingEl.innerHTML = `<span class="greeting-icon">${greeting.icon}</span> ${greeting.text} · ${greeting.sub}`;
-
-            const dateEl = document.getElementById('memberWelcomeDate');
-            if (dateEl) dateEl.textContent = `${daysRw[now.getDay()]}, ${now.getDate()} ${monthsRw[now.getMonth()]} ${now.getFullYear()}`;
-
-            const myAttendance = sessions.map(s => {
-                const present = (s.presentMembers || []).find(pm => pm.id === memberId);
-                const late = (s.lateMembers || []).find(pm => pm.id === memberId);
-                const absent = (s.absentMembers || []).find(pm => pm.id === memberId);
-                
-                let status = 'absent';
-                let time = null;
-                let reason = null;
-                let note = null;
-                
-                if (present) { status = 'present'; time = present.time; }
-                else if (late) { status = 'late'; time = late.time; reason = late.reason; note = late.note; }
-                else if (absent) { status = 'absent'; reason = absent.reason; note = absent.note; }
-                
-                return { session: s, status, time, reason, note };
-            });
-            
-            const attended = myAttendance.filter(a => a.status === 'present').length;
-            const lateCount = myAttendance.filter(a => a.status === 'late').length;
-            const absentCount = myAttendance.filter(a => a.status === 'absent').length;
-            const total = sessions.length;
-            const pct = total > 0 ? Math.round((attended / total) * 100) : 0;
-            
-            document.getElementById('myAttended').textContent = attended;
-            document.getElementById('myAbsent').textContent = absentCount;
-            document.getElementById('myLate').textContent = lateCount;
-            document.getElementById('myPercent').textContent = pct + '%';
-            
-            const annCountEl = document.getElementById('memberAnnouncementCount');
-            if (annCountEl) {
-                annCountEl.textContent = announcements.length;
-                annCountEl.style.display = announcements.length > 0 ? '' : 'none';
-            }
-            renderMemberAnnouncements();
-            
-            const recentAttendance = myAttendance.slice(0, 10);
-            const list = document.getElementById('myAttendanceList');
-            
-            if (recentAttendance.length === 0) {
-                list.innerHTML = `<div class="empty-state">
-                    <div class="icon"><i class="fas fa-calendar-times"></i></div>
-                    <h3>Nta teraniro rirahari</h3>
-                </div>`;
-            } else {
-                list.innerHTML = recentAttendance.map(a => {
-                    let statusHtml = '';
-                    if (a.status === 'present') {
-                        statusHtml = `<span class="status-pill present"><i class="fas fa-check-circle"></i> Waje ${a.time ? '• ' + a.time : ''}</span>`;
-                    } else if (a.status === 'late') {
-                        statusHtml = `<span class="status-pill late"><i class="fas fa-clock"></i> Watinze ${a.time ? '• ' + a.time : ''}<br><span style="font-size:11px;opacity:0.8;">${a.reason || ''}</span></span>`;
-                    } else {
-                        statusHtml = `<span class="status-pill absent"><i class="fas fa-times-circle"></i> Ntabwo waje<br><span style="font-size:11px;opacity:0.8;">${a.reason || ''}</span></span>`;
-                    }
-                    return `<div class="my-attendance-row">
-                        <div class="info">
-                            <h4>${a.session.name}</h4>
-                            <p>
-                                <i class="fas fa-calendar"></i> ${formatDate(a.session.date)} 
-                                • <i class="fas fa-clock"></i> ${a.session.time}
-                            </p>
-                        </div>
-                        ${statusHtml}
-                    </div>`;
-                }).join('');
-            }
-            
-            const myUniform = assignedUniforms[memberId];
-            const uniformContainer = document.getElementById('myUniformCard');
-            
-            if (myUniform) {
-                const u = uniforms.find(x => x.id === myUniform.uniformId);
-                uniformContainer.innerHTML = `
-                    <div class="my-uniform-card">
-                        <img src="${myUniform.uniformImage || u?.image || ''}" 
-                             onclick="viewUniform('${myUniform.uniformId}')"
-                             onerror="this.src='https://via.placeholder.com/200x200?text=No+Image'">
-                        <div class="uniform-info-text">
-                            <h3>${myUniform.uniformTitle || u?.title || 'Uniform'}</h3>
-                            <p><i class="fas fa-calendar"></i> Yahawe: ${formatDate(myUniform.assignedAt?.toDate?.() || new Date())}</p>
-                            ${myUniform.note ? `<p><i class="fas fa-info-circle"></i> ${myUniform.note}</p>` : ''}
-                            <span class="uniform-status has" style="margin-top: 8px; display: inline-flex;">
-                                <i class="fas fa-check-circle"></i> Wahawe Uniform
-                            </span>
-                        </div>
-                    </div>
-                `;
-            } else {
-                uniformContainer.innerHTML = `
-                    <div class="my-uniform-empty">
-                        <i class="fas fa-tshirt"></i>
-                        <h3 style="font-size: 16px; color: var(--text); margin-bottom: 6px;">Ntabwo urahabwa Uniform</h3>
-                        <p style="font-size: 13px;">Vugana n'Admin kugira ngo uhabwe uniform</p>
-                    </div>
-                `;
-            }
-            
-            renderMemberBirthdays();
-            renderFellowMembers();
-        };
+                ${statusHtml}
+            </div>`;
+        }).join('');
+    }
+    
+    const myUniform = assignedUniforms[memberId];
+    const uniformContainer = document.getElementById('myUniformCard');
+    
+    if (myUniform) {
+        const u = uniforms.find(x => x.id === myUniform.uniformId);
+        uniformContainer.innerHTML = `
+            <div class="my-uniform-card">
+                <img src="${myUniform.uniformImage || u?.image || ''}" 
+                     onclick="viewUniform('${myUniform.uniformId}')"
+                     onerror="this.src='https://via.placeholder.com/200x200?text=No+Image'">
+                <div class="uniform-info-text">
+                    <h3>${myUniform.uniformTitle || u?.title || 'Uniform'}</h3>
+                    <p><i class="fas fa-calendar"></i> Yahawe: ${formatDate(myUniform.assignedAt?.toDate?.() || new Date())}</p>
+                    ${myUniform.note ? `<p><i class="fas fa-info-circle"></i> ${myUniform.note}</p>` : ''}
+                    <span class="uniform-status has" style="margin-top: 8px; display: inline-flex;">
+                        <i class="fas fa-check-circle"></i> Wahawe Uniform
+                    </span>
+                </div>
+            </div>
+        `;
+    } else {
+        uniformContainer.innerHTML = `
+            <div class="my-uniform-empty">
+                <i class="fas fa-tshirt"></i>
+                <h3 style="font-size: 16px; color: var(--text); margin-bottom: 6px;">Ntabwo urahabwa Uniform</h3>
+                <p style="font-size: 13px;">Vugana n'Admin kugira ngo uhabwe uniform</p>
+            </div>
+        `;
+    }
+    
+    renderMemberBirthdays();
+    renderFellowMembers();
+    renderMemberSocialLinks();  // 👈 IYI NI YO YONGEWEHO
+};
 
         window.renderMemberAnnouncements = function() {
             const list = document.getElementById('memberAnnouncementsList');
@@ -7684,7 +8130,7 @@ try {
                 list.innerHTML = `<div class="empty-state"><div class="icon"><i class="fas fa-bullhorn"></i></div><h3>Nta matangazo</h3></div>`;
                 return;
             }
-            const isAdmin = currentUserData?.role === 'admin' || currentUserData?.role === 'super_admin';
+            const isAdmin = currentUserData?.role === 'admin' || currentUserData?.role === 'super_admin' || currentUserData?.role === 'comptable';
             list.innerHTML = announcements.map(a => {
                 const date = a.createdAt?.toDate ? a.createdAt.toDate() : new Date();
                 const dateStr = `${String(date.getDate()).padStart(2,'0')}/${String(date.getMonth()+1).padStart(2,'0')}/${date.getFullYear()}`;
@@ -8376,7 +8822,6 @@ try {
         function updateContribMemberCount() {
             const count = document.querySelectorAll('.contrib-member-cb:checked').length;
             const total = document.querySelectorAll('.contrib-member-cb').length;
-            const label = document.querySelector('#addContributionModal label');
         }
 
         window.saveContribution = async function() {
@@ -9167,6 +9612,796 @@ try {
                 }
             }
         });
-    </script>
+
+        // ============================================
+        // PWA INSTALL BUTTON
+        // ============================================
+        let deferredPrompt = null;
+        const installBtn = document.getElementById('installAppBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (installBtn) {
+                installBtn.hidden = false;
+            }
+        });
+
+        if (installBtn) {
+            installBtn.addEventListener('click', async () => {
+                if (!deferredPrompt) return;
+                const result = await deferredPrompt.prompt();
+                console.log(`Ubutumwa bwakiriwe: ${result.outcome}`);
+                deferredPrompt = null;
+                installBtn.hidden = true;
+            });
+        }
+
+        window.addEventListener('appinstalled', () => {
+            if (installBtn) installBtn.hidden = true;
+            deferredPrompt = null;
+            showToast('✅ App yashyizweho kuri telefone!', 'success');
+        });
+
+        // ============================================
+        // MEMBER PAYMENT SYSTEM
+        // ============================================
+        window.openPaymentModal = function() {
+            document.getElementById('memberPayType').value = 'contribution';
+            document.getElementById('memberPayAmount').value = '';
+            document.getElementById('memberPayMethod').value = 'MoMo';
+            document.getElementById('memberPayDescription').value = '';
+            document.getElementById('memberPaymentModal').classList.add('active');
+        };
+
+        window.submitMemberPayment = async function() {
+            const type = document.getElementById('memberPayType').value;
+            const amount = parseFloat(document.getElementById('memberPayAmount').value);
+            const method = document.getElementById('memberPayMethod').value;
+            const description = document.getElementById('memberPayDescription').value.trim();
+            
+            if (!amount || amount <= 0) {
+                showToast('Shyiramo amafaranga', 'warning');
+                return;
+            }
+            
+            const memberId = currentUserData.memberId;
+            const member = members.find(m => m.id === memberId);
+            if (!member) {
+                showToast('Ntabwo wabonetse muri sisitemu', 'error');
+                return;
+            }
+            
+            const btn = document.getElementById('memberPayBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turaohereza...';
+            
+            try {
+                const date = new Date().toISOString().split('T')[0];
+                const finalDescription = description || `${member.name} - ${method}`;
+                
+                // 1. Bika mu ma transactions (pending)
+                const txRef = await addDoc(collection(db, 'transactions'), {
+                    type: 'income',
+                    amount: amount,
+                    category: type,
+                    description: finalDescription,
+                    memberId: member.id,
+                    memberName: member.name,
+                    memberPhoto: member.photo || null,
+                    paymentMethod: method,
+                    date: date,
+                    status: 'pending',
+                    createdAt: serverTimestamp(),
+                    createdBy: currentUser.uid,
+                    createdByName: currentUserData.name || currentUser.email
+                });
+                
+                // 2. Bika notification kwa Comptable gusa (private notification)
+                await addDoc(collection(db, 'financeNotifications'), {
+                    type: 'payment_request',
+                    transactionId: txRef.id,
+                    memberId: member.id,
+                    memberName: member.name,
+                    memberPhoto: member.photo || null,
+                    amount: amount,
+                    category: type,
+                    method: method,
+                    description: finalDescription,
+                    status: 'unread',
+                    createdAt: serverTimestamp(),
+                    targetRole: 'comptable'
+                });
+                
+                // 3. Erekana ubutumwa bwo gutsinda
+                confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+                showToast(`✅ Ubwishyu bwoherejwe kwa Comptable!`, 'success');
+                showToast(`⏳ Bitegereje kwemezwa na Comptable`, 'info');
+                
+                // 4. Funga modal
+                closeModal('memberPaymentModal');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-paper-plane"></i> Ohereza kwa Comptable';
+                
+                // 5. Refresh
+                if (typeof loadTransactions === 'function') await loadTransactions();
+                if (typeof renderMyDashboard === 'function') renderMyDashboard();
+                if (typeof renderMyFinance === 'function') renderMyFinance();
+                
+            } catch (error) {
+                showToast('❌ ' + error.message, 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-paper-plane"></i> Ohereza kwa Comptable';
+            }
+        };
+
+        // ============================================
+        // MEMBER FINANCE PAGE
+        // ============================================
+        window.renderMyFinance = function() {
+            if (currentUserData?.role !== 'member') return;
+            
+            const memberId = currentUserData.memberId;
+            const member = members.find(m => m.id === memberId);
+            if (!member) return;
+            
+            // 1. Reba transactions za uyu muririmbyi gusa
+            const myTransactions = transactions.filter(t => 
+                t.memberId === memberId || t.createdBy === currentUser.uid
+            );
+            
+            // 2. Reba contributions ze
+            const myContributions = contributions.filter(c => 
+                (c.memberIds || []).includes(memberId)
+            );
+            
+            // 3. Kubara amafaranga yatanze (yemewe gusa)
+            let totalPaid = 0;
+            let pendingPaid = 0;
+            
+            myTransactions.forEach(t => {
+                if (t.type === 'income') {
+                    if (t.status === 'pending') {
+                        pendingPaid += Number(t.amount) || 0;
+                    } else if (t.status === 'confirmed' || !t.status) {
+                        totalPaid += Number(t.amount) || 0;
+                    }
+                }
+            });
+            
+            // 4. Kubara amafaranga agomba (muri contributions)
+            let totalDebt = 0;
+            myContributions.forEach(c => {
+                if (c.status === 'active') {
+                    const paid = (c.paidMembers || []).some(p => p.memberId === memberId);
+                    if (!paid) {
+                        totalDebt += Number(c.amountPerMember) || 0;
+                    }
+                }
+            });
+            
+            // 5. Erekana stats
+            document.getElementById('myTotalPaid').textContent = formatMoney(totalPaid);
+            document.getElementById('myPendingPaid').textContent = formatMoney(pendingPaid);
+            document.getElementById('myTotalDebt').textContent = formatMoney(totalDebt);
+            document.getElementById('myTxCount').textContent = myTransactions.length;
+            
+            // 6. Contributions zikora
+            const activeContribs = myContributions.filter(c => c.status === 'active');
+            const contribCountEl = document.getElementById('myActiveContribsCount');
+            if (contribCountEl) {
+                contribCountEl.textContent = activeContribs.length;
+                contribCountEl.style.display = activeContribs.length > 0 ? '' : 'none';
+            }
+            
+            const contribList = document.getElementById('myContributionsList');
+            if (activeContribs.length === 0) {
+                contribList.innerHTML = `<div class="empty-state">
+                    <div class="icon"><i class="fas fa-hand-holding-usd"></i></div>
+                    <h3>Nta contribution ikora</h3>
+                    <p>Nta musanzu urimo gukorwa ubu</p>
+                </div>`;
+            } else {
+                contribList.innerHTML = activeContribs.map(c => {
+                    const paid = (c.paidMembers || []).some(p => p.memberId === memberId);
+                    const isOverdue = c.deadline && c.deadline < new Date().toISOString().split('T')[0];
+                    const statusBadge = paid 
+                        ? `<span class="uniform-status has"><i class="fas fa-check"></i> Watanze</span>`
+                        : isOverdue 
+                        ? `<span class="uniform-status has-not"><i class="fas fa-exclamation-triangle"></i> Warenze</span>`
+                        : `<span class="uniform-status has" style="background:rgba(245,158,11,0.15);color:var(--warning);border-color:rgba(245,158,11,0.3);"><i class="fas fa-clock"></i> Ntiwatanze</span>`;
+                    
+                    return `<div class="contribution-card ${paid ? 'closed' : ''} ${isOverdue && !paid ? 'overdue' : ''}">
+                        <div class="contribution-header">
+                            <div style="flex:1;min-width:200px;">
+                                <div class="contribution-title">
+                                    <i class="fas fa-hand-holding-usd" style="color:var(--primary);"></i>
+                                    ${c.title}
+                                </div>
+                                <div class="contribution-meta">
+                                    <span><i class="fas fa-calendar"></i> Deadline: ${formatDate(c.deadline)}</span>
+                                    <span><i class="fas fa-coins"></i> ${formatMoney(c.amountPerMember)}</span>
+                                </div>
+                            </div>
+                            ${statusBadge}
+                        </div>
+                        ${c.description ? `<p style="font-size:13px;color:var(--text-secondary);margin-top:8px;">${c.description}</p>` : ''}
+                        ${!paid ? `<button class="btn btn-primary" onclick="openPaymentModal()" style="margin-top:12px;width:100%;">
+                            <i class="fas fa-hand-holding-usd"></i> Kwishyura Ubu
+                        </button>` : ''}
+                    </div>`;
+                }).join('');
+            }
+            
+            // 7. Transactions zawe
+            const txList = document.getElementById('myTransactionsList');
+            const sortedTx = [...myTransactions].sort((a, b) => {
+                if (!a.date) return 1;
+                if (!b.date) return -1;
+                return b.date.localeCompare(a.date);
+            });
+            
+            if (sortedTx.length === 0) {
+                txList.innerHTML = `<div class="empty-state">
+                    <div class="icon"><i class="fas fa-receipt"></i></div>
+                    <h3>Nta bwishyu burahari</h3>
+                    <p>Kanda "Gutanga Umusanzu" kugira ngo utangire</p>
+                </div>`;
+            } else {
+                txList.innerHTML = sortedTx.map(t => {
+                    const isIncome = t.type === 'income';
+                    const isPending = t.status === 'pending';
+                    const isRejected = t.status === 'rejected';
+                    
+                    let statusBadge;
+                    if (isPending) {
+                        statusBadge = `<span class="uniform-status has" style="background:rgba(245,158,11,0.15);color:var(--warning);border-color:rgba(245,158,11,0.3);"><i class="fas fa-clock"></i> Bitegereje</span>`;
+                    } else if (isRejected) {
+                        statusBadge = `<span class="uniform-status has-not"><i class="fas fa-times"></i> Byanzwe</span>`;
+                    } else {
+                        statusBadge = `<span class="uniform-status has"><i class="fas fa-check"></i> Byemejwe</span>`;
+                    }
+                    
+                    const catIcon = {
+                        contribution: 'fa-hand-holding-usd',
+                        donation: 'fa-gift',
+                        uniform: 'fa-tshirt',
+                        event: 'fa-calendar-check',
+                        other: 'fa-box'
+                    }[t.category] || 'fa-box';
+                    
+                    return `<div class="saved-card">
+                        <div class="saved-info">
+                            <h3>
+                                <i class="fas ${catIcon}" style="color:${isIncome ? 'var(--success)' : 'var(--danger)'};"></i>
+                                ${t.description || 'Ubwishyu'}
+                            </h3>
+                            <div class="saved-meta">
+                                <span><i class="fas fa-calendar"></i> ${formatDate(t.date)}</span>
+                                <span><i class="fas fa-tag"></i> ${t.category}</span>
+                                ${t.paymentMethod ? `<span><i class="fas fa-mobile-alt"></i> ${t.paymentMethod}</span>` : ''}
+                            </div>
+                        </div>
+                        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+                            <div class="tx-amount ${t.type}" style="font-size:16px;">${isIncome ? '+' : '-'} ${formatMoney(t.amount)}</div>
+                            ${statusBadge}
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+        };
+
+        // ============================================
+        // PAYMENT REQUESTS (COMPTABLE)
+        // ============================================
+        window.renderPaymentRequests = async function() {
+            if (currentUserData?.role !== 'admin' && currentUserData?.role !== 'super_admin' && currentUserData?.role !== 'comptable') {
+                return;
+            }
+            
+            await loadTransactions();
+            
+            const pending = transactions.filter(t => t.status === 'pending' && t.type === 'income');
+            const confirmed = transactions.filter(t => (t.status === 'confirmed' || !t.status) && t.type === 'income' && t.createdBy && t.category !== 'contribution');
+            const rejected = transactions.filter(t => t.status === 'rejected');
+            
+            document.getElementById('statPendingPayments').textContent = pending.length;
+            document.getElementById('statConfirmedPayments').textContent = confirmed.length;
+            document.getElementById('statRejectedPayments').textContent = rejected.length;
+            
+            const badge = document.getElementById('sidebarPaymentReqCount');
+            if (badge) {
+                badge.textContent = pending.length;
+                badge.style.display = pending.length > 0 ? '' : 'none';
+            }
+            
+            const list = document.getElementById('paymentRequestsList');
+            
+            if (pending.length === 0 && confirmed.length === 0 && rejected.length === 0) {
+                list.innerHTML = `<div class="empty-state">
+                    <div class="icon"><i class="fas fa-check-circle"></i></div>
+                    <h3>Nta bwishyu burahari</h3>
+                    <p>Ubwishyu bushya buzagaragara hano</p>
+                </div>`;
+                return;
+            }
+            
+            let html = '';
+            
+            if (pending.length > 0) {
+                html += `<div class="section-title" style="margin-bottom: 16px;">
+                    <i class="fas fa-clock" style="color:var(--warning);"></i>
+                    <span>Bitegereje Kwemezwa</span>
+                    <span class="count warning">${pending.length}</span>
+                </div>`;
+                
+                html += pending.map(t => {
+                    const member = members.find(m => m.id === t.memberId);
+                    const initials = (t.memberName || '?').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                    const photoHtml = t.memberPhoto || member?.photo
+                        ? `<img src="${t.memberPhoto || member?.photo}" class="row-photo" style="width:50px;height:50px;" onerror="this.outerHTML='<div class=\\'row-avatar\\' style='width:50px;height:50px;'>${initials}</div>'">`
+                        : `<div class="row-avatar" style="width:50px;height:50px;">${initials}</div>`;
+                    
+                    return `<div class="saved-card" style="border-left: 4px solid var(--warning); flex-direction: column; align-items: stretch;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;">
+                            <div style="display:flex; align-items:center; gap:12px; flex:1;">
+                                ${photoHtml}
+                                <div>
+                                    <h3 style="font-size:16px; margin-bottom:4px;">${t.memberName || 'Umuririmbyi'}</h3>
+                                    <div class="saved-meta">
+                                        <span><i class="fas fa-calendar"></i> ${formatDate(t.date)}</span>
+                                        <span><i class="fas fa-tag"></i> ${t.category}</span>
+                                        <span><i class="fas fa-mobile-alt"></i> ${t.paymentMethod || '-'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="font-size:22px; font-weight:800; color:var(--success);">+ ${formatMoney(t.amount)}</div>
+                                <div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">${t.description || ''}</div>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:8px; margin-top:16px; flex-wrap:wrap;">
+                            <button class="btn btn-success" onclick="approvePayment('${t.id}')" style="flex:1;">
+                                <i class="fas fa-check"></i> Emeza
+                            </button>
+                            <button class="btn btn-danger" onclick="rejectPayment('${t.id}')" style="flex:1;">
+                                <i class="fas fa-times"></i> Anze
+                            </button>
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+            
+            const history = [...confirmed, ...rejected].sort((a, b) => {
+                if (!a.date) return 1;
+                if (!b.date) return -1;
+                return b.date.localeCompare(a.date);
+            }).slice(0, 20);
+            
+            if (history.length > 0) {
+                html += `<div class="section-title" style="margin-top: 24px; margin-bottom: 16px;">
+                    <i class="fas fa-history"></i>
+                    <span>Amateka</span>
+                </div>`;
+                
+                html += history.map(t => {
+                    const isRejected = t.status === 'rejected';
+                    const statusBadge = isRejected
+                        ? `<span class="uniform-status has-not"><i class="fas fa-times"></i> Byanzwe</span>`
+                        : `<span class="uniform-status has"><i class="fas fa-check"></i> Byemejwe</span>`;
+                    
+                    return `<div class="saved-card" style="opacity:0.85;">
+                        <div class="saved-info">
+                            <h3><i class="fas fa-user"></i> ${t.memberName || 'Umuririmbyi'}</h3>
+                            <div class="saved-meta">
+                                <span><i class="fas fa-calendar"></i> ${formatDate(t.date)}</span>
+                                <span><i class="fas fa-tag"></i> ${t.category}</span>
+                                <span><i class="fas fa-coins"></i> ${formatMoney(t.amount)}</span>
+                            </div>
+                        </div>
+                        ${statusBadge}
+                    </div>`;
+                }).join('');
+            }
+            
+            list.innerHTML = html;
+        };
+
+        window.approvePayment = async function(id) {
+            if (!confirm('Emeza ubu bwishyu?')) return;
+            try {
+                await updateDoc(doc(db, 'transactions', id), {
+                    status: 'confirmed',
+                    confirmedAt: serverTimestamp(),
+                    confirmedBy: currentUser.uid,
+                    confirmedByName: currentUserData.name || currentUser.email
+                });
+                
+                try {
+                    const notifSnap = await getDocs(query(
+                        collection(db, 'financeNotifications'),
+                        where('transactionId', '==', id)
+                    ));
+                    for (const d of notifSnap.docs) {
+                        await updateDoc(doc(db, 'financeNotifications', d.id), {
+                            status: 'confirmed',
+                            confirmedAt: serverTimestamp()
+                        });
+                    }
+                } catch(e) {}
+                
+                showToast('✅ Ubwishyu bwemejwe!', 'success');
+                await loadTransactions();
+                renderPaymentRequests();
+                renderFinance();
+            } catch (error) {
+                showToast('❌ ' + error.message, 'error');
+            }
+        };
+
+        window.rejectPayment = async function(id) {
+            const reason = prompt('Impamvu yo kwanga ubwishyu (optional):');
+            if (reason === null) return;
+            
+            try {
+                await updateDoc(doc(db, 'transactions', id), {
+                    status: 'rejected',
+                    rejectedAt: serverTimestamp(),
+                    rejectedBy: currentUser.uid,
+                    rejectedByName: currentUserData.name || currentUser.email,
+                    rejectionReason: reason || 'Nta mpamvu yatanzwe'
+                });
+                
+                showToast('❌ Ubwishyu bwanze', 'warning');
+                await loadTransactions();
+                renderPaymentRequests();
+            } catch (error) {
+                showToast('❌ ' + error.message, 'error');
+            }
+        };
+window.permanentDeleteMember = async function(id) {
+    const m = members.find(x => x.id === id);
+    if (!m) return;
+    
+    // Ibaruwa yo kwemeza
+    if (!confirm(`⚠️ Urabyemeza gusiba ${m.name} BURUNDU?\n\nIbi ntibishobora gusubizwa!`)) return;
+    
+    // Ibaruwa ya kabiri (double check) - optional ariko ni ngombwa kuko ari action ikomeye
+    if (!confirm(`❓ Ongera wemeze: Gusiba ${m.name} burundu?`)) return;
+    
+    const btn = event?.target?.closest('button');
+    const originalHtml = btn?.innerHTML;
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    }
+    
+    try {
+        // 1. Siba photo muri Cloudinary (niba ushaka)
+        // Ibi ni optional - niba utashaka gusiba photo, ukuraho iyi block
+        // try {
+        //     if (m.photo && m.photo.includes('cloudinary.com')) {
+        //         const urlParts = m.photo.split('/upload/');
+        //         if (urlParts.length === 2) {
+        //             const publicId = urlParts[1].replace(/\.[^/.]+$/, '');
+        //             console.log('Would delete from Cloudinary:', publicId);
+        //         }
+        //     }
+        // } catch(e) { console.warn('Cloudinary delete failed:', e); }
+        
+        // 2. Siba document muri Firestore
+        await deleteDoc(doc(db, 'members', id));
+        
+        // 3. Siba uniform assignment (niba ihari)
+        try {
+            const assignmentSnap = await getDocs(query(
+                collection(db, 'uniformAssignments'),
+                where('memberId', '==', id)
+            ));
+            for (const d of assignmentSnap.docs) {
+                await deleteDoc(doc(db, 'uniformAssignments', d.id));
+            }
+        } catch(e) {}
+        
+        // 4. Siba member-related transactions (optional - ushobora kubihisha)
+        // Ibi birakomeye kuko transactions zifitiye akamaro Comptable
+        // Ntibikwiye gusibwa - reka ziboneke ku mateka
+        
+        showToast(`🗑️ ${m.name} yasibwe BURUNDU. Ntibishobora gusubizwa.`, 'warning');
+        
+        // Refresh
+        await loadMembers();
+        renderRecycleBin();
+        renderMembers();
+        renderDashboard();
+        renderPhotosPage();
+        
+    } catch (error) {
+        showToast('❌ ' + error.message, 'error');
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+        }
+    }
+};
+// ============================================
+// SOCIAL MEDIA GLOBALS
+// ============================================
+let socialMedia = [];
+
+const SOCIAL_PLATFORMS = {
+    youtube: { name: 'YouTube', icon: 'fa-youtube', color: '#FF0000', bg: 'linear-gradient(135deg, #FF0000, #CC0000)' },
+    instagram: { name: 'Instagram', icon: 'fa-instagram', color: '#E4405F', bg: 'linear-gradient(135deg, #833AB4, #E4405F, #FCAF45)' },
+    facebook: { name: 'Facebook', icon: 'fa-facebook', color: '#1877F2', bg: 'linear-gradient(135deg, #1877F2, #0C63D4)' },
+    tiktok: { name: 'TikTok', icon: 'fa-tiktok', color: '#000000', bg: 'linear-gradient(135deg, #000000, #25F4EE, #FE2C55)' },
+    twitter: { name: 'X (Twitter)', icon: 'fa-twitter', color: '#000000', bg: 'linear-gradient(135deg, #000000, #1a1a1a)' },
+    whatsapp: { name: 'WhatsApp', icon: 'fa-whatsapp', color: '#25D366', bg: 'linear-gradient(135deg, #25D366, #128C7E)' },
+    telegram: { name: 'Telegram', icon: 'fa-telegram', color: '#229ED9', bg: 'linear-gradient(135deg, #229ED9, #0088CC)' },
+    website: { name: 'Website', icon: 'fa-globe', color: '#38bdf8', bg: 'linear-gradient(135deg, #38bdf8, #0ea5e9)' },
+    other: { name: 'Ikindi', icon: 'fa-link', color: '#8b5cf6', bg: 'linear-gradient(135deg, #8b5cf6, #a78bfa)' }
+};
+
+async function loadSocialMedia() {
+    try {
+        const q = query(collection(db, 'socialMedia'), orderBy('createdAt', 'asc'));
+        const snap = await getDocs(q);
+        socialMedia = [];
+        snap.forEach(d => socialMedia.push({ id: d.id, ...d.data() }));
+    } catch (e) { socialMedia = []; }
+}
+
+// ============================================
+// SOCIAL MEDIA - ADMIN PAGE
+// ============================================
+window.renderSocialMedia = function() {
+    const list = document.getElementById('socialMediaList');
+    if (!list) return;
+
+    if (socialMedia.length === 0) {
+        list.innerHTML = `<div class="empty-state">
+            <div class="icon"><i class="fas fa-globe"></i></div>
+            <h3>Nta social media irahari</h3>
+            <p>Kanda "Ongeraho Link" kugira ngo utangire</p>
+        </div>`;
+        return;
+    }
+
+    list.innerHTML = socialMedia.map(s => {
+        const platform = SOCIAL_PLATFORMS[s.platform] || SOCIAL_PLATFORMS.other;
+        const displayName = s.platform === 'other' ? (s.customName || 'Ikindi') : platform.name;
+        return `<div class="saved-card">
+            <div style="display:flex; align-items:center; gap:14px; flex:1;">
+                <div style="width:48px; height:48px; border-radius:14px; background:${platform.bg}; display:flex; align-items:center; justify-content:center; color:white; font-size:22px; flex-shrink:0;">
+                    <i class="fab ${platform.icon}"></i>
+                </div>
+                <div class="saved-info">
+                    <h3 style="margin-bottom:4px;">${displayName}</h3>
+                    <div class="saved-meta">
+                        <span style="word-break:break-all;"><i class="fas fa-link"></i> ${s.url}</span>
+                        ${s.description ? `<span><i class="fas fa-info-circle"></i> ${s.description}</span>` : ''}
+                    </div>
+                </div>
+            </div>
+            <div class="saved-actions">
+                <button class="action-btn view" onclick="window.open('${s.url}', '_blank')" title="Reba">
+                    <i class="fas fa-external-link-alt"></i>
+                </button>
+                <button class="action-btn delete" onclick="deleteSocialLink('${s.id}')" title="Siba">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>`;
+    }).join('');
+};
+
+window.openAddSocialModal = function() {
+    document.getElementById('socialPlatform').value = 'youtube';
+    document.getElementById('socialCustomName').value = '';
+    document.getElementById('socialUrl').value = '';
+    document.getElementById('socialDescription').value = '';
+    document.getElementById('socialCustomNameGroup').style.display = 'none';
+    document.getElementById('addSocialModal').classList.add('active');
+};
+
+window.updateSocialPlatformUI = function() {
+    const platform = document.getElementById('socialPlatform').value;
+    const customGroup = document.getElementById('socialCustomNameGroup');
+    customGroup.style.display = platform === 'other' ? 'block' : 'none';
+};
+
+window.saveSocialLink = async function() {
+    const platform = document.getElementById('socialPlatform').value;
+    const customName = document.getElementById('socialCustomName').value.trim();
+    const url = document.getElementById('socialUrl').value.trim();
+    const description = document.getElementById('socialDescription').value.trim();
+
+    if (!url) { showToast('Shyiramo link', 'warning'); return; }
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        showToast('Link igomba gutangira na https:// cyangwa http://', 'warning');
+        return;
+    }
+    if (platform === 'other' && !customName) {
+        showToast('Shyiramo izina ry\'platform', 'warning');
+        return;
+    }
+
+    const btn = document.getElementById('saveSocialBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turabika...';
+
+    try {
+        await addDoc(collection(db, 'socialMedia'), {
+            platform,
+            customName: platform === 'other' ? customName : null,
+            url,
+            description: description || null,
+            createdAt: serverTimestamp(),
+            createdBy: currentUser.uid,
+            createdByName: currentUserData.name || currentUser.email
+        });
+
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        showToast('✅ Link yongeweho!', 'success');
+        closeModal('addSocialModal');
+        await loadSocialMedia();
+        renderSocialMedia();
+        renderMemberSocialLinks();
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Bika';
+    } catch (error) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Bika';
+        showToast('❌ ' + error.message, 'error');
+    }
+};
+
+window.deleteSocialLink = async function(id) {
+    const s = socialMedia.find(x => x.id === id);
+    if (!s) return;
+    const platform = SOCIAL_PLATFORMS[s.platform] || SOCIAL_PLATFORMS.other;
+    const displayName = s.platform === 'other' ? (s.customName || 'Ikindi') : platform.name;
+    if (!confirm(`Siba link ya ${displayName}?`)) return;
+
+    try {
+        await deleteDoc(doc(db, 'socialMedia', id));
+        showToast('🗑️ Link yasibwe', 'warning');
+        await loadSocialMedia();
+        renderSocialMedia();
+        renderMemberSocialLinks();
+    } catch (error) {
+        showToast('❌ ' + error.message, 'error');
+    }
+};
+
+// ============================================
+// SOCIAL MEDIA - MEMBER DASHBOARD
+// ============================================
+window.renderMemberSocialLinks = function() {
+    const container = document.getElementById('memberSocialLinks');
+    if (!container) return;
+
+    if (socialMedia.length === 0) {
+        container.innerHTML = `<div class="empty-state" style="padding:30px 20px;">
+            <div class="icon" style="font-size:40px;"><i class="fas fa-globe"></i></div>
+            <h3 style="font-size:15px;">Nta social media irahari</h3>
+            <p style="font-size:13px;">Admin azongeraho link za Choir vuba</p>
+        </div>`;
+        return;
+    }
+
+    container.innerHTML = `<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:14px;">
+        ${socialMedia.map(s => {
+            const platform = SOCIAL_PLATFORMS[s.platform] || SOCIAL_PLATFORMS.other;
+            const displayName = s.platform === 'other' ? (s.customName || 'Ikindi') : platform.name;
+            return `<a href="${s.url}" target="_blank" rel="noopener noreferrer" 
+                style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; 
+                padding:20px 12px; border-radius:16px; background:${platform.bg}; 
+                color:white; text-decoration:none; transition:all 0.3s; 
+                box-shadow: 0 6px 20px rgba(0,0,0,0.15); cursor:pointer;"
+                onmouseover="this.style.transform='translateY(-4px) scale(1.03)'; this.style.boxShadow='0 12px 30px rgba(0,0,0,0.25)';"
+                onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.15)';">
+                <i class="fab ${platform.icon}" style="font-size:32px;"></i>
+                <span style="font-weight:800; font-size:14px; text-align:center;">${displayName}</span>
+                ${s.description ? `<span style="font-size:11px; opacity:0.9; text-align:center;">${s.description}</span>` : ''}
+            </a>`;
+        }).join('')}
+    </div>`;
+};
+// ============================================
+// ADMIN PERMISSIONS (Super Admin gusa)
+// ============================================
+window.openAdminPermissionsModal = function(uid) {
+    if (currentUserData?.role !== 'super_admin') {
+        showToast('❌ Super Admin gusa!', 'error');
+        return;
+    }
+    
+    const u = users.find(x => x.uid === uid);
+    if (!u) { showToast('Nta user wabonetse', 'warning'); return; }
+    
+    document.getElementById('permAdminUid').value = uid;
+    document.getElementById('permAdminName').textContent = u.name || 'Admin';
+    
+    // Fungura permissions ziriho (niba zitabaho, ziba true)
+    const perms = u.permissions || {};
+    document.getElementById('permViewMembers').checked = perms.viewMembers !== false;
+    document.getElementById('permViewAttendance').checked = perms.viewAttendance !== false;
+    document.getElementById('permViewUniform').checked = perms.viewUniform !== false;
+    document.getElementById('permViewLyrics').checked = perms.viewLyrics !== false;
+    document.getElementById('permViewFinance').checked = perms.viewFinance !== false;
+    document.getElementById('permViewAnnouncements').checked = perms.viewAnnouncements !== false;
+    document.getElementById('permViewBirthday').checked = perms.viewBirthday !== false;
+    document.getElementById('permViewReports').checked = perms.viewReports !== false;
+    document.getElementById('permViewSocialMedia').checked = perms.viewSocialMedia !== false;
+    document.getElementById('permViewPending').checked = perms.viewPending !== false;
+    
+    document.getElementById('adminPermissionsModal').classList.add('active');
+};
+
+window.selectAllAdminPermissions = function(checked) {
+    document.getElementById('permViewMembers').checked = checked;
+    document.getElementById('permViewAttendance').checked = checked;
+    document.getElementById('permViewUniform').checked = checked;
+    document.getElementById('permViewLyrics').checked = checked;
+    document.getElementById('permViewFinance').checked = checked;
+    document.getElementById('permViewAnnouncements').checked = checked;
+    document.getElementById('permViewBirthday').checked = checked;
+    document.getElementById('permViewReports').checked = checked;
+    document.getElementById('permViewSocialMedia').checked = checked;
+    document.getElementById('permViewPending').checked = checked;
+};
+
+window.saveAdminPermissions = async function() {
+    if (currentUserData?.role !== 'super_admin') {
+        showToast('❌ Super Admin gusa!', 'error');
+        return;
+    }
+    
+    const uid = document.getElementById('permAdminUid').value;
+    if (!uid) return;
+    
+    const u = users.find(x => x.uid === uid);
+    if (!u) return;
+    
+    const permissions = {
+        viewMembers: document.getElementById('permViewMembers').checked,
+        viewAttendance: document.getElementById('permViewAttendance').checked,
+        viewUniform: document.getElementById('permViewUniform').checked,
+        viewLyrics: document.getElementById('permViewLyrics').checked,
+        viewFinance: document.getElementById('permViewFinance').checked,
+        viewAnnouncements: document.getElementById('permViewAnnouncements').checked,
+        viewBirthday: document.getElementById('permViewBirthday').checked,
+        viewReports: document.getElementById('permViewReports').checked,
+        viewSocialMedia: document.getElementById('permViewSocialMedia').checked,
+        viewPending: document.getElementById('permViewPending').checked
+    };
+    
+    const btn = document.getElementById('saveAdminPermBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turabika...';
+    
+    try {
+        await updateDoc(doc(db, 'users', uid), {
+            permissions: permissions,
+            permissionsUpdatedAt: serverTimestamp(),
+            permissionsUpdatedBy: currentUser.uid
+        });
+        
+        showToast(`✅ Uburenganzira bwa ${u.name} buhindutse!`, 'success');
+        closeModal('adminPermissionsModal');
+        
+        await loadUsers();
+        await renderUsers();
+        
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Bika Uburenganzira';
+    } catch (error) {
+        showToast('❌ ' + error.message, 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Bika Uburenganzira';
+    }
+};
+    
+</script>
 </body>
 </html>
