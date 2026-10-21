@@ -12,21 +12,22 @@
   "lang": "rw",
   "dir": "ltr",
   "categories": ["education", "music", "productivity"],
+  "prefer_related_applications": false,
   "icons": [
     {
-      "src": "/icon-192.png",
+      "src": "/favicon-maskable.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icon-512.png",
+      "src": "/favicon-maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icon-512.png",
+      "src": "/favicon-maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
@@ -38,6 +39,34 @@
       "sizes": "1080x1920",
       "type": "image/png",
       "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Ahabanza",
+      "short_name": "Home",
+      "description": "Reba dashboard",
+      "url": "/?page=dashboard",
+      "icons": [
+        {
+          "src": "/favicon-maskable.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Attendance",
+      "short_name": "Attendance",
+      "description": "Kora attendance",
+      "url": "/?page=attendance",
+      "icons": [
+        {
+          "src": "/favicon-maskable.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     }
   ]
 }
