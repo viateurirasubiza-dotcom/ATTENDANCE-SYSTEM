@@ -9661,16 +9661,6 @@ enterApp();
             }
         });
 
-// ============================================
-// PWA INSTALL BUTTON — IKORA KENSHI
-// ============================================
-let deferredPrompt = null;
-const installBtn = document.getElementById('installAppBtn');
-
-// 1. Reba niba app isanzwe ishyizweho (standalone mode)
-if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-    if (installBtn) installBtn.style.display = 'none';
-}
 
 // ============================================
 // PWA INSTALL BUTTON — IKORA KENSHI
