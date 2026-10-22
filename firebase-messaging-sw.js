@@ -28,14 +28,18 @@ messaging.onBackgroundMessage((payload) => {
     
     const notificationOptions = {
         body: body,
-        icon: '/favicon-maskable.png',       // ✅ PNG (Ntukoreshe .jpg)
-        badge: '/favicon-maskable.png',      // ✅ PNG (Iyi igaragara kuri Android status bar)
-        image: payload.notification?.image || null, // Niba hari ifoto nini wohereje
+        icon: '/favicon-maskable.png',       
+        badge: '/favicon-maskable.png',      
+        image: payload.notification?.image || null, 
         tag: 'hcfc-group-chat',
         data: payload.data || {},
-        vibrate: [200, 100, 200, 100, 200],  // Kunyeganyega (Vibration)
-        requireInteraction: true,            // Iyi ituma notification itazimira vuba (ugomba kuyikanda)
-        silent: false,                       // Emeza ko ijwi ryumvikana (niba telefone itabyanzwe)
+        vibrate: [200, 100, 200, 100, 200],  
+        requireInteraction: true,            
+        silent: false,                       
+        
+        // IYI NI YO ITUMA NOTIFICATION IDUTSE HEJURU (HEADS-UP) kuri Android
+        renotify: true,
+        
         actions: [
             { action: 'open', title: 'Fungura App', icon: '/favicon-maskable.png' },
             { action: 'close', title: 'Funga', icon: '/favicon-maskable.png' }
@@ -65,7 +69,7 @@ self.addEventListener('notificationclick', (event) => {
                     return client.focus();
                 }
             }
-            // Niba app ifunze, fungura nshya
+            // Niba app ifunze, fungura nshya muri Chat
             if (clients.openWindow) {
                 return clients.openWindow('/?page=chat');
             }
