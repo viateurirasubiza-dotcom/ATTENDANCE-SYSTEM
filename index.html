@@ -2610,110 +2610,147 @@ body {
         </header>
 
         <div class="layout">
-            <aside class="sidebar" id="sidebar">
-                <div class="nav-label">Menu Nyamukuru</div>
-                
-                <div class="nav-item admin-only active" onclick="switchPage('dashboard', this)">
-                    <i class="fas fa-home"></i><span>Ahabanza</span>
-                </div>
-                <div class="nav-item member-only" onclick="switchPage('my-dashboard', this)" style="display: none;">
-                    <i class="fas fa-home"></i><span>Ahabanza</span>
-                </div>
-                <div class="nav-item member-only" onclick="switchPage('my-finance', this)" style="display: none;">
-                    <i class="fas fa-wallet"></i><span>Amafaranga Yanjye</span>
-                </div>
-                <div class="nav-item admin-only" onclick="openCreateModal()">
-                    <i class="fas fa-calendar-plus"></i><span>Kora Attendance</span>
-                </div>
-                <div class="nav-item admin-only" onclick="openQRRegisterModal()">
-                    <i class="fas fa-qrcode"></i><span>QR Code Mushya</span>
-                </div>
-                <div class="nav-item admin-only" onclick="switchPage('members', this)">
-                    <i class="fas fa-users"></i><span>Abaririmbyi</span>
-                    <span class="count" id="sidebarMemberCount">0</span>
-                </div>
-                <div class="nav-item admin-only" onclick="switchPage('pending', this)">
-                    <i class="fas fa-user-clock"></i><span>Abakandida</span>
-                    <span class="count warning" id="sidebarPendingCount" style="display: none;">0</span>
-                </div>
-                <div class="nav-item admin-only" onclick="switchPage('attendance', this)">
-                    <i class="fas fa-calendar-check"></i><span>Ubwitabire</span>
-                    <span class="count" id="sidebarSessionCount">0</span>
-                </div>
-                
-                <div class="nav-label admin-only">Isesengura</div>
-                <div class="nav-item admin-only" onclick="switchPage('voices', this)">
-                    <i class="fas fa-microphone"></i><span>Amajwi</span>
-                </div>
-                <div class="nav-item admin-only" onclick="switchPage('photos', this)">
-                    <i class="fas fa-camera"></i><span>Amafoto</span>
-                </div>
-                <div class="nav-item admin-only" onclick="switchPage('reports', this)">
-                    <i class="fas fa-chart-line"></i><span>Raporo</span>
-                </div>
-                <div class="nav-item admin-only" onclick="switchPage('uniform', this)">
-                    <i class="fas fa-tshirt"></i><span>Uniform</span>
-                </div>
-                <div class="nav-item admin-only" onclick="switchPage('birthday', this)">
-                    <i class="fas fa-birthday-cake"></i><span>Birthday</span>
-                </div>
-                
-                <!-- ============ COMPTABLE ============ -->
-                <div class="nav-label admin-only">Comptabilité</div>
-                <div class="nav-item admin-only" onclick="switchPage('finance', this)">
-                    <i class="fas fa-wallet"></i><span>Comptable</span>
-                </div>
-                <div class="nav-item admin-only" onclick="switchPage('payment-requests', this)">
-                    <i class="fas fa-money-check-alt"></i><span>Kwemeza Ubwishyu</span>
-                    <span class="count warning" id="sidebarPaymentReqCount" style="display:none;">0</span>
-                </div>
-                <div class="nav-item admin-only" onclick="switchPage('contributions', this)">
-                    <i class="fas fa-hand-holding-usd"></i><span>Contributions</span>
-                    <span class="count warning" id="sidebarContribCount" style="display:none;">0</span>
-                </div>
-                <div class="nav-item admin-only" onclick="switchPage('transactions', this)">
-                    <i class="fas fa-exchange-alt"></i><span>Transactions</span>
-                </div>
-                <div class="nav-item admin-only" onclick="switchPage('finance-reports', this)">
-                    <i class="fas fa-file-invoice-dollar"></i><span>Raporo y'Amafaranga</span>
-                </div>
-                
-                <div class="nav-label">Itsinda</div>
-                <div class="nav-item" onclick="switchPage('chat', this)">
-                    <i class="fas fa-comments"></i><span>Ubutumwa</span>
-                    <span class="count danger" id="sidebarChatCount" style="display:none;">0</span>
-                </div>
-                <div class="nav-item" onclick="switchPage('lyrics', this)">
-                    <i class="fas fa-music"></i><span>Lyrics</span>
-                </div>
-<div class="nav-item admin-only" onclick="switchPage('social-media', this)">
-    <i class="fas fa-globe"></i><span>Social Media</span>
-</div>
-                <div class="nav-item" onclick="switchPage('announcements', this)">
-                    <i class="fas fa-bullhorn"></i><span>Amatangazo</span>
-                    <span class="count warning" id="sidebarAnnouncementCount" style="display: none;">0</span>
-                </div>
-                
-                <div class="nav-label super-admin-only" style="display: none;">Super Admin</div>
-                <div class="nav-item super-admin-only" onclick="switchPage('users', this)" style="display: none;">
-                    <i class="fas fa-user-shield"></i><span>Abakoresha</span>
-                </div>
-                <div class="nav-item admin-only" onclick="switchPage('recycle-bin', this)">
-                    <i class="fas fa-trash-restore"></i><span>Abasibwe</span>
-                    <span class="count danger" id="sidebarRecycleCount" style="display: none;">0</span>
-                </div>
-                
-                <div class="nav-label">Konti</div>
-                <div class="nav-item" onclick="switchPage('profile', this)">
-                    <i class="fas fa-user-circle"></i><span>Profile</span>
-                </div>
-                <div class="nav-item admin-only" onclick="switchPage('settings', this)">
-                    <i class="fas fa-cog"></i><span>Igenamiterere</span>
-                </div>
-                <div class="nav-item" onclick="forceLogout()" style="color: var(--danger);">
-                    <i class="fas fa-sign-out-alt"></i><span>Sohoka</span>
-                </div>
-            </aside>
+    <aside class="sidebar" id="sidebar">
+        <div class="nav-label">Menu Nyamukuru</div>
+        
+        <!-- ============================================ -->
+        <!-- 1. DASHBOARD (Super Admin gusa) -->
+        <!-- ============================================ -->
+        <div class="nav-item super-admin-only active" onclick="switchPage('dashboard', this)" style="display: none;">
+            <i class="fas fa-home"></i><span>Ahabanza</span>
+        </div>
+        
+        <!-- ============================================ -->
+        <!-- 2. MEMBER DASHBOARD (Member na Admin bose) -->
+        <!-- ============================================ -->
+        <div class="nav-item member-only" onclick="switchPage('my-dashboard', this)" style="display: none;">
+            <i class="fas fa-home"></i><span>Ahabanza</span>
+        </div>
+        <div class="nav-item member-only" onclick="switchPage('my-finance', this)" style="display: none;">
+            <i class="fas fa-wallet"></i><span>Amafaranga Yanjye</span>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- 3. SUPER ADMIN GUSA: Kora Attendance, QR, Members, etc. -->
+        <!-- ============================================ -->
+        <div class="nav-item super-admin-only" onclick="openCreateModal()" style="display: none;">
+            <i class="fas fa-calendar-plus"></i><span>Kora Attendance</span>
+        </div>
+        <div class="nav-item super-admin-only" onclick="openQRRegisterModal()" style="display: none;">
+            <i class="fas fa-qrcode"></i><span>QR Code Mushya</span>
+        </div>
+        <div class="nav-item super-admin-only" onclick="switchPage('members', this)" style="display: none;">
+            <i class="fas fa-users"></i><span>Abaririmbyi</span>
+            <span class="count" id="sidebarMemberCount">0</span>
+        </div>
+        <div class="nav-item super-admin-only" onclick="switchPage('pending', this)" style="display: none;">
+            <i class="fas fa-user-clock"></i><span>Abakandida</span>
+            <span class="count warning" id="sidebarPendingCount" style="display: none;">0</span>
+        </div>
+        <div class="nav-item super-admin-only" onclick="switchPage('attendance', this)" style="display: none;">
+            <i class="fas fa-calendar-check"></i><span>Ubwitabire</span>
+            <span class="count" id="sidebarSessionCount">0</span>
+        </div>
+        
+        <!-- ============================================ -->
+        <!-- 4. ISESENGURA (Super Admin gusa) -->
+        <!-- ============================================ -->
+        <div class="nav-label super-admin-only" style="display: none;">Isesengura</div>
+        <div class="nav-item super-admin-only" onclick="switchPage('voices', this)" style="display: none;">
+            <i class="fas fa-microphone"></i><span>Amajwi</span>
+        </div>
+        <div class="nav-item super-admin-only" onclick="switchPage('photos', this)" style="display: none;">
+            <i class="fas fa-camera"></i><span>Amafoto</span>
+        </div>
+        <div class="nav-item super-admin-only" onclick="switchPage('reports', this)" style="display: none;">
+            <i class="fas fa-chart-line"></i><span>Raporo</span>
+        </div>
+        <div class="nav-item super-admin-only" onclick="switchPage('uniform', this)" style="display: none;">
+            <i class="fas fa-tshirt"></i><span>Uniform</span>
+        </div>
+        <div class="nav-item super-admin-only" onclick="switchPage('birthday', this)" style="display: none;">
+            <i class="fas fa-birthday-cake"></i><span>Birthday</span>
+        </div>
+        
+        <!-- ============================================ -->
+        <!-- 5. COMPTABILITÉ (Super Admin gusa) -->
+        <!-- ============================================ -->
+        <div class="nav-label super-admin-only" style="display: none;">Comptabilité</div>
+        <div class="nav-item super-admin-only" onclick="switchPage('finance', this)" style="display: none;">
+            <i class="fas fa-wallet"></i><span>Comptable</span>
+        </div>
+        <div class="nav-item super-admin-only" onclick="switchPage('payment-requests', this)" style="display: none;">
+            <i class="fas fa-money-check-alt"></i><span>Kwemeza Ubwishyu</span>
+            <span class="count warning" id="sidebarPaymentReqCount" style="display:none;">0</span>
+        </div>
+        <div class="nav-item super-admin-only" onclick="switchPage('contributions', this)" style="display: none;">
+            <i class="fas fa-hand-holding-usd"></i><span>Contributions</span>
+            <span class="count warning" id="sidebarContribCount" style="display:none;">0</span>
+        </div>
+        <div class="nav-item super-admin-only" onclick="switchPage('transactions', this)" style="display: none;">
+            <i class="fas fa-exchange-alt"></i><span>Transactions</span>
+        </div>
+        <div class="nav-item super-admin-only" onclick="switchPage('finance-reports', this)" style="display: none;">
+            <i class="fas fa-file-invoice-dollar"></i><span>Raporo y'Amafaranga</span>
+        </div>
+        
+        <!-- ============================================ -->
+        <!-- 6. ITSINDA (Member na Admin bose babona) -->
+        <!-- ============================================ -->
+        <div class="nav-label">Itsinda</div>
+        <div class="nav-item" onclick="switchPage('chat', this)">
+            <i class="fas fa-comments"></i><span>Ubutumwa</span>
+            <span class="count danger" id="sidebarChatCount" style="display:none;">0</span>
+        </div>
+        <div class="nav-item" onclick="switchPage('lyrics', this)">
+            <i class="fas fa-music"></i><span>Lyrics</span>
+        </div>
+        
+        <!-- ============================================ -->
+        <!-- 7. SOCIAL MEDIA (Super Admin gusa) -->
+        <!-- ============================================ -->
+        <div class="nav-item super-admin-only" onclick="switchPage('social-media', this)" style="display: none;">
+            <i class="fas fa-globe"></i><span>Social Media</span>
+        </div>
+        
+        <!-- ============================================ -->
+        <!-- 8. AMATANGAZO (Member na Admin bose babona) -->
+        <!-- ============================================ -->
+        <div class="nav-item" onclick="switchPage('announcements', this)">
+            <i class="fas fa-bullhorn"></i><span>Amatangazo</span>
+            <span class="count warning" id="sidebarAnnouncementCount" style="display: none;">0</span>
+        </div>
+        
+        <!-- ============================================ -->
+        <!-- 9. SUPER ADMIN GUSA: Abakoresha -->
+        <!-- ============================================ -->
+        <div class="nav-label super-admin-only" style="display: none;">Super Admin</div>
+        <div class="nav-item super-admin-only" onclick="switchPage('users', this)" style="display: none;">
+            <i class="fas fa-user-shield"></i><span>Abakoresha</span>
+        </div>
+        
+        <!-- ============================================ -->
+        <!-- 10. ABAZIBWE (Super Admin gusa) -->
+        <!-- ============================================ -->
+        <div class="nav-item super-admin-only" onclick="switchPage('recycle-bin', this)" style="display: none;">
+            <i class="fas fa-trash-restore"></i><span>Abasibwe</span>
+            <span class="count danger" id="sidebarRecycleCount" style="display: none;">0</span>
+        </div>
+        
+        <!-- ============================================ -->
+        <!-- 11. KONTI (Member na Admin bose babona) -->
+        <!-- ============================================ -->
+        <div class="nav-label">Konti</div>
+        <div class="nav-item" onclick="switchPage('profile', this)">
+            <i class="fas fa-user-circle"></i><span>Profile</span>
+        </div>
+        <div class="nav-item super-admin-only" onclick="switchPage('settings', this)" style="display: none;">
+            <i class="fas fa-cog"></i><span>Igenamiterere</span>
+        </div>
+        <div class="nav-item" onclick="forceLogout()" style="color: var(--danger);">
+            <i class="fas fa-sign-out-alt"></i><span>Sohoka</span>
+        </div>
+    </aside>
 
             <main class="main">
                 <!-- ============ ADMIN DASHBOARD ============ -->
@@ -5578,181 +5615,30 @@ enterApp();
             }, 1000);
         }
 
-     async function enterApp() {
-    const authScreen = document.getElementById('authScreen');
-    const appEl = document.getElementById('app');
-    const ls = document.getElementById('loadingScreen');
-    
-    if (authScreen) { authScreen.classList.add('hidden'); authScreen.style.display = 'none'; }
-    if (appEl) { appEl.classList.add('active'); appEl.style.display = 'block'; }
-    if (ls) { ls.classList.add('hidden'); ls.style.display = 'none'; }
-    
+   window.switchPage = function(page, element) {
     const role = currentUserData?.role;
-    const isAdmin = role === 'admin' || role === 'super_admin' || role === 'comptable';
     const isSuperAdmin = role === 'super_admin';
     const isMember = role === 'member';
+    const isAdmin = role === 'admin' || role === 'comptable';
+    const showMemberView = isMember || isAdmin;
     
-    // ============================================
-    // 1. HIDE/SHOW MEMBER vs ADMIN
-    // ============================================
-    if (isMember) {
-        document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
-        document.querySelectorAll('.super-admin-only').forEach(el => el.style.display = 'none');
-        document.querySelectorAll('.member-only').forEach(el => el.style.display = '');
-        document.querySelectorAll('.nav-item.admin-only').forEach(item => item.style.display = 'none');
-        document.querySelectorAll('.nav-item.super-admin-only').forEach(item => item.style.display = 'none');
-    } else {
-        document.querySelectorAll('.member-only').forEach(el => el.style.display = 'none');
-        document.querySelectorAll('.admin-only').forEach(el => el.style.display = '');
-        
-        if (isSuperAdmin) {
-            document.querySelectorAll('.super-admin-only').forEach(el => el.style.display = '');
-            document.querySelectorAll('.nav-item.super-admin-only').forEach(item => item.style.display = '');
-        } else {
-            document.querySelectorAll('.super-admin-only').forEach(el => el.style.display = 'none');
-            document.querySelectorAll('.nav-item.super-admin-only').forEach(item => item.style.display = 'none');
-        }
+    // Paji zibonwa na Super Admin gusa
+    const superAdminPages = [
+        'dashboard', 'create', 'members', 'pending', 'attendance', 
+        'voices', 'photos', 'reports', 'uniform', 'birthday',
+        'finance', 'payment-requests', 'contributions', 'transactions',
+        'finance-reports', 'social-media', 'users', 'recycle-bin', 'settings'
+    ];
+    
+    // Niba ari Admin/Member agerageza kujya kuri paji ya Super Admin
+    if (showMemberView && superAdminPages.includes(page)) {
+        showToast('❌ Ntabwo wemerewe kubona iyi paji', 'error');
+        page = 'my-dashboard';
+        element = null;
     }
     
-    // ============================================
-    // 2. PERMISSION FILTERING (KURI ADMIN GUSA)
-    // ============================================
-    if (!isSuperAdmin && !isMember) {
-        const perms = currentUserData?.permissions || {};
-        
-        // Iyi mapping ihurira na data-page attribute kuri buri nav-item
-        const pagePermissionMap = {
-            'members': 'viewMembers',
-            'attendance': 'viewAttendance',
-            'uniform': 'viewUniform',
-            'lyrics': 'viewLyrics',
-            'finance': 'viewFinance',
-            'contributions': 'viewFinance',
-            'transactions': 'viewFinance',
-            'payment-requests': 'viewFinance',
-            'finance-reports': 'viewFinance',
-            'announcements': 'viewAnnouncements',
-            'birthday': 'viewBirthday',
-            'reports': 'viewReports',
-            'social-media': 'viewSocialMedia',
-            'pending': 'viewPending'
-        };
-        
-        // Hisha nav-items zidasabwa
-        Object.keys(pagePermissionMap).forEach(page => {
-            const requiredPerm = pagePermissionMap[page];
-            if (perms[requiredPerm] === false) {
-                // Hisha nav-item
-                const navItem = document.querySelector(`.nav-item[data-page="${page}"]`);
-                if (navItem) navItem.style.display = 'none';
-            }
-        });
-        
-        // Hisha "Kora Attendance" button (admin-only nav-item itari data-page)
-        const createAttendanceBtn = document.querySelector('.nav-item[onclick*="openCreateModal"]');
-        if (createAttendanceBtn && perms.viewAttendance === false) {
-            createAttendanceBtn.style.display = 'none';
-        }
-        
-        // Hisha "QR Code Mushya" button
-        const qrBtn = document.querySelector('.nav-item[onclick*="openQRRegisterModal"]');
-        if (qrBtn && perms.viewMembers === false) {
-            qrBtn.style.display = 'none';
-        }
-        
-        // Hisha "Kwemeza Ubwishyu" badge niba finance yabujijwe
-        if (perms.viewFinance === false) {
-            const payReqBadge = document.getElementById('sidebarPaymentReqCount');
-            if (payReqBadge) payReqBadge.style.display = 'none';
-            const contribBadge = document.getElementById('sidebarContribCount');
-            if (contribBadge) contribBadge.style.display = 'none';
-        }
-        
-        // Hisha "Abakandida" badge niba pending yabujijwe
-        if (perms.viewPending === false) {
-            const pendingBadge = document.getElementById('sidebarPendingCount');
-            if (pendingBadge) pendingBadge.style.display = 'none';
-        }
-        
-        // Hisha "Amatangazo" badge niba announcements yabujijwe
-        if (perms.viewAnnouncements === false) {
-            const annBadge = document.getElementById('sidebarAnnouncementCount');
-            if (annBadge) annBadge.style.display = 'none';
-        }
-    }
-    
-    // ============================================
-    // 3. UPDATE PROFILE UI
-    // ============================================
-    updateProfileUI();
-    
-    // ============================================
-    // 4. TANGIRA PAGE ITEGUYE
-    // ============================================
-    if (isMember) {
-        switchPage('my-dashboard', null);
-    } else {
-        switchPage('dashboard', null);
-        try { renderDashboard(); } catch(e) { console.error(e); }
-        try { renderMembers(); } catch(e) { console.error(e); }
-        try { renderAttendancePage(); } catch(e) { console.error(e); }
-        try { renderPhotosPage(); } catch(e) { console.error(e); }
-    }
-    
-    // ============================================
-    // 5. PRESENCE
-    // ============================================
-    try { 
-        initPresence(); 
-    } catch(e) { console.error('❌ Presence error:', e); }
-    
-    // ============================================
-    // 6. UNREAD LISTENER
-    // ============================================
-    try { 
-        startUnreadListener(); 
-    } catch(e) { console.error('❌ Unread listener error:', e); }
-    
-    // ============================================
-    // 7. FCM NOTIFICATIONS
-    // ============================================
-    try {
-        if ('Notification' in window && Notification.permission === 'default') {
-            setTimeout(async () => {
-                try {
-                    const permission = await Notification.requestPermission();
-                    if (permission === 'granted') {
-                        if (typeof window.registerFCMToken === 'function') {
-                            await window.registerFCMToken();
-                        }
-                    }
-                } catch(e) {}
-            }, 2000);
-        } else if (Notification.permission === 'granted') {
-            setTimeout(async () => {
-                if (typeof window.registerFCMToken === 'function') {
-                    await window.registerFCMToken();
-                }
-            }, 2000);
-        }
-        
-        if (typeof window.setupForegroundNotifications === 'function') {
-            window.setupForegroundNotifications();
-        }
-    } catch(e) {
-        console.error('❌ FCM setup error:', e);
-    }
-    
-    // ============================================
-    // 8. SET DATE
-    // ============================================
-    const today = new Date().toISOString().split('T')[0];
-    const sd = document.getElementById('sessionDate');
-    if (sd) sd.value = today;
-    
-    console.log('🎉 enterApp completed for:', currentUserData?.name, '| Role:', role, '| Permissions:', currentUserData?.permissions);
-}
-
+    const previousPage = window._currentPage || 'dashboard';
+    // ... ibisigaye bya switchPage ...
         // ============================================
         // NOTIFICATIONS
         // ============================================
