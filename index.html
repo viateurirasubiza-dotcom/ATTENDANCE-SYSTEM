@@ -3824,7 +3824,22 @@ body {
                         </div>
                     </div>
                 </div>
-
+<!-- ===== MODAL YO GUSHIMIRA NYUMA Y'UBWISHYU ===== -->
+<div class="modal-overlay" id="paymentSuccessModal">
+    <div class="modal" style="text-align: center; max-width: 400px;">
+        <div style="font-size: 80px; margin-bottom: 20px; animation: bounceIcon 2s infinite;">🎉</div>
+        <h2 style="font-size: 24px; font-weight: 800; color: var(--success); margin-bottom: 10px;">
+            Murakoze Cyane!
+        </h2>
+        <p style="color: var(--text-secondary); font-size: 15px; line-height: 1.6; margin-bottom: 24px;">
+            Ubwishyu bwawe bwoherejwe neza kuri <strong>Comptable</strong>.<br>
+            Bitegereje kwemezwa. Urakoze cyane kubw'umusanzu wawe! 🙏
+        </p>
+        <button class="btn btn-primary" onclick="closeModal('paymentSuccessModal')" style="width: 100%; padding: 14px; font-size: 16px;">
+            <i class="fas fa-check"></i> Byemejwe
+        </button>
+    </div>
+</div>
                 <!-- ============ PROFILE ============ -->
                 <div class="page" id="page-profile">
                     <div class="page-header">
@@ -9793,7 +9808,7 @@ window.openPaymentModal = function() {
     document.getElementById('memberPayDescription').value = '';
     document.getElementById('memberPaymentModal').classList.add('active');
 };
- window.submitMemberPayment = async function() {
+window.submitMemberPayment = async function() {
     const type = document.getElementById('memberPayType').value;
     const amount = parseFloat(document.getElementById('memberPayAmount').value);
     const phone = document.getElementById('memberPayPhone').value.trim();
@@ -9823,10 +9838,19 @@ window.openPaymentModal = function() {
             createdBy: currentUser.uid
         });
         
-        showToast('✅ Ubwishyu bwoherejwe kwa Comptable!', 'success');
-        showToast('⏳ Bitegereje kwemezwa na Comptable', 'info');
-        
+        // ============================================
+        // HANO: Funga modal yo kwishyura & Fungura Popup
+        // ============================================
         closeModal('memberPaymentModal');
+        
+        // Fungura popup ya Congratulation
+        document.getElementById('paymentSuccessModal').classList.add('active');
+        
+        // Confetti nziza (kugira ngo bishimishe)
+        confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+        
+        // ============================================
+        
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-paper-plane"></i> Ohereza kwa Comptable';
         
