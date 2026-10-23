@@ -4569,48 +4569,6 @@ body {
         </div>
     </div>
 
-<!-- ===== MODAL YO KWISHYURA (MEMBER) ===== -->
-<div class="modal-overlay" id="memberPaymentModal">
-    <div class="modal">
-        <div class="modal-header">
-            <h3><i class="fas fa-hand-holding-usd"></i> Gutanga Umusanzu</h3>
-            <button class="close-btn" onclick="closeModal('memberPaymentModal')"><i class="fas fa-times"></i></button>
-        </div>
-        
-        <div class="form-group">
-            <label>Ubwoko bw'Ubwishyu <span>*</span></label>
-            <select class="form-control" id="memberPayType">
-                <option value="contribution">💵 Umusanzu (Contribution)</option>
-                <option value="uniform">👔 Uniform</option>
-                <option value="event">🎉 Ibikorwa by'Itsinda</option>
-                <option value="other">📦 Ibindi</option>
-            </select>
-        </div>
-        
-        <div class="form-group">
-            <label>Amafaranga (RWF) <span>*</span></label>
-            <input type="number" class="form-control" id="memberPayAmount" placeholder="Urugero: 5000" min="0">
-        </div>
-        
-        <div class="form-group">
-            <label>Nimero ya Telefone (MTN MoMo) <span>*</span></label>
-            <input type="tel" class="form-control" id="memberPayPhone" placeholder="Urugero: 0788123456" maxlength="10">
-        </div>
-        
-        <div class="form-group">
-            <label>Ibisobanuro (Optional)</label>
-            <input type="text" class="form-control" id="memberPayDescription" placeholder="Urugero: Umusanzu wa Mutarama">
-        </div>
-        
-        <div class="modal-actions">
-            <button class="btn btn-outline" onclick="closeModal('memberPaymentModal')">Hagarika</button>
-            <button class="btn btn-primary" id="memberPayBtn" onclick="submitMemberPayment()">
-                <i class="fas fa-paper-plane"></i> Ohereza kwa Comptable
-            </button>
-        </div>
-    </div>
-</div>
-
 
     <!-- ===== ADD TRANSACTION MODAL ===== -->
     <div class="modal-overlay" id="addTransactionModal">
@@ -9757,14 +9715,14 @@ window.addEventListener('appinstalled', () => {
         // ============================================
         // MEMBER PAYMENT SYSTEM
         // ============================================
-        window.openPaymentModal = function() {
-            document.getElementById('memberPayType').value = 'contribution';
-            document.getElementById('memberPayAmount').value = '';
-            document.getElementById('memberPayMethod').value = 'MoMo';
-            document.getElementById('memberPayDescription').value = '';
-            document.getElementById('memberPaymentModal').classList.add('active');
-        };
-
+     // IYI NI YO GUKORESHA
+window.openPaymentModal = function() {
+    document.getElementById('memberPayType').value = 'contribution';
+    document.getElementById('memberPayAmount').value = '';
+    document.getElementById('memberPayPhone').value = ''; // Shyiramo nimero aho kuba method
+    document.getElementById('memberPayDescription').value = '';
+    document.getElementById('memberPaymentModal').classList.add('active');
+};
   window.submitMemberPayment = async function() {
     const type = document.getElementById('memberPayType').value;
     const amount = parseFloat(document.getElementById('memberPayAmount').value);
