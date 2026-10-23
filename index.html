@@ -10729,6 +10729,59 @@ window.downloadMembersListPDF = function() {
     confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
     showToast(`📄 PDF iri korwa... Hitamo "Save as PDF" muri print dialog`, 'info');
 };
+        window.renderDashboard = function() {
+    if (currentUserData?.role === 'member') return;
+    
+    const activeMembers = members.filter(m => m.status === 'active' || !m.status);
+    const pendingMembers = members.filter(m => m.status === 'pending');
+    const deletedMembers = members.filter(m => m.status === 'deleted');
+    
+    document.getElementById('statTotalMembers').textContent = activeMembers.length;
+    document.getElementById('statTotalSessions').textContent = sessions.length;
+    
+    let totalPct = 0;
+    sessions.forEach(s => { 
+        const present = (s.presentMembers || []).length;
+        totalPct += activeMembers.length > 0 ? (present / activeMembers.length) * 100 : 0; 
+    });
+    const avgPct = sessions.length > 0 ? Math.round(totalPct / sessions.length) : 0;
+    document.getElementById('statAvgPercent').textContent = avgPct + '%';
+    
+    const todayBirthdays = activeMembers.filter(m => isBirthdayToday(m.birthday));
+    document.getElementById('statBirthdayToday').textContent = todayBirthdays.length;
+    
+    const memberCountEl = document.getElementById('sidebarMemberCount');
+    if (memberCountEl) memberCountEl.textContent = activeMembers.length;
+    const sessionCountEl = document.getElementById('sidebarSessionCount');
+    if (sessionCountEl) sessionCountEl.textContent = sessions.length;
+    
+    const pendingCountEl = document.getElementById('sidebarPendingCount');
+    if (pendingCountEl) {
+        pendingCountEl.textContent = pendingMembers.length;
+        pendingCountEl.style.display = pendingMembers.length > 0 ? '' : 'none';
+    }
+    
+    const annCountEl = document.getElementById('sidebarAnnouncementCount');
+    if (annCountEl) {
+        annCountEl.textContent = announcements.length;
+        annCountEl.style.display = announcements.length > 0 ? '' : 'none';
+    }
+    
+    const recycleCountEl = document.getElementById('sidebarRecycleCount');
+    if (recycleCountEl) {
+        recycleCountEl.textContent = deletedMembers.length;
+        recycleCountEl.style.display = deletedMembers.length > 0 ? '' : 'none';
+    }
+    
+    const contribCountEl = document.getElementById('sidebarContribCount');
+    if (contribCountEl) {
+        const activeC = contributions.filter(c => c.status === 'active').length;
+        contribCountEl.textContent = activeC;
+        contribCountEl.style.display = activeC > 0 ? '' : 'none';
+    }
+    
+    renderSavedList();
+};
 </script>
 </body>
 </html>
