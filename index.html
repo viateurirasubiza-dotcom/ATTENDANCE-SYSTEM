@@ -5615,7 +5615,7 @@ enterApp();
             }, 1000);
         }
 
-   window.switchPage = function(page, element) {
+window.switchPage = function(page, element) {
     const role = currentUserData?.role;
     const isSuperAdmin = role === 'super_admin';
     const isMember = role === 'member';
@@ -5638,7 +5638,129 @@ enterApp();
     }
     
     const previousPage = window._currentPage || 'dashboard';
-    // ... ibisigaye bya switchPage ...
+    
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    if (element) element.classList.add('active');
+    
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const pageEl = document.getElementById('page-' + page);
+    if (pageEl) pageEl.classList.add('active');
+    
+    window._currentPage = page;
+    
+    if (page === 'members') renderMembers();
+    if (page === 'pending') renderPending();
+    if (page === 'users') renderUsers();
+    if (page === 'my-dashboard') renderMyDashboard();
+    if (page === 'my-finance') renderMyFinance();
+    if (page === 'payment-requests') renderPaymentRequests();
+    if (page === 'attendance') renderAttendancePage();
+    if (page === 'voices') renderVoicesPage();
+    if (page === 'photos') renderPhotosPage();
+    if (page === 'reports') initReportsPage();
+    if (page === 'profile') updateProfileUI();
+    if (page === 'uniform') {
+        if (currentUniformTab === 'checklist') renderChecklist();
+        else renderUniforms();
+    }
+    if (page === 'lyrics') renderLyrics();
+    if (page === 'announcements') renderAnnouncements();
+    if (page === 'birthday') renderBirthdayPage();
+    if (page === 'recycle-bin') renderRecycleBin();
+    if (page === 'finance') renderFinance();
+    if (page === 'contributions') renderContributions();
+    if (page === 'transactions') renderTransactions();
+    if (page === 'finance-reports') initFinanceReportsPage();
+    
+    if (previousPage === 'chat' && page !== 'chat') {
+        if (typeof window.markGroupMessagesAsRead === 'function') {
+            setTimeout(() => {
+                window.markGroupMessagesAsRead();
+            }, 300);
+        }
+    }
+    
+    if (page === 'chat') initChatPage();
+    
+    if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+        async function enterApp() {
+    const authScreen = document.getElementById('authScreen');
+    const appEl = document.getElementById('app');
+    const ls = document.getElementById('loadingScreen');
+    
+    if (authScreen) { authScreen.classList.add('hidden'); authScreen.style.display = 'none'; }
+    if (appEl) { appEl.classList.add('active'); appEl.style.display = 'block'; }
+    if (ls) { ls.classList.add('hidden'); ls.style.display = 'none'; }
+    
+    const role = currentUserData?.role;
+    const isSuperAdmin = role === 'super_admin';
+    const isMember = role === 'member';
+    const isAdmin = role === 'admin' || role === 'comptable';
+    const showMemberView = isMember || isAdmin;
+    
+    if (showMemberView) {
+        document.querySelectorAll('.super-admin-only').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.nav-item.super-admin-only').forEach(item => item.style.display = 'none');
+        document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.nav-item.admin-only').forEach(item => item.style.display = 'none');
+        document.querySelectorAll('.member-only').forEach(el => el.style.display = '');
+    } else if (isSuperAdmin) {
+        document.querySelectorAll('.member-only').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.admin-only').forEach(el => el.style.display = '');
+        document.querySelectorAll('.super-admin-only').forEach(el => el.style.display = '');
+        document.querySelectorAll('.nav-item.super-admin-only').forEach(item => item.style.display = '');
+    }
+    
+    updateProfileUI();
+    
+    if (showMemberView) {
+        switchPage('my-dashboard', null);
+    } else {
+        switchPage('dashboard', null);
+        try { renderDashboard(); } catch(e) { console.error(e); }
+        try { renderMembers(); } catch(e) { console.error(e); }
+        try { renderAttendancePage(); } catch(e) { console.error(e); }
+        try { renderPhotosPage(); } catch(e) { console.error(e); }
+    }
+    
+    try { initPresence(); } catch(e) { console.error('❌ Presence error:', e); }
+    try { startUnreadListener(); } catch(e) { console.error('❌ Unread listener error:', e); }
+    
+    try {
+        if ('Notification' in window && Notification.permission === 'default') {
+            setTimeout(async () => {
+                try {
+                    const permission = await Notification.requestPermission();
+                    if (permission === 'granted') {
+                        if (typeof window.registerFCMToken === 'function') {
+                            await window.registerFCMToken();
+                        }
+                    }
+                } catch(e) {}
+            }, 2000);
+        } else if (Notification.permission === 'granted') {
+            setTimeout(async () => {
+                if (typeof window.registerFCMToken === 'function') {
+                    await window.registerFCMToken();
+                }
+            }, 2000);
+        }
+        
+        if (typeof window.setupForegroundNotifications === 'function') {
+            window.setupForegroundNotifications();
+        }
+    } catch(e) {
+        console.error('❌ FCM setup error:', e);
+    }
+    
+    const today = new Date().toISOString().split('T')[0];
+    const sd = document.getElementById('sessionDate');
+    if (sd) sd.value = today;
+    
+    console.log('🎉 enterApp completed for:', currentUserData?.name, '| Role:', role);
+}
         // ============================================
         // NOTIFICATIONS
         // ============================================
