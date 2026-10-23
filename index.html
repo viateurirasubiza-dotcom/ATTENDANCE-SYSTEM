@@ -3865,7 +3865,7 @@ body {
                     </div>
                     <div class="settings-card">
                         <h3><i class="fas fa-users-cog"></i> Amakuru y'Itsinda</h3>
-                        <div class="form-group"><label>Izina ry'itsinda</label><input type="text" class="form-control" value="Choir Imanzi" id="choirName"></div>
+                        <div class="form-group"><label>Izina ry'itsinda</label><input type="text" class="form-control" value="HCFC CHOIR" id="choirName"></div>
                         <button class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save"></i> Bika</button>
                     </div>
                     
@@ -5104,7 +5104,7 @@ try {
                     canManageUniform: permissions.manageUniform !== false,
                     canManageLyrics: permissions.manageLyrics !== false,
                     canManageAttendance: permissions.manageAttendance !== false,
-                    choirName: 'Choir Imanzi', 
+                    choirName: 'HCFC CHOIR', 
                     invitedBy: invitation?.invitedBy || null,
                     createdAt: serverTimestamp() 
                 });
@@ -5421,7 +5421,7 @@ try {
                                 memberId: memberData.id,
                                 memberNumber: memberData.memberId,
                                 birthday: memberData.birthday,
-                                choirName: 'Choir Imanzi'
+                                choirName: 'HCFC CHOIR'
                             };
                         } else {
                             const usersSnap = await getDocs(collection(db, 'users'));
@@ -5438,7 +5438,7 @@ try {
                                 canManageUniform: true,
                                 canManageLyrics: true,
                                 canManageAttendance: true,
-                                choirName: 'Choir Imanzi'
+                                choirName: 'HCFC CHOIR'
                             };
                             
                             await setDoc(doc(db, 'users', user.uid), {
@@ -5858,9 +5858,9 @@ enterApp();
             }
             
             const choirNameInput = document.getElementById('choirName');
-            if (choirNameInput) choirNameInput.value = currentUserData.choirName || 'Choir Imanzi';
+            if (choirNameInput) choirNameInput.value = currentUserData.choirName || 'HCFC CHOIR';
             
-            const choirName = currentUserData.choirName || 'Choir Imanzi';
+            const choirName = currentUserData.choirName || 'HCFC CHOIR';
             
             const choirTitleSubtitle = document.getElementById('choirTitleSubtitle');
             if (choirTitleSubtitle) {
@@ -6860,7 +6860,7 @@ enterApp();
                         uid: m.uid, name: m.name, email: m.email, photo: m.photo,
                         role: 'member', memberId: m.id, memberNumber: m.memberId,
                         birthday: m.birthday || null,
-                        choirName: currentUserData.choirName || 'Choir Imanzi',
+                        choirName: currentUserData.choirName || 'HCFC CHOIR',
                         createdAt: serverTimestamp()
                     });
                 }
