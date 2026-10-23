@@ -2628,10 +2628,10 @@ body {
                 <div class="nav-item admin-only" onclick="openQRRegisterModal()">
                     <i class="fas fa-qrcode"></i><span>QR Code Mushya</span>
                 </div>
-                <div class="nav-item admin-only" onclick="switchPage('members', this)">
-                    <i class="fas fa-users"></i><span>Abaririmbyi</span>
-                    <span class="count" id="sidebarMemberCount">0</span>
-                </div>
+      <div class="nav-item admin-only" data-page="members" onclick="switchPage('members', this)">
+    <i class="fas fa-users"></i><span>Abaririmbyi</span>
+    <span class="count" id="sidebarMemberCount">0</span>
+</div>
                 <div class="nav-item admin-only" onclick="switchPage('pending', this)">
                     <i class="fas fa-user-clock"></i><span>Abakandida</span>
                     <span class="count warning" id="sidebarPendingCount" style="display: none;">0</span>
