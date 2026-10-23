@@ -9763,7 +9763,7 @@ window.openPaymentModal = function() {
     document.getElementById('memberPayDescription').value = '';
     document.getElementById('memberPaymentModal').classList.add('active');
 };
-  window.submitMemberPayment = async function() {
+ window.submitMemberPayment = async function() {
     const type = document.getElementById('memberPayType').value;
     const amount = parseFloat(document.getElementById('memberPayAmount').value);
     const phone = document.getElementById('memberPayPhone').value.trim();
@@ -9771,51 +9771,46 @@ window.openPaymentModal = function() {
     
     if (!amount || amount <= 0) { showToast('Shyiramo amafaranga', 'warning'); return; }
     if (!phone || phone.length < 10) { showToast('Shyiramo nimero yuzuye (10 imibare)', 'warning'); return; }
-    
-    let cleanPhone = phone;
-    if (cleanPhone.startsWith('0')) {
-        cleanPhone = '25' + cleanPhone;
-    }
 
     const btn = document.getElementById('memberPayBtn');
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turahuza na MTN...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turabika...';
     
     try {
-        // Hano reka dushyireho "timeout" kugira ngo bidahagarara igihe kirekire
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 15000); // Amasegonda 15
-
-        const response = await fetch('https://us-central1-choir-system-9745a.cloudfunctions.net/requestMomoPayment', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                phone: cleanPhone,
-                amount: amount,
-                memberId: currentUserData.memberId,
-                memberName: currentUserData.name
-            }),
-            signal: controller.signal
+        const date = new Date().toISOString().split('T')[0];
+        await addDoc(collection(db, 'transactions'), {
+            type: 'income',
+            amount: amount,
+            category: type,
+            description: description || `${currentUserData.name} - MoMo`,
+            memberId: currentUserData.memberId,
+            memberName: currentUserData.name,
+            phoneNumber: phone,
+            paymentMethod: 'MTN MoMo',
+            status: 'pending',
+            date: date,
+            createdAt: serverTimestamp(),
+            createdBy: currentUser.uid
         });
         
-        clearTimeout(timeoutId); // Kuraho timeout niba byagenze
-        const data = await response.json();
+        showToast('✅ Ubwishyu bwoherejwe kwa Comptable!', 'success');
+        showToast('⏳ Bitegereje kwemezwa na Comptable', 'info');
         
-        if (response.ok) {
-            showToast('📱 Ubutumwa bwoherejwe kuri telefone yawe!', 'success');
-            // ... (ibindi biri muri code yawe)
-        } else {
-            // HANO: Tugaragaza amakuru y'ikosa rya seriveri
-            throw new Error(data.error || 'Ikibazo cyabaye kuri seriveri');
-        }
+        closeModal('memberPaymentModal');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Ohereza kwa Comptable';
+        
+        document.getElementById('memberPayAmount').value = '';
+        document.getElementById('memberPayPhone').value = '';
+        document.getElementById('memberPayDescription').value = '';
+        
+        setTimeout(() => {
+            if (typeof loadTransactions === 'function') loadTransactions();
+            if (typeof renderMyFinance === 'function') renderMyFinance();
+        }, 1000);
         
     } catch (error) {
-        // HANO: Tugaragaza ikosa mu buryo burambuye
-        if (error.name === 'AbortError') {
-            showToast('❌ Igihe cyarenze. Seriveri ntiyashubije. Reba niba Firebase Function yarakoreshejwe.', 'error');
-        } else {
-            showToast('❌ ' + error.message, 'error');
-        }
+        showToast('❌ ' + error.message, 'error');
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-paper-plane"></i> Ohereza kwa Comptable';
     }
