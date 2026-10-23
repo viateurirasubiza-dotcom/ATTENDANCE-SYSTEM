@@ -10725,12 +10725,16 @@ window.downloadMembersListPDF = function() {
     
     renderSavedList();
 };
-        window.updateClock = function() {
+       window.updateClock = function() {
     const clockEl = document.getElementById('liveClock');
     if (!clockEl) return;
     const now = new Date();
     clockEl.textContent = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
 };
+
+// Tangiza isaha (ihora yihindura buri segonda)
+setInterval(window.updateClock, 1000);
+window.updateClock();
 </script>
 </body>
 </html>
