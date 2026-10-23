@@ -3636,39 +3636,66 @@ body {
                     <div class="saved-list" id="recentTransactionsList"></div>
                 </div>
 
-                <!-- ============ PAYMENT REQUESTS ============ -->
-                <div class="page" id="page-payment-requests">
-                    <div class="page-header">
-                        <div>
-                            <h1>💰 Kwemeza Ubwishyu</h1>
-                            <p>Reba kandi wemeze ubwishyu bw'abanyamuryango</p>
-                        </div>
-                        <button class="btn btn-outline" onclick="renderPaymentRequests()">
-                            <i class="fas fa-sync"></i> Refresh
-                        </button>
-                    </div>
+             <div class="page" id="page-payment-requests">
+    <div class="page-header">
+        <div>
+            <h1>💰 Kwemeza Ubwishyu</h1>
+            <p>Reba kandi wemeze ubwishyu bw'abanyamuryango</p>
+        </div>
+        <button class="btn btn-outline" onclick="renderPaymentRequests()">
+            <i class="fas fa-sync"></i> Refresh
+        </button>
+    </div>
 
-                    <div class="stats-grid" style="margin-bottom: 24px;">
-                        <div class="stat-card warning">
-                            <div class="stat-icon"><i class="fas fa-clock"></i></div>
-                            <div class="stat-value" id="statPendingPayments">0</div>
-                            <div class="stat-label">Bitegereje</div>
-                        </div>
-                        <div class="stat-card success">
-                            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
-                            <div class="stat-value" id="statConfirmedPayments">0</div>
-                            <div class="stat-label">Byemejwe</div>
-                        </div>
-                        <div class="stat-card danger">
-                            <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
-                            <div class="stat-value" id="statRejectedPayments">0</div>
-                            <div class="stat-label">Byanzwe</div>
-                        </div>
-                    </div>
+    <!-- ============================================ -->
+    <!-- STATS CARDS ZA KWEMEZA UBWISHYU -->
+    <!-- ============================================ -->
+    <div class="stats-grid" style="margin-bottom: 24px;">
+        <!-- Bitegereje (Count) -->
+        <div class="stat-card warning">
+            <div class="stat-icon"><i class="fas fa-clock"></i></div>
+            <div class="stat-value" id="statPendingPayments">0</div>
+            <div class="stat-label">Bitegereje (Count)</div>
+        </div>
 
-                    <div class="saved-list" id="paymentRequestsList"></div>
-                </div>
+        <!-- Byemejwe (Count) -->
+        <div class="stat-card success">
+            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-value" id="statConfirmedPayments">0</div>
+            <div class="stat-label">Byemejwe (Count)</div>
+        </div>
 
+        <!-- Byanzwe (Count) -->
+        <div class="stat-card danger">
+            <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+            <div class="stat-value" id="statRejectedPayments">0</div>
+            <div class="stat-label">Byanzwe (Count)</div>
+        </div>
+
+        <!-- TOTAL Y'UBWISHYU BUTEGEREJE -->
+        <div class="stat-card" style="border-left: 5px solid var(--warning);">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #fbbf24);">
+                <i class="fas fa-coins"></i>
+            </div>
+            <div class="stat-value" id="statPendingAmount" style="color: var(--warning);">0 RWF</div>
+            <div class="stat-label">Total Y'Ubwishyu Butegereje</div>
+        </div>
+
+        <!-- TOTAL Y'UBWISHYU BWEMEJWE -->
+        <div class="stat-card" style="border-left: 5px solid var(--success);">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #34d399);">
+                <i class="fas fa-check-double"></i>
+            </div>
+            <div class="stat-value" id="statConfirmedAmount" style="color: var(--success);">0 RWF</div>
+            <div class="stat-label">Total Y'Ubwishyu Bwemejwe</div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- URUTONDE RW'UBWISHYU -->
+    <!-- ============================================ -->
+    <div class="saved-list" id="paymentRequestsList"></div>
+</div>
                 <!-- ============ CONTRIBUTIONS ============ -->
                 <div class="page" id="page-contributions">
                     <div class="page-header">
@@ -3764,7 +3791,29 @@ body {
                         </div>
                     </div>
                 </div>
-
+    <!-- ===== STATS CARDS ZA TRANSACTIONS ===== -->
+    <div class="stats-grid" id="transactionStats" style="margin-bottom: 24px;">
+        <div class="finance-stat-card">
+            <div class="finance-stat-icon income"><i class="fas fa-arrow-down"></i></div>
+            <div class="finance-stat-value income" id="txStatTotalIncome">0 RWF</div>
+            <div class="finance-stat-label">Amafaranga Yinjiye</div>
+        </div>
+        <div class="finance-stat-card">
+            <div class="finance-stat-icon expense"><i class="fas fa-arrow-up"></i></div>
+            <div class="finance-stat-value expense" id="txStatTotalExpense">0 RWF</div>
+            <div class="finance-stat-label">Amafaranga Yasohotse</div>
+        </div>
+        <div class="finance-stat-card">
+            <div class="finance-stat-icon balance"><i class="fas fa-wallet"></i></div>
+            <div class="finance-stat-value balance" id="txStatBalance">0 RWF</div>
+            <div class="finance-stat-label">Balance (Ibisigaye)</div>
+        </div>
+        <div class="finance-stat-card">
+            <div class="finance-stat-icon contrib"><i class="fas fa-list"></i></div>
+            <div class="finance-stat-value contrib" id="txStatCount">0</div>
+            <div class="finance-stat-label">Transactions Zose</div>
+        </div>
+    </div>
                 <!-- ============ FINANCE REPORTS ============ -->
                 <div class="page" id="page-finance-reports">
                     <div class="page-header">
@@ -10027,7 +10076,7 @@ window.submitMemberPayment = async function() {
         // ============================================
         // PAYMENT REQUESTS (COMPTABLE)
         // ============================================
-       window.renderPaymentRequests = async function() {
+     window.renderPaymentRequests = async function() {
     if (currentUserData?.role !== 'admin' && currentUserData?.role !== 'super_admin' && currentUserData?.role !== 'comptable') {
         return;
     }
@@ -10038,10 +10087,31 @@ window.submitMemberPayment = async function() {
     const confirmed = transactions.filter(t => (t.status === 'confirmed' || !t.status) && t.type === 'income' && t.createdBy && t.category !== 'contribution');
     const rejected = transactions.filter(t => t.status === 'rejected');
     
+    // ============================================
+    // 1. EREKANA COUNTS (Umubare w'ubwishyu)
+    // ============================================
     document.getElementById('statPendingPayments').textContent = pending.length;
     document.getElementById('statConfirmedPayments').textContent = confirmed.length;
     document.getElementById('statRejectedPayments').textContent = rejected.length;
     
+    // ============================================
+    // 2. KUBARA TOTAL Y'AMAFARANGA (Pending & Confirmed)
+    // ============================================
+    let pendingAmount = 0;
+    let confirmedAmount = 0;
+
+    pending.forEach(t => { pendingAmount += Number(t.amount) || 0; });
+    confirmed.forEach(t => { confirmedAmount += Number(t.amount) || 0; });
+
+    const statPendingAmountEl = document.getElementById('statPendingAmount');
+    const statConfirmedAmountEl = document.getElementById('statConfirmedAmount');
+
+    if (statPendingAmountEl) statPendingAmountEl.textContent = formatMoney(pendingAmount);
+    if (statConfirmedAmountEl) statConfirmedAmountEl.textContent = formatMoney(confirmedAmount);
+    
+    // ============================================
+    // 3. BADGE MU SIDEBAR
+    // ============================================
     const badge = document.getElementById('sidebarPaymentReqCount');
     if (badge) {
         badge.textContent = pending.length;
@@ -10062,7 +10132,7 @@ window.submitMemberPayment = async function() {
     let html = '';
     
     // ============================================
-    // 1. PENDING PAYMENTS (Bitegereje kwemezwa)
+    // 4. PENDING PAYMENTS (Bitegereje kwemezwa)
     // ============================================
     if (pending.length > 0) {
         html += `<div class="section-title" style="margin-bottom: 16px;">
@@ -10078,7 +10148,6 @@ window.submitMemberPayment = async function() {
                 ? `<img src="${t.memberPhoto || member?.photo}" class="row-photo" style="width:50px;height:50px;" onerror="this.outerHTML='<div class=\\'row-avatar\\' style='width:50px;height:50px;'>${initials}</div>'">`
                 : `<div class="row-avatar" style="width:50px;height:50px;">${initials}</div>`;
             
-            // Hano ni ho hongewe nimero ya telefone n'uburyo bwo kwishyura
             const phoneInfo = t.phoneNumber ? `<span><i class="fas fa-phone"></i> ${t.phoneNumber}</span>` : '';
             const methodInfo = t.paymentMethod ? `<span><i class="fas fa-mobile-alt"></i> ${t.paymentMethod}</span>` : '';
             
@@ -10114,7 +10183,7 @@ window.submitMemberPayment = async function() {
     }
     
     // ============================================
-    // 2. HISTORY (Amateka: Byemejwe & Byanzwe)
+    // 5. HISTORY (Amateka: Byemejwe & Byanzwe)
     // ============================================
     const history = [...confirmed, ...rejected].sort((a, b) => {
         if (!a.date) return 1;
@@ -10134,7 +10203,6 @@ window.submitMemberPayment = async function() {
                 ? `<span class="uniform-status has-not"><i class="fas fa-times"></i> Byanzwe</span>`
                 : `<span class="uniform-status has"><i class="fas fa-check"></i> Byemejwe</span>`;
             
-            // Hano na ho hongewe nimero ya telefone mu mateka
             const phoneInfo = t.phoneNumber ? ` • <i class="fas fa-phone"></i> ${t.phoneNumber}` : '';
             
             return `<div class="saved-card" style="opacity:0.85;">
