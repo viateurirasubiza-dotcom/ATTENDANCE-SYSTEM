@@ -2,24 +2,20 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
+const cors = require('cors')({ origin: true }); // 👈 IYI NI YO YONGEWEHO
 
 admin.initializeApp();
 
 // ============================================
-// AMAKURU YAWE YA MTN (Reba neza ko ari yo)
+// AMAKURU YAWE YA MTN
 // ============================================
 const MTN_BASE = 'https://sandbox.momodeveloper.mtn.com';
-const SUB_KEY = '4a91ae09431a439d8aa0fdbcf8fe0df8'; // SUB_KEY yawe
-const API_USER = '7d4f28a6-d3a5-4cb3-8a56-15c49e2610d7'; // API_USER yawe
-const API_KEY = '9a7e58ce6a1144ada2e34078d08b6a4e'; // API_KEY yawe
+const SUB_KEY = '4a91ae09431a439d8aa0fdbcf8fe0df8';
+const API_USER = '7d4f28a6-d3a5-4cb3-8a56-15c49e2610d7';
+const API_KEY = '9a7e58ce6a1144ada2e34078d08b6a4e';
 // ============================================
 
-
-// ============================================
-// 1. FUNCTIONS ZA MTN MOMO (Kwishyura)
-// ============================================
-
-// Iyi function ibona Token kuri MTN (ntabwo uyihamagara mu HTML, irakorwa muri iyi seriveri gusa)
+// 1. KUBONA TOKEN
 async function getMtnToken() {
     const auth = Buffer.from(`${API_USER}:${API_KEY}`).toString('base64');
     const res = await axios.post(`${MTN_BASE}/collection/token/`, {}, {
@@ -32,101 +28,98 @@ async function getMtnToken() {
     return res.data.access_token;
 }
 
-// Iyi function ni yo HTML yawe ihamagara iyo umukoresha akanda "Kwishyura"
-exports.requestMomoPayment = functions.https.onRequest(async (req, res) => {
-    // Kora CORS kugira ngo HTML yawe ishobore kuyihamagara
-    res.set('Access-Control-Allow-Origin', '*');
-    if (req.method === 'OPTIONS') {
-        res.set('Access-Control-Allow-Methods', 'POST');
-        res.set('Access-Control-Allow-Headers', 'Content-Type');
-        res.status(204).send('');
-        return;
-    }
+// ============================================
+// 2. REQUEST TO PAY (IYI NI YO HTML IHAMAGARA)
+// ============================================
+exports.requestMomoPayment = functions.https.onRequest((req, res) => {
+    // Koresha CORS kuri byose (POST na OPTIONS)
+    cors(req, res, async () => {
+        const { phone, amount, memberId, memberName } = req.body;
 
-    const { phone, amount, memberId, memberName } = req.body;
+        try {
+            const token = await getMtnToken();
+            const refId = uuidv4();
 
-    try {
-        const token = await getMtnToken();
-        const refId = uuidv4(); // Iyi ni ID y'ubwishyu
-
-        await axios.post(`${MTN_BASE}/collection/v1_0/requesttopay`, {
-            amount: amount.toString(),
-            currency: 'EUR', // Sandbox = EUR, iyo uri Live = RWF
-            externalId: 'HCFC-' + Date.now(),
-            payer: { partyIdType: 'MSISDN', partyId: phone },
-            payerMessage: 'Umusanzu wa HCFC',
-            payeeNote: 'Murakoze'
-        }, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'X-Reference-Id': refId,
-                'X-Target-Environment': 'sandbox',
-                'Ocp-Apim-Subscription-Key': SUB_KEY
-            }
-        });
-
-        // Bika muri Firestore nka pending kugira ngo Comptable abone
-        await admin.firestore().collection('transactions').doc(refId).set({
-            type: 'income',
-            amount: parseFloat(amount),
-            category: 'contribution',
-            description: 'MoMo Payment',
-            memberId: memberId || null,
-            memberName: memberName || 'Unknown',
-            phoneNumber: phone,
-            paymentMethod: 'MTN MoMo',
-            mtnReferenceId: refId,
-            status: 'pending',
-            date: new Date().toISOString().split('T')[0],
-            createdAt: admin.firestore.FieldValue.serverTimestamp()
-        });
-
-        res.json({ success: true, referenceId: refId, message: 'Ubutumwa bwoherejwe kuri telefone yawe. Injiza PIN.' });
-    } catch (error) {
-        console.error(error.response ? error.response.data : error.message);
-        res.status(500).json({ error: error.message });
-    }
-});
-
-// Iyi function ikora "Callback" iyo umukoresha amaze kwishyura
-exports.momoCallback = functions.https.onRequest(async (req, res) => {
-    const { referenceId } = req.body;
-    
-    try {
-        const token = await getMtnToken();
-        // Reba status kuri MTN
-        const statusRes = await axios.get(`${MTN_BASE}/collection/v1_0/requesttopay/${referenceId}`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'X-Target-Environment': 'sandbox',
-                'Ocp-Apim-Subscription-Key': SUB_KEY
-            }
-        });
-
-        const status = statusRes.data.status; // SUCCESSFUL, FAILED, PENDING
-        console.log('MTN Status:', status);
-
-        if (status === 'SUCCESSFUL') {
-            await admin.firestore().collection('transactions').doc(referenceId).update({
-                status: 'confirmed',
-                confirmedAt: admin.firestore.FieldValue.serverTimestamp()
+            await axios.post(`${MTN_BASE}/collection/v1_0/requesttopay`, {
+                amount: amount.toString(),
+                currency: 'EUR',
+                externalId: 'HCFC-' + Date.now(),
+                payer: { partyIdType: 'MSISDN', partyId: phone },
+                payerMessage: 'Umusanzu wa HCFC',
+                payeeNote: 'Murakoze'
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'X-Reference-Id': refId,
+                    'X-Target-Environment': 'sandbox',
+                    'Ocp-Apim-Subscription-Key': SUB_KEY
+                }
             });
-        } else if (status === 'FAILED') {
-            await admin.firestore().collection('transactions').doc(referenceId).update({
-                status: 'rejected',
-                mtnStatus: 'FAILED'
+
+            // Bika muri Firestore nka pending
+            await admin.firestore().collection('transactions').doc(refId).set({
+                type: 'income',
+                amount: parseFloat(amount),
+                category: 'contribution',
+                description: 'MoMo Payment',
+                memberId: memberId || null,
+                memberName: memberName || 'Unknown',
+                phoneNumber: phone,
+                paymentMethod: 'MTN MoMo',
+                mtnReferenceId: refId,
+                status: 'pending',
+                date: new Date().toISOString().split('T')[0],
+                createdAt: admin.firestore.FieldValue.serverTimestamp()
             });
+
+            res.json({ success: true, referenceId: refId, message: 'Ubutumwa bwoherejwe kuri telefone yawe. Injiza PIN.' });
+        } catch (error) {
+            console.error(error.response ? error.response.data : error.message);
+            res.status(500).json({ error: error.message });
         }
-        res.sendStatus(200);
-    } catch (error) {
-        console.error(error);
-        res.sendStatus(500);
-    }
+    });
 });
-
 
 // ============================================
-// 2. IYI NI YO CODE YAWE YARI IHARI (Notifications)
+// 3. CALLBACK (IYO UMUKORESHA AMAZE KWISHYURA)
+// ============================================
+exports.momoCallback = functions.https.onRequest((req, res) => {
+    cors(req, res, async () => {
+        const { referenceId } = req.body;
+        
+        try {
+            const token = await getMtnToken();
+            const statusRes = await axios.get(`${MTN_BASE}/collection/v1_0/requesttopay/${referenceId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'X-Target-Environment': 'sandbox',
+                    'Ocp-Apim-Subscription-Key': SUB_KEY
+                }
+            });
+
+            const status = statusRes.data.status;
+
+            if (status === 'SUCCESSFUL') {
+                await admin.firestore().collection('transactions').doc(referenceId).update({
+                    status: 'confirmed',
+                    confirmedAt: admin.firestore.FieldValue.serverTimestamp()
+                });
+            } else if (status === 'FAILED') {
+                await admin.firestore().collection('transactions').doc(referenceId).update({
+                    status: 'rejected',
+                    mtnStatus: 'FAILED'
+                });
+            }
+            res.sendStatus(200);
+        } catch (error) {
+            console.error(error);
+            res.sendStatus(500);
+        }
+    });
+});
+
+// ============================================
+// 4. NOTIFICATIONS (IYO HARI UBUTUMWA BUSHYA MU ITSINDA)
 // ============================================
 exports.sendGroupChatNotification = functions.firestore
     .document('groupChats/{messageId}')
@@ -134,15 +127,10 @@ exports.sendGroupChatNotification = functions.firestore
         const message = snap.data();
         const messageId = context.params.messageId;
         
-        if (!message.fromUid || !message.message) {
-            console.log('⚠️ Message nta fromUid cyangwa message');
-            return null;
-        }
+        if (!message.fromUid || !message.message) return null;
         
         try {
-            // ✅ Bona users BOSE (nta filter ya query)
             const usersSnap = await admin.firestore().collection('users').get();
-            
             const tokens = [];
             usersSnap.forEach(doc => {
                 const user = doc.data();
@@ -151,26 +139,18 @@ exports.sendGroupChatNotification = functions.firestore
                 }
             });
             
-            // ✅ Reba NA members (abo batari muri users)
             const membersSnap = await admin.firestore().collection('members').get();
             membersSnap.forEach(doc => {
                 const member = doc.data();
                 if (member.fcmToken && member.uid && member.uid !== message.fromUid) {
-                    // Reba niba token itarasanzwe muri tokens
                     if (!tokens.includes(member.fcmToken)) {
                         tokens.push(member.fcmToken);
                     }
                 }
             });
             
-            if (tokens.length === 0) {
-                console.log('⚠️ Nta FCM token yabonetse');
-                return null;
-            }
+            if (tokens.length === 0) return null;
             
-            console.log(`📤 Kohereza notification kuri ${tokens.length} users`);
-            
-            // ✅ Koresha sendEachForMulticast (v12+)
             const response = await admin.messaging().sendEachForMulticast({
                 tokens: tokens,
                 notification: {
@@ -184,9 +164,7 @@ exports.sendGroupChatNotification = functions.firestore
                     fromName: message.fromName || ''
                 },
                 webpush: {
-                    fcmOptions: {
-                        link: '/index.html#chat'
-                    },
+                    fcmOptions: { link: '/index.html#chat' },
                     notification: {
                         icon: message.fromPhoto || '/favicon.png',
                         badge: '/favicon.png',
@@ -196,21 +174,7 @@ exports.sendGroupChatNotification = functions.firestore
                 }
             });
             
-            console.log(`✅ Notification yoherejwe: ${response.successCount} success, ${response.failureCount} failed`);
-            
-            // ✅ Kuraho tokens zitarakora
-            if (response.failureCount > 0) {
-                const failedTokens = [];
-                response.responses.forEach((resp, idx) => {
-                    if (!resp.success) {
-                        failedTokens.push(tokens[idx]);
-                    }
-                });
-                console.log('❌ Failed tokens:', failedTokens);
-            }
-            
             return null;
-            
         } catch(e) {
             console.error('❌ Notification error:', e);
             return null;
