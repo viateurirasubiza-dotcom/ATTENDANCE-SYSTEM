@@ -3050,16 +3050,20 @@ body {
                 </div>
 
                 <!-- ============ MEMBERS ============ -->
-                <div class="page" id="page-members">
-                    <div class="page-header">
-                        <div>
-                            <h1>👥 Abaririmbyi</h1>
-                            <p>Manage abaririmbyi bose</p>
-                        </div>
-                        <button class="btn btn-primary" onclick="openAddMemberModal()">
-                            <i class="fas fa-user-plus"></i> Ongeraho
-                        </button>
-                    </div>
+              <div class="page-header">
+    <div>
+        <h1>👥 Abaririmbyi</h1>
+        <p>Manage abaririmbyi bose</p>
+    </div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn btn-danger" onclick="downloadMembersListPDF()">
+            <i class="fas fa-file-pdf"></i> Kubikura Urutonde (PDF)
+        </button>
+        <button class="btn btn-primary" onclick="openAddMemberModal()">
+            <i class="fas fa-user-plus"></i> Ongeraho
+        </button>
+    </div>
+</div>
                     <div class="filter-bar">
                         <div class="filter-group">
                             <label>Ijwi:</label>
@@ -10615,7 +10619,177 @@ window.saveAdminPermissions = async function() {
         btn.innerHTML = '<i class="fas fa-save"></i> Bika Uburenganzira';
     }
 };
+    // ============================================
+// DOWNLOAD MEMBERS LIST (PDF)
+// ============================================
+window.downloadMembersListPDF = function() {
+    // Fata abaririmbyi bakora gusa
+    const activeMembers = members.filter(m => m.status === 'active' || !m.status);
     
+    if (activeMembers.length === 0) {
+        showToast('Nta baririmbyi babonetse', 'warning');
+        return;
+    }
+    
+    // Yubaha filters ziri kuri page
+    const vf = document.getElementById('membersFilterVoice')?.value || '';
+    const lf = document.getElementById('membersFilterLevel')?.value || '';
+    const st = document.getElementById('membersSearch')?.value.toLowerCase().trim() || '';
+    
+    let filtered = [...activeMembers].sort((a, b) => 
+        (a.name || '').localeCompare(b.name || '')
+    );
+    
+    if (vf) filtered = filtered.filter(m => m.voice === vf);
+    if (lf) filtered = filtered.filter(m => m.level === lf);
+    if (st) filtered = filtered.filter(m => 
+        (m.name || '').toLowerCase().includes(st) || 
+        (m.number || '').toLowerCase().includes(st) || 
+        (m.memberId || '').toLowerCase().includes(st)
+    );
+    
+    if (filtered.length === 0) {
+        showToast('Nta baririmbyi bahuye na filter', 'warning');
+        return;
+    }
+    
+    // ============================================
+    // KUBARA STATS
+    // ============================================
+    const soprano = filtered.filter(m => m.voice === 'Soprano').length;
+    const alto    = filtered.filter(m => m.voice === 'Alto').length;
+    const tenor   = filtered.filter(m => m.voice === 'Tenor').length;
+    const bass    = filtered.filter(m => m.voice === 'Bass').length;
+    
+    const today = new Date();
+    const dateStr = `${String(today.getDate()).padStart(2,'0')}/${String(today.getMonth()+1).padStart(2,'0')}/${today.getFullYear()}`;
+    const timeStr = `${String(today.getHours()).padStart(2,'0')}:${String(today.getMinutes()).padStart(2,'0')}`;
+    const choirName = currentUserData?.choirName || 'HCFC CHOIR';
+    
+    // ============================================
+    // KORA ROWS ZA TABLE
+    // ============================================
+    const rows = filtered.map((m, i) => {
+        const levelLabel = m.level === 'Special' ? '⭐ Special' : (m.level || '-');
+        return `<tr>
+            <td style="text-align:center;font-weight:700;color:#64748b;">${i + 1}</td>
+            <td>
+                <div style="font-weight:700;color:#1e293b;">${m.name || '-'}</div>
+                ${m.email ? `<div style="font-size:10px;color:#64748b;">${m.email}</div>` : ''}
+            </td>
+            <td style="font-family:monospace;font-size:11px;font-weight:600;">${m.memberId || '-'}</td>
+            <td>${m.number || '-'}</td>
+            <td><span style="padding:3px 8px;border-radius:50px;font-size:10px;font-weight:700;background:${m.level === 'Special' ? 'rgba(139,92,246,0.15);color:#8b5cf6' : 'rgba(56,189,248,0.12);color:#0284c7'};">${levelLabel}</span></td>
+            <td><span style="padding:3px 8px;border-radius:50px;font-size:10px;font-weight:700;background:${
+                m.voice === 'Soprano' ? 'rgba(236,72,153,0.12);color:#ec4899' :
+                m.voice === 'Alto'    ? 'rgba(6,182,212,0.12);color:#06b6d4' :
+                m.voice === 'Tenor'   ? 'rgba(245,158,11,0.12);color:#f59e0b' :
+                                        'rgba(16,185,129,0.12);color:#10b981'
+            };">${m.voice || '-'}</span></td>
+            <td style="font-size:11px;color:#475569;">${m.birthday ? formatDate(m.birthday) : '-'}</td>
+        </tr>`;
+    }).join('');
+    
+    // ============================================
+    // KORA HTML YA PDF
+    // ============================================
+    const w = window.open('', '_blank');
+    w.document.write(`<!DOCTYPE html><html><head>
+        <meta charset="UTF-8">
+        <title>Urutonde rw'Abaririmbyi — ${choirName}</title>
+        <style>
+            *{margin:0;padding:0;box-sizing:border-box}
+            body{font-family:'Segoe UI',Arial,sans-serif;padding:30px 35px;color:#1e293b;background:white;}
+            
+            /* HEADER */
+            .header{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:16px;border-bottom:3px solid #38bdf8;margin-bottom:20px;}
+            .header-left h1{font-size:22px;font-weight:800;color:#0284c7;margin-bottom:4px;}
+            .header-left h2{font-size:14px;font-weight:600;color:#475569;}
+            .header-left p{font-size:11px;color:#94a3b8;margin-top:6px;}
+            .header-right{text-align:right;font-size:11px;color:#64748b;line-height:1.6;}
+            .header-right .badge{display:inline-block;background:#38bdf8;color:white;padding:6px 14px;border-radius:50px;font-size:12px;font-weight:800;margin-bottom:8px;}
+            
+            /* STATS */
+            .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px;}
+            .stat{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px;text-align:center;}
+            .stat .value{font-size:22px;font-weight:800;line-height:1;margin-bottom:4px;}
+            .stat .label{font-size:9px;text-transform:uppercase;color:#64748b;font-weight:700;letter-spacing:0.5px;}
+            .stat.total .value{color:#0284c7;}
+            .stat.soprano .value{color:#ec4899;}
+            .stat.alto .value{color:#06b6d4;}
+            .stat.tenor .value{color:#f59e0b;}
+            .stat.bass .value{color:#10b981;}
+            
+            /* TABLE */
+            table{width:100%;border-collapse:collapse;font-size:11px;}
+            thead th{background:linear-gradient(135deg,#38bdf8,#0ea5e9);color:white;padding:10px 8px;text-align:left;font-size:9.5px;text-transform:uppercase;font-weight:800;letter-spacing:0.5px;}
+            tbody td{padding:9px 8px;border-bottom:1px solid #e2e8f0;vertical-align:middle;}
+            tbody tr:nth-child(even) td{background:#f8fafc;}
+            tbody tr:hover td{background:#e0f2fe;}
+            
+            /* FOOTER */
+            .footer{margin-top:24px;padding-top:14px;border-top:1px solid #e2e8f0;text-align:center;font-size:10px;color:#94a3b8;}
+            .footer strong{color:#0284c7;}
+            
+            @media print {
+                body{padding:15px 20px;}
+                .header{padding-bottom:10px;}
+                thead{display:table-header-group;}
+                tr{page-break-inside:avoid;}
+            }
+            @page { size: A4 landscape; margin: 12mm; }
+        </style>
+    </head><body>
+        <div class="header">
+            <div class="header-left">
+                <h1>🎵 ${choirName}</h1>
+                <h2>Urutonde rw'Abaririmbyi Bose</h2>
+                <p>📅 ${dateStr} &nbsp;•&nbsp; 🕐 ${timeStr}</p>
+            </div>
+            <div class="header-right">
+                <div class="badge">${filtered.length} Abaririmbyi</div>
+                ${vf || lf ? `<div style="font-size:10px;">Filter: ${[vf, lf].filter(Boolean).join(' • ')}</div>` : ''}
+            </div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat total"><div class="value">${filtered.length}</div><div class="label">Bose</div></div>
+            <div class="stat soprano"><div class="value">${soprano}</div><div class="label">Soprano</div></div>
+            <div class="stat alto"><div class="value">${alto}</div><div class="label">Alto</div></div>
+            <div class="stat tenor"><div class="value">${tenor}</div><div class="label">Tenor</div></div>
+            <div class="stat bass"><div class="value">${bass}</div><div class="label">Bass</div></div>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:35px;text-align:center;">#</th>
+                    <th>Amazina</th>
+                    <th style="width:80px;">Nimero (ID)</th>
+                    <th style="width:95px;">Telefone</th>
+                    <th style="width:80px;">Level</th>
+                    <th style="width:80px;">Ijwi</th>
+                    <th style="width:85px;">Birthday</th>
+                </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+        </table>
+        
+        <div class="footer">
+            Icyorezo: <strong>${choirName}</strong> — Attendance System &nbsp;•&nbsp; ${dateStr} ${timeStr}
+        </div>
+        
+        <script>
+            window.onload = function() {
+                setTimeout(function() { window.print(); }, 400);
+            };
+        <\/script>
+    </body></html>`);
+    w.document.close();
+    
+    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+    showToast(`📄 PDF iri korwa... Hitamo "Save as PDF" muri print dialog`, 'info');
+};
 </script>
 </body>
 </html>
