@@ -4577,14 +4577,6 @@ body {
             <button class="close-btn" onclick="closeModal('memberPaymentModal')"><i class="fas fa-times"></i></button>
         </div>
         
-        <!-- Aha werekana nimero ya MTN ya Choir -->
-        <div style="background: rgba(56,189,248,0.1); border: 1px dashed var(--primary); border-radius: 12px; padding: 16px; margin-bottom: 20px; text-align: center;">
-            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 6px;">Shyira kuri MTN MoMo:</p>
-            <h2 style="font-size: 24px; font-weight: 800; color: var(--primary); letter-spacing: 1px;">0788 123 456</h2>
-            <p style="font-size: 13px; font-weight: 600; margin-top: 4px;">Izina: HCFC CHOIR</p>
-            <p style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">Koresha code: <strong>*182*1*1*0788123456*AMAFARANGA#</strong></p>
-        </div>
-
         <div class="form-group">
             <label>Ubwoko bw'Ubwishyu <span>*</span></label>
             <select class="form-control" id="memberPayType">
@@ -4601,7 +4593,7 @@ body {
         </div>
         
         <div class="form-group">
-            <label>Nimero ya Telefone Yakoreshejwe <span>*</span></label>
+            <label>Nimero ya Telefone (MTN MoMo) <span>*</span></label>
             <input type="tel" class="form-control" id="memberPayPhone" placeholder="Urugero: 0788123456" maxlength="10">
         </div>
         
@@ -4613,11 +4605,12 @@ body {
         <div class="modal-actions">
             <button class="btn btn-outline" onclick="closeModal('memberPaymentModal')">Hagarika</button>
             <button class="btn btn-primary" id="memberPayBtn" onclick="submitMemberPayment()">
-                <i class="fas fa-check-circle"></i> Nishyuye (Ohereza kwa Comptable)
+                <i class="fas fa-paper-plane"></i> Ohereza kwa Comptable
             </button>
         </div>
     </div>
 </div>
+
 
     <!-- ===== ADD TRANSACTION MODAL ===== -->
     <div class="modal-overlay" id="addTransactionModal">
@@ -9772,84 +9765,75 @@ window.addEventListener('appinstalled', () => {
             document.getElementById('memberPaymentModal').classList.add('active');
         };
 
-      window.submitMemberPayment = async function() {
+  window.submitMemberPayment = async function() {
     const type = document.getElementById('memberPayType').value;
     const amount = parseFloat(document.getElementById('memberPayAmount').value);
     const phone = document.getElementById('memberPayPhone').value.trim();
     const description = document.getElementById('memberPayDescription').value.trim();
     
-    if (!amount || amount <= 0) { showToast('Shyiramo amafaranga', 'warning'); return; }
-    if (!phone || phone.length < 10) { showToast('Shyiramo nimero ya telefone yuzuye (10 imibare)', 'warning'); return; }
+    if (!amount || amount <= 0) { 
+        showToast('Shyiramo amafaranga', 'warning'); 
+        return; 
+    }
+    if (!phone || phone.length < 10) { 
+        showToast('Shyiramo nimero yuzuye (10 imibare)', 'warning'); 
+        return; 
+    }
     
-    const memberId = currentUserData.memberId;
-    const member = members.find(m => m.id === memberId);
-    if (!member) { showToast('Ntabwo wabonetse muri sisitemu', 'error'); return; }
-    
+    // Hindura nimero ngo ibe muri format ya MTN (250...)
+    let cleanPhone = phone;
+    if (cleanPhone.startsWith('0')) {
+        cleanPhone = '25' + cleanPhone;
+    }
+
     const btn = document.getElementById('memberPayBtn');
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turaohereza...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turahuza na MTN...';
     
     try {
-        const date = new Date().toISOString().split('T')[0];
-        const finalDescription = description || `${member.name} - MoMo (${phone})`;
-        
-        // Bika nka pending mu transactions
-        const txRef = await addDoc(collection(db, 'transactions'), {
-            type: 'income',
-            amount: amount,
-            category: type,
-            description: finalDescription,
-            memberId: member.id,
-            memberName: member.name,
-            memberPhoto: member.photo || null,
-            paymentMethod: 'MTN MoMo',
-            phoneNumber: phone, // Bika nimero yakoreshejwe
-            date: date,
-            status: 'pending', // Bitegereje kwemezwa na Comptable
-            createdAt: serverTimestamp(),
-            createdBy: currentUser.uid,
-            createdByName: currentUserData.name || currentUser.email
+        // Iyi ni URL ya Firebase Function yawe (Reba niba ari yo)
+        const response = await fetch('https://us-central1-choir-system-9745a.cloudfunctions.net/requestMomoPayment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                phone: cleanPhone,
+                amount: amount,
+                memberId: currentUserData.memberId,
+                memberName: currentUserData.name
+            })
         });
         
-        // Notification kwa Comptable
-        await addDoc(collection(db, 'financeNotifications'), {
-            type: 'payment_request',
-            transactionId: txRef.id,
-            memberId: member.id,
-            memberName: member.name,
-            memberPhoto: member.photo || null,
-            amount: amount,
-            category: type,
-            method: 'MTN MoMo',
-            phoneNumber: phone,
-            description: finalDescription,
-            status: 'unread',
-            createdAt: serverTimestamp(),
-            targetRole: 'comptable'
-        });
+        const data = await response.json();
         
-        confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
-        showToast(`✅ Ubwishyu bwoherejwe kwa Comptable!`, 'success');
-        showToast(`⏳ Bitegereje kwemezwa na Comptable`, 'info');
-        
-        closeModal('memberPaymentModal');
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-check-circle"></i> Nishyuye (Ohereza kwa Comptable)';
-        
-        document.getElementById('memberPayAmount').value = '';
-        document.getElementById('memberPayPhone').value = '';
-        
-        if (typeof loadTransactions === 'function') await loadTransactions();
-        if (typeof renderMyDashboard === 'function') renderMyDashboard();
-        if (typeof renderMyFinance === 'function') renderMyFinance();
+        if (response.ok) {
+            showToast('📱 Ubutumwa bwoherejwe kuri telefone yawe!', 'success');
+            showToast('🔐 Injiza PIN yawe ya MTN MoMo', 'info');
+            
+            // Funga modal hanyuma usibe amakuru
+            closeModal('memberPaymentModal');
+            document.getElementById('memberPayAmount').value = '';
+            document.getElementById('memberPayPhone').value = '';
+            document.getElementById('memberPayDescription').value = '';
+            
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Ohereza kwa Comptable';
+            
+            // Tegereza gato hanyuma uvugurure amakuru (kuko bizaba pending)
+            setTimeout(() => {
+                if (typeof loadTransactions === 'function') loadTransactions();
+                if (typeof renderMyFinance === 'function') renderMyFinance();
+            }, 3000);
+            
+        } else {
+            throw new Error(data.error || 'Ikibazo cyabaye');
+        }
         
     } catch (error) {
         showToast('❌ ' + error.message, 'error');
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-check-circle"></i> Nishyuye (Ohereza kwa Comptable)';
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Ohereza kwa Comptable';
     }
 };
-        // ============================================
         // MEMBER FINANCE PAGE
         // ============================================
         window.renderMyFinance = function() {
