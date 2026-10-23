@@ -5393,6 +5393,15 @@ try {
             } catch (e) { contributions = []; }
         }
 
+        async function loadSocialMedia() {
+            try {
+                const q = query(collection(db, 'socialMedia'), orderBy('createdAt', 'asc'));
+                const snap = await getDocs(q);
+                window.socialMedia = [];
+                snap.forEach(d => window.socialMedia.push({ id: d.id, ...d.data() }));
+            } catch (e) { window.socialMedia = []; }
+        }
+
         // ============================================
         // PRESENCE
         // ============================================
@@ -5591,7 +5600,7 @@ await loadAnnouncements();
 await loadAdminInvitations();
 await loadTransactions();
 await loadContributions();
-await loadSocialMedia();  // 👈 IYI NI YO YARI IBURAYE
+await loadSocialMedia();
 console.log('✅ All data loaded');
 
 await new Promise(resolve => setTimeout(resolve, 300));
@@ -5615,152 +5624,170 @@ enterApp();
             }, 1000);
         }
 
-window.switchPage = function(page, element) {
-    const role = currentUserData?.role;
-    const isSuperAdmin = role === 'super_admin';
-    const isMember = role === 'member';
-    const isAdmin = role === 'admin' || role === 'comptable';
-    const showMemberView = isMember || isAdmin;
-    
-    // Paji zibonwa na Super Admin gusa
-    const superAdminPages = [
-        'dashboard', 'create', 'members', 'pending', 'attendance', 
-        'voices', 'photos', 'reports', 'uniform', 'birthday',
-        'finance', 'payment-requests', 'contributions', 'transactions',
-        'finance-reports', 'social-media', 'users', 'recycle-bin', 'settings'
-    ];
-    
-    // Niba ari Admin/Member agerageza kujya kuri paji ya Super Admin
-    if (showMemberView && superAdminPages.includes(page)) {
-        showToast('❌ Ntabwo wemerewe kubona iyi paji', 'error');
-        page = 'my-dashboard';
-        element = null;
-    }
-    
-    const previousPage = window._currentPage || 'dashboard';
-    
-    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-    if (element) element.classList.add('active');
-    
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    const pageEl = document.getElementById('page-' + page);
-    if (pageEl) pageEl.classList.add('active');
-    
-    window._currentPage = page;
-    
-    if (page === 'members') renderMembers();
-    if (page === 'pending') renderPending();
-    if (page === 'users') renderUsers();
-    if (page === 'my-dashboard') renderMyDashboard();
-    if (page === 'my-finance') renderMyFinance();
-    if (page === 'payment-requests') renderPaymentRequests();
-    if (page === 'attendance') renderAttendancePage();
-    if (page === 'voices') renderVoicesPage();
-    if (page === 'photos') renderPhotosPage();
-    if (page === 'reports') initReportsPage();
-    if (page === 'profile') updateProfileUI();
-    if (page === 'uniform') {
-        if (currentUniformTab === 'checklist') renderChecklist();
-        else renderUniforms();
-    }
-    if (page === 'lyrics') renderLyrics();
-    if (page === 'announcements') renderAnnouncements();
-    if (page === 'birthday') renderBirthdayPage();
-    if (page === 'recycle-bin') renderRecycleBin();
-    if (page === 'finance') renderFinance();
-    if (page === 'contributions') renderContributions();
-    if (page === 'transactions') renderTransactions();
-    if (page === 'finance-reports') initFinanceReportsPage();
-    
-    if (previousPage === 'chat' && page !== 'chat') {
-        if (typeof window.markGroupMessagesAsRead === 'function') {
-            setTimeout(() => {
-                window.markGroupMessagesAsRead();
-            }, 300);
-        }
-    }
-    
-    if (page === 'chat') initChatPage();
-    
-    if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-};
+        // ============================================
+        // SWITCH PAGE (IMWE GUSA — IFITE PROTECTION YUZUYE)
+        // ============================================
+        window.switchPage = function(page, element) {
+            const role = currentUserData?.role;
+            const isSuperAdmin = role === 'super_admin';
+            const isMember = role === 'member';
+            const isAdmin = role === 'admin' || role === 'comptable';
+            const showMemberView = isMember || isAdmin;
+            
+            // Paji zibonwa na Super Admin gusa
+            const superAdminPages = [
+                'dashboard', 'create', 'members', 'pending', 'attendance', 
+                'voices', 'photos', 'reports', 'uniform', 'birthday',
+                'finance', 'payment-requests', 'contributions', 'transactions',
+                'finance-reports', 'social-media', 'users', 'recycle-bin', 'settings',
+                'lyrics', 'announcements'
+            ];
+            
+            // Niba ari Admin/Member agerageza kujya kuri paji ya Super Admin
+            if (showMemberView && superAdminPages.includes(page)) {
+                showToast('❌ Ntabwo wemerewe kubona iyi paji', 'error');
+                page = 'my-dashboard';
+                element = null;
+            }
+            
+            const previousPage = window._currentPage || 'dashboard';
+            
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            if (element) element.classList.add('active');
+            
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const pageEl = document.getElementById('page-' + page);
+            if (pageEl) pageEl.classList.add('active');
+            
+            window._currentPage = page;
+            
+            if (page === 'members') renderMembers();
+            if (page === 'pending') renderPending();
+            if (page === 'users') renderUsers();
+            if (page === 'my-dashboard') renderMyDashboard();
+            if (page === 'my-finance') renderMyFinance();
+            if (page === 'payment-requests') renderPaymentRequests();
+            if (page === 'attendance') renderAttendancePage();
+            if (page === 'voices') renderVoicesPage();
+            if (page === 'photos') renderPhotosPage();
+            if (page === 'reports') initReportsPage();
+            if (page === 'profile') updateProfileUI();
+            if (page === 'uniform') {
+                if (currentUniformTab === 'checklist') renderChecklist();
+                else renderUniforms();
+            }
+            if (page === 'lyrics') renderLyrics();
+            if (page === 'announcements') renderAnnouncements();
+            if (page === 'birthday') renderBirthdayPage();
+            if (page === 'recycle-bin') renderRecycleBin();
+            if (page === 'finance') renderFinance();
+            if (page === 'contributions') renderContributions();
+            if (page === 'transactions') renderTransactions();
+            if (page === 'finance-reports') initFinanceReportsPage();
+            
+            if (previousPage === 'chat' && page !== 'chat') {
+                if (typeof window.markGroupMessagesAsRead === 'function') {
+                    setTimeout(() => {
+                        window.markGroupMessagesAsRead();
+                    }, 300);
+                }
+            }
+            
+            if (page === 'chat') initChatPage();
+            
+            if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        // ============================================
+        // ENTER APP (ADMIN = UMURIRIMBYI)
+        // ============================================
         async function enterApp() {
-    const authScreen = document.getElementById('authScreen');
-    const appEl = document.getElementById('app');
-    const ls = document.getElementById('loadingScreen');
-    
-    if (authScreen) { authScreen.classList.add('hidden'); authScreen.style.display = 'none'; }
-    if (appEl) { appEl.classList.add('active'); appEl.style.display = 'block'; }
-    if (ls) { ls.classList.add('hidden'); ls.style.display = 'none'; }
-    
-    const role = currentUserData?.role;
-    const isSuperAdmin = role === 'super_admin';
-    const isMember = role === 'member';
-    const isAdmin = role === 'admin' || role === 'comptable';
-    const showMemberView = isMember || isAdmin;
-    
-    if (showMemberView) {
-        document.querySelectorAll('.super-admin-only').forEach(el => el.style.display = 'none');
-        document.querySelectorAll('.nav-item.super-admin-only').forEach(item => item.style.display = 'none');
-        document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
-        document.querySelectorAll('.nav-item.admin-only').forEach(item => item.style.display = 'none');
-        document.querySelectorAll('.member-only').forEach(el => el.style.display = '');
-    } else if (isSuperAdmin) {
-        document.querySelectorAll('.member-only').forEach(el => el.style.display = 'none');
-        document.querySelectorAll('.admin-only').forEach(el => el.style.display = '');
-        document.querySelectorAll('.super-admin-only').forEach(el => el.style.display = '');
-        document.querySelectorAll('.nav-item.super-admin-only').forEach(item => item.style.display = '');
-    }
-    
-    updateProfileUI();
-    
-    if (showMemberView) {
-        switchPage('my-dashboard', null);
-    } else {
-        switchPage('dashboard', null);
-        try { renderDashboard(); } catch(e) { console.error(e); }
-        try { renderMembers(); } catch(e) { console.error(e); }
-        try { renderAttendancePage(); } catch(e) { console.error(e); }
-        try { renderPhotosPage(); } catch(e) { console.error(e); }
-    }
-    
-    try { initPresence(); } catch(e) { console.error('❌ Presence error:', e); }
-    try { startUnreadListener(); } catch(e) { console.error('❌ Unread listener error:', e); }
-    
-    try {
-        if ('Notification' in window && Notification.permission === 'default') {
-            setTimeout(async () => {
-                try {
-                    const permission = await Notification.requestPermission();
-                    if (permission === 'granted') {
+            const authScreen = document.getElementById('authScreen');
+            const appEl = document.getElementById('app');
+            const ls = document.getElementById('loadingScreen');
+            
+            if (authScreen) { authScreen.classList.add('hidden'); authScreen.style.display = 'none'; }
+            if (appEl) { appEl.classList.add('active'); appEl.style.display = 'block'; }
+            if (ls) { ls.classList.add('hidden'); ls.style.display = 'none'; }
+            
+            const role = currentUserData?.role;
+            const isSuperAdmin = role === 'super_admin';
+            const isMember = role === 'member';
+            const isAdmin = role === 'admin' || role === 'comptable';
+            const showMemberView = isMember || isAdmin;
+            
+            if (showMemberView) {
+                document.querySelectorAll('.super-admin-only').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.nav-item.super-admin-only').forEach(item => item.style.display = 'none');
+                document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.nav-item.admin-only').forEach(item => item.style.display = 'none');
+                
+                // Hisha nav-items za Lyrics na Announcements kuri Admin/Member
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    const onclick = item.getAttribute('onclick') || '';
+                    if (onclick.includes("'lyrics'") || onclick.includes("'announcements'")) {
+                        item.style.display = 'none';
+                    }
+                });
+                
+                document.querySelectorAll('.member-only').forEach(el => el.style.display = '');
+            } else if (isSuperAdmin) {
+                document.querySelectorAll('.member-only').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.admin-only').forEach(el => el.style.display = '');
+                document.querySelectorAll('.super-admin-only').forEach(el => el.style.display = '');
+                document.querySelectorAll('.nav-item.super-admin-only').forEach(item => item.style.display = '');
+            }
+            
+            updateProfileUI();
+            
+            if (showMemberView) {
+                switchPage('my-dashboard', null);
+            } else {
+                switchPage('dashboard', null);
+                try { renderDashboard(); } catch(e) { console.error(e); }
+                try { renderMembers(); } catch(e) { console.error(e); }
+                try { renderAttendancePage(); } catch(e) { console.error(e); }
+                try { renderPhotosPage(); } catch(e) { console.error(e); }
+            }
+            
+            try { initPresence(); } catch(e) { console.error('❌ Presence error:', e); }
+            try { startUnreadListener(); } catch(e) { console.error('❌ Unread listener error:', e); }
+            
+            try {
+                if ('Notification' in window && Notification.permission === 'default') {
+                    setTimeout(async () => {
+                        try {
+                            const permission = await Notification.requestPermission();
+                            if (permission === 'granted') {
+                                if (typeof window.registerFCMToken === 'function') {
+                                    await window.registerFCMToken();
+                                }
+                            }
+                        } catch(e) {}
+                    }, 2000);
+                } else if (Notification.permission === 'granted') {
+                    setTimeout(async () => {
                         if (typeof window.registerFCMToken === 'function') {
                             await window.registerFCMToken();
                         }
-                    }
-                } catch(e) {}
-            }, 2000);
-        } else if (Notification.permission === 'granted') {
-            setTimeout(async () => {
-                if (typeof window.registerFCMToken === 'function') {
-                    await window.registerFCMToken();
+                    }, 2000);
                 }
-            }, 2000);
+                
+                if (typeof window.setupForegroundNotifications === 'function') {
+                    window.setupForegroundNotifications();
+                }
+            } catch(e) {
+                console.error('❌ FCM setup error:', e);
+            }
+            
+            const today = new Date().toISOString().split('T')[0];
+            const sd = document.getElementById('sessionDate');
+            if (sd) sd.value = today;
+            
+            console.log('🎉 enterApp completed for:', currentUserData?.name, '| Role:', role);
         }
-        
-        if (typeof window.setupForegroundNotifications === 'function') {
-            window.setupForegroundNotifications();
-        }
-    } catch(e) {
-        console.error('❌ FCM setup error:', e);
-    }
-    
-    const today = new Date().toISOString().split('T')[0];
-    const sd = document.getElementById('sessionDate');
-    if (sd) sd.value = today;
-    
-    console.log('🎉 enterApp completed for:', currentUserData?.name, '| Role:', role);
-}
+
         // ============================================
         // NOTIFICATIONS
         // ============================================
@@ -6055,56 +6082,6 @@ window.switchPage = function(page, element) {
             document.getElementById('sidebar').classList.toggle('open'); 
         };
 
-        window.switchPage = function(page, element) {
-            const previousPage = window._currentPage || 'dashboard';
-            
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            if (element) element.classList.add('active');
-            
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            const pageEl = document.getElementById('page-' + page);
-            if (pageEl) pageEl.classList.add('active');
-            
-            window._currentPage = page;
-            
-            if (page === 'members') renderMembers();
-            if (page === 'pending') renderPending();
-            if (page === 'users') renderUsers();
-            if (page === 'my-dashboard') renderMyDashboard();
-            if (page === 'my-finance') renderMyFinance();
-            if (page === 'payment-requests') renderPaymentRequests();
-            if (page === 'attendance') renderAttendancePage();
-            if (page === 'voices') renderVoicesPage();
-            if (page === 'photos') renderPhotosPage();
-            if (page === 'reports') initReportsPage();
-            if (page === 'profile') updateProfileUI();
-            if (page === 'uniform') {
-                if (currentUniformTab === 'checklist') renderChecklist();
-                else renderUniforms();
-            }
-            if (page === 'lyrics') renderLyrics();
-            if (page === 'announcements') renderAnnouncements();
-            if (page === 'birthday') renderBirthdayPage();
-            if (page === 'recycle-bin') renderRecycleBin();
-            if (page === 'finance') renderFinance();
-            if (page === 'contributions') renderContributions();
-            if (page === 'transactions') renderTransactions();
-            if (page === 'finance-reports') initFinanceReportsPage();
-            
-            if (previousPage === 'chat' && page !== 'chat') {
-                if (typeof window.markGroupMessagesAsRead === 'function') {
-                    setTimeout(() => {
-                        window.markGroupMessagesAsRead();
-                    }, 300);
-                }
-            }
-            
-            if (page === 'chat') initChatPage();
-            
-            if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        };
-
         function updateClock() {
             const now = new Date();
             const h = String(now.getHours()).padStart(2, '0');
@@ -6120,7 +6097,7 @@ window.switchPage = function(page, element) {
         // DASHBOARD
         // ============================================
         window.renderDashboard = function() {
-            if (currentUserData?.role === 'member') return;
+            if (currentUserData?.role !== 'super_admin') return;
             
             const activeMembers = members.filter(m => m.status === 'active' || !m.status);
             const pendingMembers = members.filter(m => m.status === 'pending');
@@ -8063,56 +8040,58 @@ window.switchPage = function(page, element) {
             } catch (error) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Bika Lyrics'; showToast('❌ ' + error.message, 'error'); }
         };
 
-        window.renderLyrics = function() {
-            const grid = document.getElementById('lyricsGrid');
-            const uploadArea = document.getElementById('lyricsUploadArea');
-            if (!grid) return;
-            const typeFilter = document.getElementById('lyricsFilterType')?.value || '';
-            const search = document.getElementById('lyricsSearch')?.value.toLowerCase().trim() || '';
-            document.getElementById('statLyricsTotal').textContent = lyrics.length;
-            document.getElementById('statLyricsPDF').textContent = lyrics.filter(l => l.type === 'pdf').length;
-            document.getElementById('statLyricsPPT').textContent = lyrics.filter(l => l.type === 'ppt').length;
-            document.getElementById('statLyricsWord').textContent = lyrics.filter(l => l.type === 'word').length;
-            let filtered = [...lyrics];
-            if (typeFilter) filtered = filtered.filter(l => l.type === typeFilter);
-            if (search) filtered = filtered.filter(l => (l.title || '').toLowerCase().includes(search) || (l.description || '').toLowerCase().includes(search));
-            if (filtered.length === 0) {
-                if (uploadArea) uploadArea.style.display = (lyrics.length === 0 && currentUserData?.role !== 'member') ? 'block' : 'none';
-                grid.innerHTML = `<div class="uniform-empty" style="grid-column: 1/-1;"><div class="icon"><i class="fas fa-music"></i></div><h3>Nta lyrics zirahari</h3></div>`;
-                return;
-            }
-            if (uploadArea) uploadArea.style.display = 'none';
-            const isMember = currentUserData?.role === 'member';
-            grid.innerHTML = filtered.map(l => {
-                const date = l.uploadedAt?.toDate ? l.uploadedAt.toDate() : new Date();
-                const dateStr = `${String(date.getDate()).padStart(2,'0')}/${String(date.getMonth()+1).padStart(2,'0')}/${date.getFullYear()}`;
-                let iconClass = 'fa-file-alt', typeLabel = 'Text';
-                if (l.type === 'pdf') { iconClass = 'fa-file-pdf'; typeLabel = 'PDF'; }
-                else if (l.type === 'word') { iconClass = 'fa-file-word'; typeLabel = 'Word'; }
-                else if (l.type === 'ppt') { iconClass = 'fa-file-powerpoint'; typeLabel = 'PowerPoint'; }
-                
-                return `<div class="lyrics-card">
-                    <div class="lyrics-preview" onclick="viewLyrics('${l.id}')">
-                        <i class="fas ${iconClass} lyrics-preview-icon"></i>
-                        <div class="lyrics-preview-badge"><i class="fas ${iconClass}"></i> ${typeLabel}</div>
-                    </div>
-                    <div class="lyrics-info">
-                        <div>
-                            <div class="lyrics-title">${l.title}</div>
-                            <div class="lyrics-meta"><span><i class="fas fa-calendar"></i> ${dateStr}</span>${l.description ? `<span><i class="fas fa-info-circle"></i> ${l.description}</span>` : ''}</div>
-                        </div>
-                        <div class="lyrics-actions">
-                            <button class="btn btn-primary" onclick="viewLyrics('${l.id}')"><i class="fas fa-eye"></i> Reba</button>
-                            ${!isMember ? `
-                                <button class="btn btn-warning" onclick="openEditLyricsModal('${l.id}')"><i class="fas fa-edit"></i> Edit</button>
-                                <button class="btn btn-danger" onclick="deleteLyrics('${l.id}')"><i class="fas fa-trash"></i> Siba</button>
-                            ` : ''}
-                        </div>
-                    </div>
-                </div>`;
-            }).join('');
-        };
-
+       window.renderLyrics = function() {
+    const grid = document.getElementById('lyricsGrid');
+    const uploadArea = document.getElementById('lyricsUploadArea');
+    if (!grid) return;
+    const typeFilter = document.getElementById('lyricsFilterType')?.value || '';
+    const search = document.getElementById('lyricsSearch')?.value.toLowerCase().trim() || '';
+    document.getElementById('statLyricsTotal').textContent = lyrics.length;
+    document.getElementById('statLyricsPDF').textContent = lyrics.filter(l => l.type === 'pdf').length;
+    document.getElementById('statLyricsPPT').textContent = lyrics.filter(l => l.type === 'ppt').length;
+    document.getElementById('statLyricsWord').textContent = lyrics.filter(l => l.type === 'word').length;
+    let filtered = [...lyrics];
+    if (typeFilter) filtered = filtered.filter(l => l.type === typeFilter);
+    if (search) filtered = filtered.filter(l => (l.title || '').toLowerCase().includes(search) || (l.description || '').toLowerCase().includes(search));
+    if (filtered.length === 0) {
+        if (uploadArea) uploadArea.style.display = (lyrics.length === 0 && currentUserData?.role !== 'member') ? 'block' : 'none';
+        grid.innerHTML = `<div class="uniform-empty" style="grid-column: 1/-1;"><div class="icon"><i class="fas fa-music"></i></div><h3>Nta lyrics zirahari</h3></div>`;
+        return;
+    }
+    if (uploadArea) uploadArea.style.display = 'none';
+    
+    // ✅ HANO: SUPER ADMIN GUSA ASHOBORA KUBONA EDIT NA SIBA
+    const isSuperAdmin = currentUserData?.role === 'super_admin';
+    
+    grid.innerHTML = filtered.map(l => {
+        const date = l.uploadedAt?.toDate ? l.uploadedAt.toDate() : new Date();
+        const dateStr = `${String(date.getDate()).padStart(2,'0')}/${String(date.getMonth()+1).padStart(2,'0')}/${date.getFullYear()}`;
+        let iconClass = 'fa-file-alt', typeLabel = 'Text';
+        if (l.type === 'pdf') { iconClass = 'fa-file-pdf'; typeLabel = 'PDF'; }
+        else if (l.type === 'word') { iconClass = 'fa-file-word'; typeLabel = 'Word'; }
+        else if (l.type === 'ppt') { iconClass = 'fa-file-powerpoint'; typeLabel = 'PowerPoint'; }
+        
+        return `<div class="lyrics-card">
+            <div class="lyrics-preview" onclick="viewLyrics('${l.id}')">
+                <i class="fas ${iconClass} lyrics-preview-icon"></i>
+                <div class="lyrics-preview-badge"><i class="fas ${iconClass}"></i> ${typeLabel}</div>
+            </div>
+            <div class="lyrics-info">
+                <div>
+                    <div class="lyrics-title">${l.title}</div>
+                    <div class="lyrics-meta"><span><i class="fas fa-calendar"></i> ${dateStr}</span>${l.description ? `<span><i class="fas fa-info-circle"></i> ${l.description}</span>` : ''}</div>
+                </div>
+                <div class="lyrics-actions">
+                    <button class="btn btn-primary" onclick="viewLyrics('${l.id}')"><i class="fas fa-eye"></i> Reba</button>
+                    ${isSuperAdmin ? `
+                        <button class="btn btn-warning" onclick="openEditLyricsModal('${l.id}')"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="btn btn-danger" onclick="deleteLyrics('${l.id}')"><i class="fas fa-trash"></i> Siba</button>
+                    ` : ''}
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+};
         window.viewLyrics = function(id) {
             const l = lyrics.find(x => x.id === id);
             if (!l) return;
