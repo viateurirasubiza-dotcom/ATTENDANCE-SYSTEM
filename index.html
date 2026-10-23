@@ -6051,55 +6051,85 @@ enterApp();
             document.getElementById('sidebar').classList.toggle('open'); 
         };
 
-        window.switchPage = function(page, element) {
-            const previousPage = window._currentPage || 'dashboard';
-            
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            if (element) element.classList.add('active');
-            
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            const pageEl = document.getElementById('page-' + page);
-            if (pageEl) pageEl.classList.add('active');
-            
-            window._currentPage = page;
-            
-            if (page === 'members') renderMembers();
-            if (page === 'pending') renderPending();
-            if (page === 'users') renderUsers();
-            if (page === 'my-dashboard') renderMyDashboard();
-            if (page === 'my-finance') renderMyFinance();
-            if (page === 'payment-requests') renderPaymentRequests();
-            if (page === 'attendance') renderAttendancePage();
-            if (page === 'voices') renderVoicesPage();
-            if (page === 'photos') renderPhotosPage();
-            if (page === 'reports') initReportsPage();
-            if (page === 'profile') updateProfileUI();
-            if (page === 'uniform') {
-                if (currentUniformTab === 'checklist') renderChecklist();
-                else renderUniforms();
-            }
-            if (page === 'lyrics') renderLyrics();
-            if (page === 'announcements') renderAnnouncements();
-            if (page === 'birthday') renderBirthdayPage();
-            if (page === 'recycle-bin') renderRecycleBin();
-            if (page === 'finance') renderFinance();
-            if (page === 'contributions') renderContributions();
-            if (page === 'transactions') renderTransactions();
-            if (page === 'finance-reports') initFinanceReportsPage();
-            
-            if (previousPage === 'chat' && page !== 'chat') {
-                if (typeof window.markGroupMessagesAsRead === 'function') {
-                    setTimeout(() => {
-                        window.markGroupMessagesAsRead();
-                    }, 300);
-                }
-            }
-            
-            if (page === 'chat') initChatPage();
-            
-            if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        };
+       window.switchPage = function(page, element) {
+    // ============================================
+    // 1. RINDA: Member ntashobora kujya kuri paji z'Admin/Finance
+    // ============================================
+    const role = currentUserData?.role;
+    const isMember = role === 'member';
+    
+    // Paji izo umuririmbyi atemerewe kujyamo na gato
+    const blockedPagesForMember = [
+        'finance', 'payment-requests', 'contributions', 
+        'transactions', 'finance-reports', 'pending', 
+        'users', 'settings', 'recycle-bin'
+    ];
+    
+    if (isMember && blockedPagesForMember.includes(page)) {
+        showToast('❌ Ntushobora kubona aya mafaranga cyangwa aya makuru. Admin gusa!', 'error');
+        return; // Hagarika guhindura page
+    }
+
+    // ============================================
+    // 2. GUTANGIRA GUHINDURA PAGE
+    // ============================================
+    const previousPage = window._currentPage || 'dashboard';
+    
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    if (element) element.classList.add('active');
+    
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const pageEl = document.getElementById('page-' + page);
+    if (pageEl) pageEl.classList.add('active');
+    
+    window._currentPage = page;
+    
+    // ============================================
+    // 3. GUHAMAGARA FUNCTIONS ZA BURI PAJI
+    // ============================================
+    if (page === 'members') renderMembers();
+    if (page === 'pending') renderPending();
+    if (page === 'users') renderUsers();
+    if (page === 'my-dashboard') renderMyDashboard();
+    if (page === 'my-finance') renderMyFinance();
+    if (page === 'payment-requests') renderPaymentRequests();
+    if (page === 'attendance') renderAttendancePage();
+    if (page === 'voices') renderVoicesPage();
+    if (page === 'photos') renderPhotosPage();
+    if (page === 'reports') initReportsPage();
+    if (page === 'profile') updateProfileUI();
+    if (page === 'uniform') {
+        if (currentUniformTab === 'checklist') renderChecklist();
+        else renderUniforms();
+    }
+    if (page === 'lyrics') renderLyrics();
+    if (page === 'announcements') renderAnnouncements();
+    if (page === 'birthday') renderBirthdayPage();
+    if (page === 'recycle-bin') renderRecycleBin();
+    if (page === 'finance') renderFinance();
+    if (page === 'contributions') renderContributions();
+    if (page === 'transactions') renderTransactions();
+    if (page === 'finance-reports') initFinanceReportsPage();
+    
+    // ============================================
+    // 4. IBINDI BIKORWA
+    // ============================================
+    if (previousPage === 'chat' && page !== 'chat') {
+        if (typeof window.markGroupMessagesAsRead === 'function') {
+            setTimeout(() => {
+                window.markGroupMessagesAsRead();
+            }, 300);
+        }
+    }
+    
+    if (page === 'chat') initChatPage();
+    
+    if (window.innerWidth <= 900) {
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar) sidebar.classList.remove('open');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+};
 
         function updateClock() {
             const now = new Date();
