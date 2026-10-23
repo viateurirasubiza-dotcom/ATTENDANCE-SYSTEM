@@ -4577,6 +4577,14 @@ body {
             <button class="close-btn" onclick="closeModal('memberPaymentModal')"><i class="fas fa-times"></i></button>
         </div>
         
+        <!-- Aha werekana nimero ya MTN ya Choir -->
+        <div style="background: rgba(56,189,248,0.1); border: 1px dashed var(--primary); border-radius: 12px; padding: 16px; margin-bottom: 20px; text-align: center;">
+            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 6px;">Shyira kuri MTN MoMo:</p>
+            <h2 style="font-size: 24px; font-weight: 800; color: var(--primary); letter-spacing: 1px;">0788 123 456</h2>
+            <p style="font-size: 13px; font-weight: 600; margin-top: 4px;">Izina: HCFC CHOIR</p>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">Koresha code: <strong>*182*1*1*0788123456*AMAFARANGA#</strong></p>
+        </div>
+
         <div class="form-group">
             <label>Ubwoko bw'Ubwishyu <span>*</span></label>
             <select class="form-control" id="memberPayType">
@@ -4593,13 +4601,8 @@ body {
         </div>
         
         <div class="form-group">
-            <label>Uburyo bwo Kwishyura <span>*</span></label>
-            <select class="form-control" id="memberPayMethod">
-                <option value="MoMo">📱 MTN Mobile Money</option>
-                <option value="Airtel">📱 Airtel Money</option>
-                <option value="Bank">🏦 Banki</option>
-                <option value="Cash">💵 Amafaranga mu ntoki</option>
-            </select>
+            <label>Nimero ya Telefone Yakoreshejwe <span>*</span></label>
+            <input type="tel" class="form-control" id="memberPayPhone" placeholder="Urugero: 0788123456" maxlength="10">
         </div>
         
         <div class="form-group">
@@ -4610,7 +4613,7 @@ body {
         <div class="modal-actions">
             <button class="btn btn-outline" onclick="closeModal('memberPaymentModal')">Hagarika</button>
             <button class="btn btn-primary" id="memberPayBtn" onclick="submitMemberPayment()">
-                <i class="fas fa-paper-plane"></i> Ohereza kwa Comptable
+                <i class="fas fa-check-circle"></i> Nishyuye (Ohereza kwa Comptable)
             </button>
         </div>
     </div>
@@ -9769,87 +9772,83 @@ window.addEventListener('appinstalled', () => {
             document.getElementById('memberPaymentModal').classList.add('active');
         };
 
-        window.submitMemberPayment = async function() {
-            const type = document.getElementById('memberPayType').value;
-            const amount = parseFloat(document.getElementById('memberPayAmount').value);
-            const method = document.getElementById('memberPayMethod').value;
-            const description = document.getElementById('memberPayDescription').value.trim();
-            
-            if (!amount || amount <= 0) {
-                showToast('Shyiramo amafaranga', 'warning');
-                return;
-            }
-            
-            const memberId = currentUserData.memberId;
-            const member = members.find(m => m.id === memberId);
-            if (!member) {
-                showToast('Ntabwo wabonetse muri sisitemu', 'error');
-                return;
-            }
-            
-            const btn = document.getElementById('memberPayBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turaohereza...';
-            
-            try {
-                const date = new Date().toISOString().split('T')[0];
-                const finalDescription = description || `${member.name} - ${method}`;
-                
-                // 1. Bika mu ma transactions (pending)
-                const txRef = await addDoc(collection(db, 'transactions'), {
-                    type: 'income',
-                    amount: amount,
-                    category: type,
-                    description: finalDescription,
-                    memberId: member.id,
-                    memberName: member.name,
-                    memberPhoto: member.photo || null,
-                    paymentMethod: method,
-                    date: date,
-                    status: 'pending',
-                    createdAt: serverTimestamp(),
-                    createdBy: currentUser.uid,
-                    createdByName: currentUserData.name || currentUser.email
-                });
-                
-                // 2. Bika notification kwa Comptable gusa (private notification)
-                await addDoc(collection(db, 'financeNotifications'), {
-                    type: 'payment_request',
-                    transactionId: txRef.id,
-                    memberId: member.id,
-                    memberName: member.name,
-                    memberPhoto: member.photo || null,
-                    amount: amount,
-                    category: type,
-                    method: method,
-                    description: finalDescription,
-                    status: 'unread',
-                    createdAt: serverTimestamp(),
-                    targetRole: 'comptable'
-                });
-                
-                // 3. Erekana ubutumwa bwo gutsinda
-                confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
-                showToast(`✅ Ubwishyu bwoherejwe kwa Comptable!`, 'success');
-                showToast(`⏳ Bitegereje kwemezwa na Comptable`, 'info');
-                
-                // 4. Funga modal
-                closeModal('memberPaymentModal');
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-paper-plane"></i> Ohereza kwa Comptable';
-                
-                // 5. Refresh
-                if (typeof loadTransactions === 'function') await loadTransactions();
-                if (typeof renderMyDashboard === 'function') renderMyDashboard();
-                if (typeof renderMyFinance === 'function') renderMyFinance();
-                
-            } catch (error) {
-                showToast('❌ ' + error.message, 'error');
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-paper-plane"></i> Ohereza kwa Comptable';
-            }
-        };
-
+      window.submitMemberPayment = async function() {
+    const type = document.getElementById('memberPayType').value;
+    const amount = parseFloat(document.getElementById('memberPayAmount').value);
+    const phone = document.getElementById('memberPayPhone').value.trim();
+    const description = document.getElementById('memberPayDescription').value.trim();
+    
+    if (!amount || amount <= 0) { showToast('Shyiramo amafaranga', 'warning'); return; }
+    if (!phone || phone.length < 10) { showToast('Shyiramo nimero ya telefone yuzuye (10 imibare)', 'warning'); return; }
+    
+    const memberId = currentUserData.memberId;
+    const member = members.find(m => m.id === memberId);
+    if (!member) { showToast('Ntabwo wabonetse muri sisitemu', 'error'); return; }
+    
+    const btn = document.getElementById('memberPayBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turaohereza...';
+    
+    try {
+        const date = new Date().toISOString().split('T')[0];
+        const finalDescription = description || `${member.name} - MoMo (${phone})`;
+        
+        // Bika nka pending mu transactions
+        const txRef = await addDoc(collection(db, 'transactions'), {
+            type: 'income',
+            amount: amount,
+            category: type,
+            description: finalDescription,
+            memberId: member.id,
+            memberName: member.name,
+            memberPhoto: member.photo || null,
+            paymentMethod: 'MTN MoMo',
+            phoneNumber: phone, // Bika nimero yakoreshejwe
+            date: date,
+            status: 'pending', // Bitegereje kwemezwa na Comptable
+            createdAt: serverTimestamp(),
+            createdBy: currentUser.uid,
+            createdByName: currentUserData.name || currentUser.email
+        });
+        
+        // Notification kwa Comptable
+        await addDoc(collection(db, 'financeNotifications'), {
+            type: 'payment_request',
+            transactionId: txRef.id,
+            memberId: member.id,
+            memberName: member.name,
+            memberPhoto: member.photo || null,
+            amount: amount,
+            category: type,
+            method: 'MTN MoMo',
+            phoneNumber: phone,
+            description: finalDescription,
+            status: 'unread',
+            createdAt: serverTimestamp(),
+            targetRole: 'comptable'
+        });
+        
+        confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+        showToast(`✅ Ubwishyu bwoherejwe kwa Comptable!`, 'success');
+        showToast(`⏳ Bitegereje kwemezwa na Comptable`, 'info');
+        
+        closeModal('memberPaymentModal');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check-circle"></i> Nishyuye (Ohereza kwa Comptable)';
+        
+        document.getElementById('memberPayAmount').value = '';
+        document.getElementById('memberPayPhone').value = '';
+        
+        if (typeof loadTransactions === 'function') await loadTransactions();
+        if (typeof renderMyDashboard === 'function') renderMyDashboard();
+        if (typeof renderMyFinance === 'function') renderMyFinance();
+        
+    } catch (error) {
+        showToast('❌ ' + error.message, 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check-circle"></i> Nishyuye (Ohereza kwa Comptable)';
+    }
+};
         // ============================================
         // MEMBER FINANCE PAGE
         // ============================================
@@ -10009,119 +10008,132 @@ window.addEventListener('appinstalled', () => {
         // ============================================
         // PAYMENT REQUESTS (COMPTABLE)
         // ============================================
-        window.renderPaymentRequests = async function() {
-            if (currentUserData?.role !== 'admin' && currentUserData?.role !== 'super_admin' && currentUserData?.role !== 'comptable') {
-                return;
-            }
+       window.renderPaymentRequests = async function() {
+    if (currentUserData?.role !== 'admin' && currentUserData?.role !== 'super_admin' && currentUserData?.role !== 'comptable') {
+        return;
+    }
+    
+    await loadTransactions();
+    
+    const pending = transactions.filter(t => t.status === 'pending' && t.type === 'income');
+    const confirmed = transactions.filter(t => (t.status === 'confirmed' || !t.status) && t.type === 'income' && t.createdBy && t.category !== 'contribution');
+    const rejected = transactions.filter(t => t.status === 'rejected');
+    
+    document.getElementById('statPendingPayments').textContent = pending.length;
+    document.getElementById('statConfirmedPayments').textContent = confirmed.length;
+    document.getElementById('statRejectedPayments').textContent = rejected.length;
+    
+    const badge = document.getElementById('sidebarPaymentReqCount');
+    if (badge) {
+        badge.textContent = pending.length;
+        badge.style.display = pending.length > 0 ? '' : 'none';
+    }
+    
+    const list = document.getElementById('paymentRequestsList');
+    
+    if (pending.length === 0 && confirmed.length === 0 && rejected.length === 0) {
+        list.innerHTML = `<div class="empty-state">
+            <div class="icon"><i class="fas fa-check-circle"></i></div>
+            <h3>Nta bwishyu burahari</h3>
+            <p>Ubwishyu bushya buzagaragara hano</p>
+        </div>`;
+        return;
+    }
+    
+    let html = '';
+    
+    // ============================================
+    // 1. PENDING PAYMENTS (Bitegereje kwemezwa)
+    // ============================================
+    if (pending.length > 0) {
+        html += `<div class="section-title" style="margin-bottom: 16px;">
+            <i class="fas fa-clock" style="color:var(--warning);"></i>
+            <span>Bitegereje Kwemezwa</span>
+            <span class="count warning">${pending.length}</span>
+        </div>`;
+        
+        html += pending.map(t => {
+            const member = members.find(m => m.id === t.memberId);
+            const initials = (t.memberName || '?').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+            const photoHtml = t.memberPhoto || member?.photo
+                ? `<img src="${t.memberPhoto || member?.photo}" class="row-photo" style="width:50px;height:50px;" onerror="this.outerHTML='<div class=\\'row-avatar\\' style='width:50px;height:50px;'>${initials}</div>'">`
+                : `<div class="row-avatar" style="width:50px;height:50px;">${initials}</div>`;
             
-            await loadTransactions();
+            // Hano ni ho hongewe nimero ya telefone n'uburyo bwo kwishyura
+            const phoneInfo = t.phoneNumber ? `<span><i class="fas fa-phone"></i> ${t.phoneNumber}</span>` : '';
+            const methodInfo = t.paymentMethod ? `<span><i class="fas fa-mobile-alt"></i> ${t.paymentMethod}</span>` : '';
             
-            const pending = transactions.filter(t => t.status === 'pending' && t.type === 'income');
-            const confirmed = transactions.filter(t => (t.status === 'confirmed' || !t.status) && t.type === 'income' && t.createdBy && t.category !== 'contribution');
-            const rejected = transactions.filter(t => t.status === 'rejected');
-            
-            document.getElementById('statPendingPayments').textContent = pending.length;
-            document.getElementById('statConfirmedPayments').textContent = confirmed.length;
-            document.getElementById('statRejectedPayments').textContent = rejected.length;
-            
-            const badge = document.getElementById('sidebarPaymentReqCount');
-            if (badge) {
-                badge.textContent = pending.length;
-                badge.style.display = pending.length > 0 ? '' : 'none';
-            }
-            
-            const list = document.getElementById('paymentRequestsList');
-            
-            if (pending.length === 0 && confirmed.length === 0 && rejected.length === 0) {
-                list.innerHTML = `<div class="empty-state">
-                    <div class="icon"><i class="fas fa-check-circle"></i></div>
-                    <h3>Nta bwishyu burahari</h3>
-                    <p>Ubwishyu bushya buzagaragara hano</p>
-                </div>`;
-                return;
-            }
-            
-            let html = '';
-            
-            if (pending.length > 0) {
-                html += `<div class="section-title" style="margin-bottom: 16px;">
-                    <i class="fas fa-clock" style="color:var(--warning);"></i>
-                    <span>Bitegereje Kwemezwa</span>
-                    <span class="count warning">${pending.length}</span>
-                </div>`;
-                
-                html += pending.map(t => {
-                    const member = members.find(m => m.id === t.memberId);
-                    const initials = (t.memberName || '?').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-                    const photoHtml = t.memberPhoto || member?.photo
-                        ? `<img src="${t.memberPhoto || member?.photo}" class="row-photo" style="width:50px;height:50px;" onerror="this.outerHTML='<div class=\\'row-avatar\\' style='width:50px;height:50px;'>${initials}</div>'">`
-                        : `<div class="row-avatar" style="width:50px;height:50px;">${initials}</div>`;
-                    
-                    return `<div class="saved-card" style="border-left: 4px solid var(--warning); flex-direction: column; align-items: stretch;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;">
-                            <div style="display:flex; align-items:center; gap:12px; flex:1;">
-                                ${photoHtml}
-                                <div>
-                                    <h3 style="font-size:16px; margin-bottom:4px;">${t.memberName || 'Umuririmbyi'}</h3>
-                                    <div class="saved-meta">
-                                        <span><i class="fas fa-calendar"></i> ${formatDate(t.date)}</span>
-                                        <span><i class="fas fa-tag"></i> ${t.category}</span>
-                                        <span><i class="fas fa-mobile-alt"></i> ${t.paymentMethod || '-'}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div style="text-align:right;">
-                                <div style="font-size:22px; font-weight:800; color:var(--success);">+ ${formatMoney(t.amount)}</div>
-                                <div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">${t.description || ''}</div>
-                            </div>
-                        </div>
-                        <div style="display:flex; gap:8px; margin-top:16px; flex-wrap:wrap;">
-                            <button class="btn btn-success" onclick="approvePayment('${t.id}')" style="flex:1;">
-                                <i class="fas fa-check"></i> Emeza
-                            </button>
-                            <button class="btn btn-danger" onclick="rejectPayment('${t.id}')" style="flex:1;">
-                                <i class="fas fa-times"></i> Anze
-                            </button>
-                        </div>
-                    </div>`;
-                }).join('');
-            }
-            
-            const history = [...confirmed, ...rejected].sort((a, b) => {
-                if (!a.date) return 1;
-                if (!b.date) return -1;
-                return b.date.localeCompare(a.date);
-            }).slice(0, 20);
-            
-            if (history.length > 0) {
-                html += `<div class="section-title" style="margin-top: 24px; margin-bottom: 16px;">
-                    <i class="fas fa-history"></i>
-                    <span>Amateka</span>
-                </div>`;
-                
-                html += history.map(t => {
-                    const isRejected = t.status === 'rejected';
-                    const statusBadge = isRejected
-                        ? `<span class="uniform-status has-not"><i class="fas fa-times"></i> Byanzwe</span>`
-                        : `<span class="uniform-status has"><i class="fas fa-check"></i> Byemejwe</span>`;
-                    
-                    return `<div class="saved-card" style="opacity:0.85;">
-                        <div class="saved-info">
-                            <h3><i class="fas fa-user"></i> ${t.memberName || 'Umuririmbyi'}</h3>
+            return `<div class="saved-card" style="border-left: 4px solid var(--warning); flex-direction: column; align-items: stretch;">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;">
+                    <div style="display:flex; align-items:center; gap:12px; flex:1;">
+                        ${photoHtml}
+                        <div>
+                            <h3 style="font-size:16px; margin-bottom:4px;">${t.memberName || 'Umuririmbyi'}</h3>
                             <div class="saved-meta">
                                 <span><i class="fas fa-calendar"></i> ${formatDate(t.date)}</span>
                                 <span><i class="fas fa-tag"></i> ${t.category}</span>
-                                <span><i class="fas fa-coins"></i> ${formatMoney(t.amount)}</span>
+                                ${methodInfo}
+                                ${phoneInfo}
                             </div>
                         </div>
-                        ${statusBadge}
-                    </div>`;
-                }).join('');
-            }
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-size:22px; font-weight:800; color:var(--success);">+ ${formatMoney(t.amount)}</div>
+                        <div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">${t.description || ''}</div>
+                    </div>
+                </div>
+                <div style="display:flex; gap:8px; margin-top:16px; flex-wrap:wrap;">
+                    <button class="btn btn-success" onclick="approvePayment('${t.id}')" style="flex:1;">
+                        <i class="fas fa-check"></i> Emeza
+                    </button>
+                    <button class="btn btn-danger" onclick="rejectPayment('${t.id}')" style="flex:1;">
+                        <i class="fas fa-times"></i> Anze
+                    </button>
+                </div>
+            </div>`;
+        }).join('');
+    }
+    
+    // ============================================
+    // 2. HISTORY (Amateka: Byemejwe & Byanzwe)
+    // ============================================
+    const history = [...confirmed, ...rejected].sort((a, b) => {
+        if (!a.date) return 1;
+        if (!b.date) return -1;
+        return b.date.localeCompare(a.date);
+    }).slice(0, 20);
+    
+    if (history.length > 0) {
+        html += `<div class="section-title" style="margin-top: 24px; margin-bottom: 16px;">
+            <i class="fas fa-history"></i>
+            <span>Amateka</span>
+        </div>`;
+        
+        html += history.map(t => {
+            const isRejected = t.status === 'rejected';
+            const statusBadge = isRejected
+                ? `<span class="uniform-status has-not"><i class="fas fa-times"></i> Byanzwe</span>`
+                : `<span class="uniform-status has"><i class="fas fa-check"></i> Byemejwe</span>`;
             
-            list.innerHTML = html;
-        };
-
+            // Hano na ho hongewe nimero ya telefone mu mateka
+            const phoneInfo = t.phoneNumber ? ` • <i class="fas fa-phone"></i> ${t.phoneNumber}` : '';
+            
+            return `<div class="saved-card" style="opacity:0.85;">
+                <div class="saved-info">
+                    <h3><i class="fas fa-user"></i> ${t.memberName || 'Umuririmbyi'}</h3>
+                    <div class="saved-meta">
+                        <span><i class="fas fa-calendar"></i> ${formatDate(t.date)}</span>
+                        <span><i class="fas fa-tag"></i> ${t.category}</span>
+                        <span><i class="fas fa-coins"></i> ${formatMoney(t.amount)}${phoneInfo}</span>
+                    </div>
+                </div>
+                ${statusBadge}
+            </div>`;
+        }).join('');
+    }
+    
+    list.innerHTML = html;
+};
         window.approvePayment = async function(id) {
             if (!confirm('Emeza ubu bwishyu?')) return;
             try {
