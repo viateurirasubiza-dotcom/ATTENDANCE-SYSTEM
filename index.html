@@ -1911,58 +1911,28 @@ body {
 }
 .chat-empty i { font-size: 60px; opacity: 0.3; margin-bottom: 16px; }
 .chat-empty h3 { font-size: 17px; color: var(--text); margin-bottom: 6px; }
-/* ============================================
-   CHAT - FULL SCREEN KURI TELEFONE (MOBILE)
-   ============================================ */
 @media (max-width: 768px) {
-    /* 1. Kuraho padding ya .main kuri page ya chat gusa */
-    #page-chat.active {
-        padding: 0 !important;
-        margin: 0 !important;
-        height: calc(100vh - 71px) !important; /* 71px ni header */
-        overflow: hidden !important;
-    }
-
-    /* 2. Chat layout ifata umwanya wose */
     .chat-layout { 
         grid-template-columns: 1fr !important; 
-        height: 100% !important; /* Yuzuye */
-        min-height: 100% !important;
-        gap: 0 !important;
+        height: calc(100vh - 150px) !important; 
+        min-height: 450px;
     }
-    
-    /* 3. Hisha sidebar (urutonde rw'amatsinda) */
     .chat-sidebar { 
         display: none !important; 
     }
-    
-    /* 4. Chat main ifata umwanya wose */
     .chat-main { 
         height: 100% !important; 
         width: 100% !important;
-        border-radius: 0 !important; /* Kuraho border radius kugira ngo ifate impande */
-        border: none !important;
+        border-radius: var(--radius);
         display: flex !important;
         flex-direction: column !important;
-        margin: 0 !important;
     }
-    
-    /* 5. Messages zuzura kandi zikagenda neza */
     .chat-messages {
         flex: 1 !important;
         overflow-y: auto !important;
-        padding: 16px !important;
     }
-    
-    /* 6. Message nto kuri telefone */
     .chat-message { 
         max-width: 85%; 
-    }
-
-    /* 7. Input bar igumaho hepfo */
-    .chat-input-bar {
-        padding: 12px 16px !important;
-        border-radius: 0 !important;
     }
 }
 
@@ -2827,7 +2797,7 @@ body {
         <div class="stat-card danger">
             <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
             <div class="stat-value" id="myAbsent">0</div>
-            <div class="stat-label">Iteraniro utaje</div>
+            <div class="stat-label">Iteraniro Wataje</div>
         </div>
         <div class="stat-card warning">
             <div class="stat-icon"><i class="fas fa-clock"></i></div>
@@ -2855,7 +2825,7 @@ body {
 
     <div class="section-title" style="margin-top: 30px;">
         <i class="fas fa-history"></i>
-        <span>Ubwitabire Bwawe (10 bwa vuba)</span>
+        <span>Ubwitabire Bwawe (10 za vuba)</span>
     </div>
     <div class="saved-list" id="myAttendanceList"></div>
 
@@ -2933,7 +2903,7 @@ body {
         <div class="stat-card danger">
             <div class="stat-icon"><i class="fas fa-hand-holding-usd"></i></div>
             <div class="stat-value" id="myTotalDebt">0 RWF</div>
-            <div class="stat-label">Amafaranga Ugombagutanga</div>
+            <div class="stat-label">Amafaranga Ugomba</div>
         </div>
         <div class="stat-card">
             <div class="stat-icon"><i class="fas fa-receipt"></i></div>
@@ -2961,7 +2931,7 @@ body {
                     <div class="page-header">
                         <div>
                             <h1>📋 Kora Attendance</h1>
-                            <p>Kanda ku muririmbyi wese — Yaje / Late / Ntabwo yaje</p>
+                            <p>Kanda ku muririmbyi wese — Yaje / Late / Ntabwo</p>
                         </div>
                         <button class="btn btn-outline" onclick="cancelCreate()">
                             <i class="fas fa-times"></i> Hagarika
@@ -3050,20 +3020,16 @@ body {
                 </div>
 
                 <!-- ============ MEMBERS ============ -->
-              <div class="page-header">
-    <div>
-        <h1>👥 Abaririmbyi</h1>
-        <p>Manage abaririmbyi bose</p>
-    </div>
-    <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <button class="btn btn-danger" onclick="downloadMembersListPDF()">
-            <i class="fas fa-file-pdf"></i>download member list (PDF)
-        </button>
-        <button class="btn btn-primary" onclick="openAddMemberModal()">
-            <i class="fas fa-user-plus"></i> Ongeraho
-        </button>
-    </div>
-</div>
+                <div class="page" id="page-members">
+                    <div class="page-header">
+                        <div>
+                            <h1>👥 Abaririmbyi</h1>
+                            <p>Manage abaririmbyi bose</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="openAddMemberModal()">
+                            <i class="fas fa-user-plus"></i> Ongeraho
+                        </button>
+                    </div>
                     <div class="filter-bar">
                         <div class="filter-group">
                             <label>Ijwi:</label>
@@ -3366,10 +3332,10 @@ body {
                                         <i class="fas fa-users"></i> Bose
                                     </button>
                                     <button class="checklist-filter" onclick="filterChecklist('have', this)">
-                                        <i class="fas fa-check-circle"></i> Abafite
+                                        <i class="fas fa-check-circle"></i> Bafite
                                     </button>
                                     <button class="checklist-filter" onclick="filterChecklist('need', this)">
-                                        <i class="fas fa-times-circle"></i> Abadafite
+                                        <i class="fas fa-times-circle"></i> Badafite
                                     </button>
                                 </div>
                             </div>
@@ -3605,7 +3571,7 @@ body {
                         <div class="finance-stat-card">
                             <div class="finance-stat-icon expense"><i class="fas fa-arrow-up"></i></div>
                             <div class="finance-stat-value expense" id="statTotalExpense">0 RWF</div>
-                            <div class="finance-stat-label">Amafaranga yasohotse</div>
+                            <div class="finance-stat-label">Amafaranga Asohotse</div>
                         </div>
                         <div class="finance-stat-card">
                             <div class="finance-stat-icon balance"><i class="fas fa-wallet"></i></div>
@@ -3640,66 +3606,39 @@ body {
                     <div class="saved-list" id="recentTransactionsList"></div>
                 </div>
 
-             <div class="page" id="page-payment-requests">
-    <div class="page-header">
-        <div>
-            <h1>💰 Kwemeza Ubwishyu</h1>
-            <p>Reba kandi wemeze ubwishyu bw'abanyamuryango</p>
-        </div>
-        <button class="btn btn-outline" onclick="renderPaymentRequests()">
-            <i class="fas fa-sync"></i> Refresh
-        </button>
-    </div>
+                <!-- ============ PAYMENT REQUESTS ============ -->
+                <div class="page" id="page-payment-requests">
+                    <div class="page-header">
+                        <div>
+                            <h1>💰 Kwemeza Ubwishyu</h1>
+                            <p>Reba kandi wemeze ubwishyu bw'abanyamuryango</p>
+                        </div>
+                        <button class="btn btn-outline" onclick="renderPaymentRequests()">
+                            <i class="fas fa-sync"></i> Refresh
+                        </button>
+                    </div>
 
-    <!-- ============================================ -->
-    <!-- STATS CARDS ZA KWEMEZA UBWISHYU -->
-    <!-- ============================================ -->
-    <div class="stats-grid" style="margin-bottom: 24px;">
-        <!-- Bitegereje (Count) -->
-        <div class="stat-card warning">
-            <div class="stat-icon"><i class="fas fa-clock"></i></div>
-            <div class="stat-value" id="statPendingPayments">0</div>
-            <div class="stat-label">Bitegereje (Count)</div>
-        </div>
+                    <div class="stats-grid" style="margin-bottom: 24px;">
+                        <div class="stat-card warning">
+                            <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                            <div class="stat-value" id="statPendingPayments">0</div>
+                            <div class="stat-label">Bitegereje</div>
+                        </div>
+                        <div class="stat-card success">
+                            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                            <div class="stat-value" id="statConfirmedPayments">0</div>
+                            <div class="stat-label">Byemejwe</div>
+                        </div>
+                        <div class="stat-card danger">
+                            <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+                            <div class="stat-value" id="statRejectedPayments">0</div>
+                            <div class="stat-label">Byanzwe</div>
+                        </div>
+                    </div>
 
-        <!-- Byemejwe (Count) -->
-        <div class="stat-card success">
-            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
-            <div class="stat-value" id="statConfirmedPayments">0</div>
-            <div class="stat-label">Byemejwe (Count)</div>
-        </div>
+                    <div class="saved-list" id="paymentRequestsList"></div>
+                </div>
 
-        <!-- Byanzwe (Count) -->
-        <div class="stat-card danger">
-            <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
-            <div class="stat-value" id="statRejectedPayments">0</div>
-            <div class="stat-label">Byanzwe (Count)</div>
-        </div>
-
-        <!-- TOTAL Y'UBWISHYU BUTEGEREJE -->
-        <div class="stat-card" style="border-left: 5px solid var(--warning);">
-            <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #fbbf24);">
-                <i class="fas fa-coins"></i>
-            </div>
-            <div class="stat-value" id="statPendingAmount" style="color: var(--warning);">0 RWF</div>
-            <div class="stat-label">Total Y'Ubwishyu Butegereje</div>
-        </div>
-
-        <!-- TOTAL Y'UBWISHYU BWEMEJWE -->
-        <div class="stat-card" style="border-left: 5px solid var(--success);">
-            <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #34d399);">
-                <i class="fas fa-check-double"></i>
-            </div>
-            <div class="stat-value" id="statConfirmedAmount" style="color: var(--success);">0 RWF</div>
-            <div class="stat-label">Total Y'Ubwishyu Bwemejwe</div>
-        </div>
-    </div>
-
-    <!-- ============================================ -->
-    <!-- URUTONDE RW'UBWISHYU -->
-    <!-- ============================================ -->
-    <div class="saved-list" id="paymentRequestsList"></div>
-</div>
                 <!-- ============ CONTRIBUTIONS ============ -->
                 <div class="page" id="page-contributions">
                     <div class="page-header">
@@ -3795,29 +3734,7 @@ body {
                         </div>
                     </div>
                 </div>
-    <!-- ===== STATS CARDS ZA TRANSACTIONS ===== -->
-    <div class="stats-grid" id="transactionStats" style="margin-bottom: 24px;">
-        <div class="finance-stat-card">
-            <div class="finance-stat-icon income"><i class="fas fa-arrow-down"></i></div>
-            <div class="finance-stat-value income" id="txStatTotalIncome">0 RWF</div>
-            <div class="finance-stat-label">Amafaranga Yinjiye</div>
-        </div>
-        <div class="finance-stat-card">
-            <div class="finance-stat-icon expense"><i class="fas fa-arrow-up"></i></div>
-            <div class="finance-stat-value expense" id="txStatTotalExpense">0 RWF</div>
-            <div class="finance-stat-label">Amafaranga Yasohotse</div>
-        </div>
-        <div class="finance-stat-card">
-            <div class="finance-stat-icon balance"><i class="fas fa-wallet"></i></div>
-            <div class="finance-stat-value balance" id="txStatBalance">0 RWF</div>
-            <div class="finance-stat-label">Balance (Ibisigaye)</div>
-        </div>
-        <div class="finance-stat-card">
-            <div class="finance-stat-icon contrib"><i class="fas fa-list"></i></div>
-            <div class="finance-stat-value contrib" id="txStatCount">0</div>
-            <div class="finance-stat-label">Transactions Zose</div>
-        </div>
-    </div>
+
                 <!-- ============ FINANCE REPORTS ============ -->
                 <div class="page" id="page-finance-reports">
                     <div class="page-header">
@@ -3877,22 +3794,7 @@ body {
                         </div>
                     </div>
                 </div>
-<!-- ===== MODAL YO GUSHIMIRA NYUMA Y'UBWISHYU ===== -->
-<div class="modal-overlay" id="paymentSuccessModal">
-    <div class="modal" style="text-align: center; max-width: 400px;">
-        <div style="font-size: 80px; margin-bottom: 20px; animation: bounceIcon 2s infinite;">🎉</div>
-        <h2 style="font-size: 24px; font-weight: 800; color: var(--success); margin-bottom: 10px;">
-            Murakoze Cyane!
-        </h2>
-        <p style="color: var(--text-secondary); font-size: 15px; line-height: 1.6; margin-bottom: 24px;">
-            Ubwishyu bwawe bwoherejwe neza kuri <strong>Comptable</strong>.<br>
-            Bitegereje kwemezwa. Urakoze cyane kubw'umusanzu wawe! 🙏
-        </p>
-        <button class="btn btn-primary" onclick="closeModal('paymentSuccessModal')" style="width: 100%; padding: 14px; font-size: 16px;">
-            <i class="fas fa-check"></i> Byemejwe
-        </button>
-    </div>
-</div>
+
                 <!-- ============ PROFILE ============ -->
                 <div class="page" id="page-profile">
                     <div class="page-header">
@@ -3963,7 +3865,7 @@ body {
                     </div>
                     <div class="settings-card">
                         <h3><i class="fas fa-users-cog"></i> Amakuru y'Itsinda</h3>
-                        <div class="form-group"><label>Izina ry'itsinda</label><input type="text" class="form-control" value="HCFC CHOIR" id="choirName"></div>
+                        <div class="form-group"><label>Izina ry'itsinda</label><input type="text" class="form-control" value="Choir Imanzi" id="choirName"></div>
                         <button class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save"></i> Bika</button>
                     </div>
                     
@@ -4552,47 +4454,7 @@ body {
             </div>
         </div>
     </div>
-<!-- ===== MODAL YO KWISHYURA (MEMBER) ===== -->
-<div class="modal-overlay" id="memberPaymentModal">
-    <div class="modal">
-        <div class="modal-header">
-            <h3><i class="fas fa-hand-holding-usd"></i> Gutanga Umusanzu</h3>
-            <button class="close-btn" onclick="closeModal('memberPaymentModal')"><i class="fas fa-times"></i></button>
-        </div>
-        
-        <div class="form-group">
-            <label>Ubwoko bw'Ubwishyu <span>*</span></label>
-            <select class="form-control" id="memberPayType">
-                <option value="contribution">💵 Umusanzu (Contribution)</option>
-                <option value="uniform">👔 Uniform</option>
-                <option value="event">🎉 Ibikorwa by'Itsinda</option>
-                <option value="other">📦 Ibindi</option>
-            </select>
-        </div>
-        
-        <div class="form-group">
-            <label>Amafaranga (RWF) <span>*</span></label>
-            <input type="number" class="form-control" id="memberPayAmount" placeholder="Urugero: 5000" min="0">
-        </div>
-        
-        <div class="form-group">
-            <label>Nimero ya Telefone (MTN MoMo) <span>*</span></label>
-            <input type="tel" class="form-control" id="memberPayPhone" placeholder="Urugero: 0788123456" maxlength="10">
-        </div>
-        
-        <div class="form-group">
-            <label>Ibisobanuro (Optional)</label>
-            <input type="text" class="form-control" id="memberPayDescription" placeholder="Urugero: Umusanzu wa Mutarama">
-        </div>
-        
-        <div class="modal-actions">
-            <button class="btn btn-outline" onclick="closeModal('memberPaymentModal')">Hagarika</button>
-            <button class="btn btn-primary" id="memberPayBtn" onclick="submitMemberPayment()">
-                <i class="fas fa-paper-plane"></i> Ohereza kwa Comptable
-            </button>
-        </div>
-    </div>
-</div>
+
     <!-- Late Modal -->
     <div class="modal-overlay" id="lateModal">
         <div class="modal">
@@ -4707,6 +4569,52 @@ body {
         </div>
     </div>
 
+<!-- ===== MODAL YO KWISHYURA (MEMBER) ===== -->
+<div class="modal-overlay" id="memberPaymentModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3><i class="fas fa-hand-holding-usd"></i> Gutanga Umusanzu</h3>
+            <button class="close-btn" onclick="closeModal('memberPaymentModal')"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <div class="form-group">
+            <label>Ubwoko bw'Ubwishyu <span>*</span></label>
+            <select class="form-control" id="memberPayType">
+                <option value="contribution">💵 Umusanzu (Contribution)</option>
+                <option value="uniform">👔 Uniform</option>
+                <option value="event">🎉 Ibikorwa by'Itsinda</option>
+                <option value="other">📦 Ibindi</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Amafaranga (RWF) <span>*</span></label>
+            <input type="number" class="form-control" id="memberPayAmount" placeholder="Urugero: 5000" min="0">
+        </div>
+        
+        <div class="form-group">
+            <label>Uburyo bwo Kwishyura <span>*</span></label>
+            <select class="form-control" id="memberPayMethod">
+                <option value="MoMo">📱 MTN Mobile Money</option>
+                <option value="Airtel">📱 Airtel Money</option>
+                <option value="Bank">🏦 Banki</option>
+                <option value="Cash">💵 Amafaranga mu ntoki</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Ibisobanuro (Optional)</label>
+            <input type="text" class="form-control" id="memberPayDescription" placeholder="Urugero: Umusanzu wa Mutarama">
+        </div>
+        
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="closeModal('memberPaymentModal')">Hagarika</button>
+            <button class="btn btn-primary" id="memberPayBtn" onclick="submitMemberPayment()">
+                <i class="fas fa-paper-plane"></i> Ohereza kwa Comptable
+            </button>
+        </div>
+    </div>
+</div>
 
     <!-- ===== ADD TRANSACTION MODAL ===== -->
     <div class="modal-overlay" id="addTransactionModal">
@@ -5196,7 +5104,7 @@ try {
                     canManageUniform: permissions.manageUniform !== false,
                     canManageLyrics: permissions.manageLyrics !== false,
                     canManageAttendance: permissions.manageAttendance !== false,
-                    choirName: 'HCFC CHOIR', 
+                    choirName: 'Choir Imanzi', 
                     invitedBy: invitation?.invitedBy || null,
                     createdAt: serverTimestamp() 
                 });
@@ -5513,7 +5421,7 @@ try {
                                 memberId: memberData.id,
                                 memberNumber: memberData.memberId,
                                 birthday: memberData.birthday,
-                                choirName: 'HCFC CHOIR'
+                                choirName: 'Choir Imanzi'
                             };
                         } else {
                             const usersSnap = await getDocs(collection(db, 'users'));
@@ -5530,7 +5438,7 @@ try {
                                 canManageUniform: true,
                                 canManageLyrics: true,
                                 canManageAttendance: true,
-                                choirName: 'HCFC CHOIR'
+                                choirName: 'Choir Imanzi'
                             };
                             
                             await setDoc(doc(db, 'users', user.uid), {
@@ -5950,9 +5858,9 @@ enterApp();
             }
             
             const choirNameInput = document.getElementById('choirName');
-            if (choirNameInput) choirNameInput.value = currentUserData.choirName || 'HCFC CHOIR';
+            if (choirNameInput) choirNameInput.value = currentUserData.choirName || 'Choir Imanzi';
             
-            const choirName = currentUserData.choirName || 'HCFC CHOIR';
+            const choirName = currentUserData.choirName || 'Choir Imanzi';
             
             const choirTitleSubtitle = document.getElementById('choirTitleSubtitle');
             if (choirTitleSubtitle) {
@@ -6952,7 +6860,7 @@ enterApp();
                         uid: m.uid, name: m.name, email: m.email, photo: m.photo,
                         role: 'member', memberId: m.id, memberNumber: m.memberId,
                         birthday: m.birthday || null,
-                        choirName: currentUserData.choirName || 'HCFC CHOIR',
+                        choirName: currentUserData.choirName || 'Choir Imanzi',
                         createdAt: serverTimestamp()
                     });
                 }
@@ -9754,70 +9662,40 @@ enterApp();
                 }
             }
         });
+
+
 // ============================================
-// SERVICE WORKER REGISTRATION (NGOMBWA KURI PWA)
-// ============================================
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js', {
-            scope: '/'
-        })
-        .then((registration) => {
-            console.log('✅ Service Worker yanditswe:', registration.scope);
-            
-            // Reba updates
-            registration.addEventListener('updatefound', () => {
-                const newWorker = registration.installing;
-                newWorker.addEventListener('statechange', () => {
-                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                        console.log('🔄 Service Worker nshya iteguye — refresh page');
-                    }
-                });
-            });
-        })
-        .catch((error) => {
-            console.error('❌ Service Worker yananiwe:', error);
-        });
-    });
-}
-// ============================================
-// PWA INSTALL BUTTON — IKORA KENSHI (FIXED)
+// PWA INSTALL BUTTON — IKORA KENSHI
 // ============================================
 let deferredPrompt = null;
 const installBtn = document.getElementById('installAppBtn');
 
-// 1. Reba niba app isanzwe ishyizweho
-function isAppInstalled() {
-    return window.matchMedia('(display-mode: standalone)').matches 
-        || window.navigator.standalone === true;
-}
-
-// Hisha button niba app isanzwe ishyizweho
-if (isAppInstalled()) {
+// 1. Reba niba app isanzwe ishyizweho (standalone mode)
+if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
     if (installBtn) installBtn.style.display = 'none';
 }
 
-// 2. Capture beforeinstallprompt
+// 2. beforeinstallprompt — buto igaragara
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
-    console.log('✅ beforeinstallprompt yabonetse — buto yiteguye');
+    console.log('✅ beforeinstallprompt yabonetse');
     if (installBtn) {
         installBtn.hidden = false;
         installBtn.style.display = 'flex';
     }
 });
 
-// 3. Click handler
+// 3. Click handler — ikora kenshi (n'ubutumwa bwiza)
 if (installBtn) {
     installBtn.addEventListener('click', async () => {
         // 3a. Reba niba app isanzwe ishyizweho
-        if (isAppInstalled()) {
-            showToast('✅ App isanzwe ishyizweho! Fungura ukoresheje icon ya HCFC CHOIR.', 'success');
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+            showToast('✅ App isanzwe ishyizweho kuri telefone! Fungura ukoresheje icon ya HCFC CHOIR kuri home screen.', 'success');
             return;
         }
         
-        // 3b. Niba nta deferredPrompt — werekane amabwiriza
+        // 3b. Niba nta deferredPrompt, werekane ubutumwa bwiza
         if (!deferredPrompt) {
             showToast('📱 Kanda menu ya browser (⋮) hanyuma uhitemo "Install app" cyangwa "Add to Home Screen"', 'info');
             return;
@@ -9825,17 +9703,17 @@ if (installBtn) {
         
         // 3c. Fungura install prompt
         try {
-            deferredPrompt.prompt();
-            const result = await deferredPrompt.userChoice;
-            console.log(`📲 User choice: ${result.outcome}`);
+            const result = await deferredPrompt.prompt();
+            console.log(`📲 Ubutumwa bwakiriwe: ${result.outcome}`);
             
             if (result.outcome === 'accepted') {
                 showToast('✅ App ishyirwa kuri telefone...', 'success');
                 installBtn.style.display = 'none';
+                deferredPrompt = null;
             } else {
                 showToast('ℹ️ Ntabwo washyize app. Ushobora kongera ugerageza.', 'info');
+                // NTUKUREHO deferredPrompt — reka ibeho kugira ngo buto ikore kenshi
             }
-            // NTUKUREHO deferredPrompt — reka ibeho kugira ngo buto ikore kenshi
         } catch (error) {
             console.error('❌ Install error:', error);
             showToast('❌ Ikibazo cyabaye. Ongera ugerageze.', 'error');
@@ -9843,7 +9721,7 @@ if (installBtn) {
     });
 }
 
-// 4. appinstalled
+// 4. appinstalled — buto irahishwa
 window.addEventListener('appinstalled', () => {
     console.log('✅ App yashyizweho!');
     if (installBtn) installBtn.style.display = 'none';
@@ -9853,75 +9731,96 @@ window.addEventListener('appinstalled', () => {
         // ============================================
         // MEMBER PAYMENT SYSTEM
         // ============================================
-     // IYI NI YO GUKORESHA
-window.openPaymentModal = function() {
-    document.getElementById('memberPayType').value = 'contribution';
-    document.getElementById('memberPayAmount').value = '';
-    document.getElementById('memberPayPhone').value = ''; // Shyiramo nimero aho kuba method
-    document.getElementById('memberPayDescription').value = '';
-    document.getElementById('memberPaymentModal').classList.add('active');
-};
-window.submitMemberPayment = async function() {
-    const type = document.getElementById('memberPayType').value;
-    const amount = parseFloat(document.getElementById('memberPayAmount').value);
-    const phone = document.getElementById('memberPayPhone').value.trim();
-    const description = document.getElementById('memberPayDescription').value.trim();
-    
-    if (!amount || amount <= 0) { showToast('Shyiramo amafaranga', 'warning'); return; }
-    if (!phone || phone.length < 10) { showToast('Shyiramo nimero yuzuye (10 imibare)', 'warning'); return; }
+        window.openPaymentModal = function() {
+            document.getElementById('memberPayType').value = 'contribution';
+            document.getElementById('memberPayAmount').value = '';
+            document.getElementById('memberPayMethod').value = 'MoMo';
+            document.getElementById('memberPayDescription').value = '';
+            document.getElementById('memberPaymentModal').classList.add('active');
+        };
 
-    const btn = document.getElementById('memberPayBtn');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turabika...';
-    
-    try {
-        const date = new Date().toISOString().split('T')[0];
-        await addDoc(collection(db, 'transactions'), {
-            type: 'income',
-            amount: amount,
-            category: type,
-            description: description || `${currentUserData.name} - MoMo`,
-            memberId: currentUserData.memberId,
-            memberName: currentUserData.name,
-            phoneNumber: phone,
-            paymentMethod: 'MTN MoMo',
-            status: 'pending',
-            date: date,
-            createdAt: serverTimestamp(),
-            createdBy: currentUser.uid
-        });
-        
+        window.submitMemberPayment = async function() {
+            const type = document.getElementById('memberPayType').value;
+            const amount = parseFloat(document.getElementById('memberPayAmount').value);
+            const method = document.getElementById('memberPayMethod').value;
+            const description = document.getElementById('memberPayDescription').value.trim();
+            
+            if (!amount || amount <= 0) {
+                showToast('Shyiramo amafaranga', 'warning');
+                return;
+            }
+            
+            const memberId = currentUserData.memberId;
+            const member = members.find(m => m.id === memberId);
+            if (!member) {
+                showToast('Ntabwo wabonetse muri sisitemu', 'error');
+                return;
+            }
+            
+            const btn = document.getElementById('memberPayBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turaohereza...';
+            
+            try {
+                const date = new Date().toISOString().split('T')[0];
+                const finalDescription = description || `${member.name} - ${method}`;
+                
+                // 1. Bika mu ma transactions (pending)
+                const txRef = await addDoc(collection(db, 'transactions'), {
+                    type: 'income',
+                    amount: amount,
+                    category: type,
+                    description: finalDescription,
+                    memberId: member.id,
+                    memberName: member.name,
+                    memberPhoto: member.photo || null,
+                    paymentMethod: method,
+                    date: date,
+                    status: 'pending',
+                    createdAt: serverTimestamp(),
+                    createdBy: currentUser.uid,
+                    createdByName: currentUserData.name || currentUser.email
+                });
+                
+                // 2. Bika notification kwa Comptable gusa (private notification)
+                await addDoc(collection(db, 'financeNotifications'), {
+                    type: 'payment_request',
+                    transactionId: txRef.id,
+                    memberId: member.id,
+                    memberName: member.name,
+                    memberPhoto: member.photo || null,
+                    amount: amount,
+                    category: type,
+                    method: method,
+                    description: finalDescription,
+                    status: 'unread',
+                    createdAt: serverTimestamp(),
+                    targetRole: 'comptable'
+                });
+                
+                // 3. Erekana ubutumwa bwo gutsinda
+                confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+                showToast(`✅ Ubwishyu bwoherejwe kwa Comptable!`, 'success');
+                showToast(`⏳ Bitegereje kwemezwa na Comptable`, 'info');
+                
+                // 4. Funga modal
+                closeModal('memberPaymentModal');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-paper-plane"></i> Ohereza kwa Comptable';
+                
+                // 5. Refresh
+                if (typeof loadTransactions === 'function') await loadTransactions();
+                if (typeof renderMyDashboard === 'function') renderMyDashboard();
+                if (typeof renderMyFinance === 'function') renderMyFinance();
+                
+            } catch (error) {
+                showToast('❌ ' + error.message, 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-paper-plane"></i> Ohereza kwa Comptable';
+            }
+        };
+
         // ============================================
-        // HANO: Funga modal yo kwishyura & Fungura Popup
-        // ============================================
-        closeModal('memberPaymentModal');
-        
-        // Fungura popup ya Congratulation
-        document.getElementById('paymentSuccessModal').classList.add('active');
-        
-        // Confetti nziza (kugira ngo bishimishe)
-        confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
-        
-        // ============================================
-        
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Ohereza kwa Comptable';
-        
-        document.getElementById('memberPayAmount').value = '';
-        document.getElementById('memberPayPhone').value = '';
-        document.getElementById('memberPayDescription').value = '';
-        
-        setTimeout(() => {
-            if (typeof loadTransactions === 'function') loadTransactions();
-            if (typeof renderMyFinance === 'function') renderMyFinance();
-        }, 1000);
-        
-    } catch (error) {
-        showToast('❌ ' + error.message, 'error');
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Ohereza kwa Comptable';
-    }
-};
         // MEMBER FINANCE PAGE
         // ============================================
         window.renderMyFinance = function() {
@@ -10080,151 +9979,119 @@ window.submitMemberPayment = async function() {
         // ============================================
         // PAYMENT REQUESTS (COMPTABLE)
         // ============================================
-     window.renderPaymentRequests = async function() {
-    if (currentUserData?.role !== 'admin' && currentUserData?.role !== 'super_admin' && currentUserData?.role !== 'comptable') {
-        return;
-    }
-    
-    await loadTransactions();
-    
-    const pending = transactions.filter(t => t.status === 'pending' && t.type === 'income');
-    const confirmed = transactions.filter(t => (t.status === 'confirmed' || !t.status) && t.type === 'income' && t.createdBy && t.category !== 'contribution');
-    const rejected = transactions.filter(t => t.status === 'rejected');
-    
-    // ============================================
-    // 1. EREKANA COUNTS (Umubare w'ubwishyu)
-    // ============================================
-    document.getElementById('statPendingPayments').textContent = pending.length;
-    document.getElementById('statConfirmedPayments').textContent = confirmed.length;
-    document.getElementById('statRejectedPayments').textContent = rejected.length;
-    
-    // ============================================
-    // 2. KUBARA TOTAL Y'AMAFARANGA (Pending & Confirmed)
-    // ============================================
-    let pendingAmount = 0;
-    let confirmedAmount = 0;
-
-    pending.forEach(t => { pendingAmount += Number(t.amount) || 0; });
-    confirmed.forEach(t => { confirmedAmount += Number(t.amount) || 0; });
-
-    const statPendingAmountEl = document.getElementById('statPendingAmount');
-    const statConfirmedAmountEl = document.getElementById('statConfirmedAmount');
-
-    if (statPendingAmountEl) statPendingAmountEl.textContent = formatMoney(pendingAmount);
-    if (statConfirmedAmountEl) statConfirmedAmountEl.textContent = formatMoney(confirmedAmount);
-    
-    // ============================================
-    // 3. BADGE MU SIDEBAR
-    // ============================================
-    const badge = document.getElementById('sidebarPaymentReqCount');
-    if (badge) {
-        badge.textContent = pending.length;
-        badge.style.display = pending.length > 0 ? '' : 'none';
-    }
-    
-    const list = document.getElementById('paymentRequestsList');
-    
-    if (pending.length === 0 && confirmed.length === 0 && rejected.length === 0) {
-        list.innerHTML = `<div class="empty-state">
-            <div class="icon"><i class="fas fa-check-circle"></i></div>
-            <h3>Nta bwishyu burahari</h3>
-            <p>Ubwishyu bushya buzagaragara hano</p>
-        </div>`;
-        return;
-    }
-    
-    let html = '';
-    
-    // ============================================
-    // 4. PENDING PAYMENTS (Bitegereje kwemezwa)
-    // ============================================
-    if (pending.length > 0) {
-        html += `<div class="section-title" style="margin-bottom: 16px;">
-            <i class="fas fa-clock" style="color:var(--warning);"></i>
-            <span>Bitegereje Kwemezwa</span>
-            <span class="count warning">${pending.length}</span>
-        </div>`;
-        
-        html += pending.map(t => {
-            const member = members.find(m => m.id === t.memberId);
-            const initials = (t.memberName || '?').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-            const photoHtml = t.memberPhoto || member?.photo
-                ? `<img src="${t.memberPhoto || member?.photo}" class="row-photo" style="width:50px;height:50px;" onerror="this.outerHTML='<div class=\\'row-avatar\\' style='width:50px;height:50px;'>${initials}</div>'">`
-                : `<div class="row-avatar" style="width:50px;height:50px;">${initials}</div>`;
+        window.renderPaymentRequests = async function() {
+            if (currentUserData?.role !== 'admin' && currentUserData?.role !== 'super_admin' && currentUserData?.role !== 'comptable') {
+                return;
+            }
             
-            const phoneInfo = t.phoneNumber ? `<span><i class="fas fa-phone"></i> ${t.phoneNumber}</span>` : '';
-            const methodInfo = t.paymentMethod ? `<span><i class="fas fa-mobile-alt"></i> ${t.paymentMethod}</span>` : '';
+            await loadTransactions();
             
-            return `<div class="saved-card" style="border-left: 4px solid var(--warning); flex-direction: column; align-items: stretch;">
-                <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;">
-                    <div style="display:flex; align-items:center; gap:12px; flex:1;">
-                        ${photoHtml}
-                        <div>
-                            <h3 style="font-size:16px; margin-bottom:4px;">${t.memberName || 'Umuririmbyi'}</h3>
+            const pending = transactions.filter(t => t.status === 'pending' && t.type === 'income');
+            const confirmed = transactions.filter(t => (t.status === 'confirmed' || !t.status) && t.type === 'income' && t.createdBy && t.category !== 'contribution');
+            const rejected = transactions.filter(t => t.status === 'rejected');
+            
+            document.getElementById('statPendingPayments').textContent = pending.length;
+            document.getElementById('statConfirmedPayments').textContent = confirmed.length;
+            document.getElementById('statRejectedPayments').textContent = rejected.length;
+            
+            const badge = document.getElementById('sidebarPaymentReqCount');
+            if (badge) {
+                badge.textContent = pending.length;
+                badge.style.display = pending.length > 0 ? '' : 'none';
+            }
+            
+            const list = document.getElementById('paymentRequestsList');
+            
+            if (pending.length === 0 && confirmed.length === 0 && rejected.length === 0) {
+                list.innerHTML = `<div class="empty-state">
+                    <div class="icon"><i class="fas fa-check-circle"></i></div>
+                    <h3>Nta bwishyu burahari</h3>
+                    <p>Ubwishyu bushya buzagaragara hano</p>
+                </div>`;
+                return;
+            }
+            
+            let html = '';
+            
+            if (pending.length > 0) {
+                html += `<div class="section-title" style="margin-bottom: 16px;">
+                    <i class="fas fa-clock" style="color:var(--warning);"></i>
+                    <span>Bitegereje Kwemezwa</span>
+                    <span class="count warning">${pending.length}</span>
+                </div>`;
+                
+                html += pending.map(t => {
+                    const member = members.find(m => m.id === t.memberId);
+                    const initials = (t.memberName || '?').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                    const photoHtml = t.memberPhoto || member?.photo
+                        ? `<img src="${t.memberPhoto || member?.photo}" class="row-photo" style="width:50px;height:50px;" onerror="this.outerHTML='<div class=\\'row-avatar\\' style='width:50px;height:50px;'>${initials}</div>'">`
+                        : `<div class="row-avatar" style="width:50px;height:50px;">${initials}</div>`;
+                    
+                    return `<div class="saved-card" style="border-left: 4px solid var(--warning); flex-direction: column; align-items: stretch;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;">
+                            <div style="display:flex; align-items:center; gap:12px; flex:1;">
+                                ${photoHtml}
+                                <div>
+                                    <h3 style="font-size:16px; margin-bottom:4px;">${t.memberName || 'Umuririmbyi'}</h3>
+                                    <div class="saved-meta">
+                                        <span><i class="fas fa-calendar"></i> ${formatDate(t.date)}</span>
+                                        <span><i class="fas fa-tag"></i> ${t.category}</span>
+                                        <span><i class="fas fa-mobile-alt"></i> ${t.paymentMethod || '-'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="font-size:22px; font-weight:800; color:var(--success);">+ ${formatMoney(t.amount)}</div>
+                                <div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">${t.description || ''}</div>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:8px; margin-top:16px; flex-wrap:wrap;">
+                            <button class="btn btn-success" onclick="approvePayment('${t.id}')" style="flex:1;">
+                                <i class="fas fa-check"></i> Emeza
+                            </button>
+                            <button class="btn btn-danger" onclick="rejectPayment('${t.id}')" style="flex:1;">
+                                <i class="fas fa-times"></i> Anze
+                            </button>
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+            
+            const history = [...confirmed, ...rejected].sort((a, b) => {
+                if (!a.date) return 1;
+                if (!b.date) return -1;
+                return b.date.localeCompare(a.date);
+            }).slice(0, 20);
+            
+            if (history.length > 0) {
+                html += `<div class="section-title" style="margin-top: 24px; margin-bottom: 16px;">
+                    <i class="fas fa-history"></i>
+                    <span>Amateka</span>
+                </div>`;
+                
+                html += history.map(t => {
+                    const isRejected = t.status === 'rejected';
+                    const statusBadge = isRejected
+                        ? `<span class="uniform-status has-not"><i class="fas fa-times"></i> Byanzwe</span>`
+                        : `<span class="uniform-status has"><i class="fas fa-check"></i> Byemejwe</span>`;
+                    
+                    return `<div class="saved-card" style="opacity:0.85;">
+                        <div class="saved-info">
+                            <h3><i class="fas fa-user"></i> ${t.memberName || 'Umuririmbyi'}</h3>
                             <div class="saved-meta">
                                 <span><i class="fas fa-calendar"></i> ${formatDate(t.date)}</span>
                                 <span><i class="fas fa-tag"></i> ${t.category}</span>
-                                ${methodInfo}
-                                ${phoneInfo}
+                                <span><i class="fas fa-coins"></i> ${formatMoney(t.amount)}</span>
                             </div>
                         </div>
-                    </div>
-                    <div style="text-align:right;">
-                        <div style="font-size:22px; font-weight:800; color:var(--success);">+ ${formatMoney(t.amount)}</div>
-                        <div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">${t.description || ''}</div>
-                    </div>
-                </div>
-                <div style="display:flex; gap:8px; margin-top:16px; flex-wrap:wrap;">
-                    <button class="btn btn-success" onclick="approvePayment('${t.id}')" style="flex:1;">
-                        <i class="fas fa-check"></i> Emeza
-                    </button>
-                    <button class="btn btn-danger" onclick="rejectPayment('${t.id}')" style="flex:1;">
-                        <i class="fas fa-times"></i> Anze
-                    </button>
-                </div>
-            </div>`;
-        }).join('');
-    }
-    
-    // ============================================
-    // 5. HISTORY (Amateka: Byemejwe & Byanzwe)
-    // ============================================
-    const history = [...confirmed, ...rejected].sort((a, b) => {
-        if (!a.date) return 1;
-        if (!b.date) return -1;
-        return b.date.localeCompare(a.date);
-    }).slice(0, 20);
-    
-    if (history.length > 0) {
-        html += `<div class="section-title" style="margin-top: 24px; margin-bottom: 16px;">
-            <i class="fas fa-history"></i>
-            <span>Amateka</span>
-        </div>`;
-        
-        html += history.map(t => {
-            const isRejected = t.status === 'rejected';
-            const statusBadge = isRejected
-                ? `<span class="uniform-status has-not"><i class="fas fa-times"></i> Byanzwe</span>`
-                : `<span class="uniform-status has"><i class="fas fa-check"></i> Byemejwe</span>`;
+                        ${statusBadge}
+                    </div>`;
+                }).join('');
+            }
             
-            const phoneInfo = t.phoneNumber ? ` • <i class="fas fa-phone"></i> ${t.phoneNumber}` : '';
-            
-            return `<div class="saved-card" style="opacity:0.85;">
-                <div class="saved-info">
-                    <h3><i class="fas fa-user"></i> ${t.memberName || 'Umuririmbyi'}</h3>
-                    <div class="saved-meta">
-                        <span><i class="fas fa-calendar"></i> ${formatDate(t.date)}</span>
-                        <span><i class="fas fa-tag"></i> ${t.category}</span>
-                        <span><i class="fas fa-coins"></i> ${formatMoney(t.amount)}${phoneInfo}</span>
-                    </div>
-                </div>
-                ${statusBadge}
-            </div>`;
-        }).join('');
-    }
-    
-    list.innerHTML = html;
-};
+            list.innerHTML = html;
+        };
+
         window.approvePayment = async function(id) {
             if (!confirm('Emeza ubu bwishyu?')) return;
             try {
@@ -10619,177 +10486,7 @@ window.saveAdminPermissions = async function() {
         btn.innerHTML = '<i class="fas fa-save"></i> Bika Uburenganzira';
     }
 };
-    // ============================================
-// DOWNLOAD MEMBERS LIST (PDF)
-// ============================================
-window.downloadMembersListPDF = function() {
-    // Fata abaririmbyi bakora gusa
-    const activeMembers = members.filter(m => m.status === 'active' || !m.status);
     
-    if (activeMembers.length === 0) {
-        showToast('Nta baririmbyi babonetse', 'warning');
-        return;
-    }
-    
-    // Yubaha filters ziri kuri page
-    const vf = document.getElementById('membersFilterVoice')?.value || '';
-    const lf = document.getElementById('membersFilterLevel')?.value || '';
-    const st = document.getElementById('membersSearch')?.value.toLowerCase().trim() || '';
-    
-    let filtered = [...activeMembers].sort((a, b) => 
-        (a.name || '').localeCompare(b.name || '')
-    );
-    
-    if (vf) filtered = filtered.filter(m => m.voice === vf);
-    if (lf) filtered = filtered.filter(m => m.level === lf);
-    if (st) filtered = filtered.filter(m => 
-        (m.name || '').toLowerCase().includes(st) || 
-        (m.number || '').toLowerCase().includes(st) || 
-        (m.memberId || '').toLowerCase().includes(st)
-    );
-    
-    if (filtered.length === 0) {
-        showToast('Nta baririmbyi bahuye na filter', 'warning');
-        return;
-    }
-    
-    // ============================================
-    // KUBARA STATS
-    // ============================================
-    const soprano = filtered.filter(m => m.voice === 'Soprano').length;
-    const alto    = filtered.filter(m => m.voice === 'Alto').length;
-    const tenor   = filtered.filter(m => m.voice === 'Tenor').length;
-    const bass    = filtered.filter(m => m.voice === 'Bass').length;
-    
-    const today = new Date();
-    const dateStr = `${String(today.getDate()).padStart(2,'0')}/${String(today.getMonth()+1).padStart(2,'0')}/${today.getFullYear()}`;
-    const timeStr = `${String(today.getHours()).padStart(2,'0')}:${String(today.getMinutes()).padStart(2,'0')}`;
-    const choirName = currentUserData?.choirName || 'HCFC CHOIR';
-    
-    // ============================================
-    // KORA ROWS ZA TABLE
-    // ============================================
-    const rows = filtered.map((m, i) => {
-        const levelLabel = m.level === 'Special' ? '⭐ Special' : (m.level || '-');
-        return `<tr>
-            <td style="text-align:center;font-weight:700;color:#64748b;">${i + 1}</td>
-            <td>
-                <div style="font-weight:700;color:#1e293b;">${m.name || '-'}</div>
-                ${m.email ? `<div style="font-size:10px;color:#64748b;">${m.email}</div>` : ''}
-            </td>
-            <td style="font-family:monospace;font-size:11px;font-weight:600;">${m.memberId || '-'}</td>
-            <td>${m.number || '-'}</td>
-            <td><span style="padding:3px 8px;border-radius:50px;font-size:10px;font-weight:700;background:${m.level === 'Special' ? 'rgba(139,92,246,0.15);color:#8b5cf6' : 'rgba(56,189,248,0.12);color:#0284c7'};">${levelLabel}</span></td>
-            <td><span style="padding:3px 8px;border-radius:50px;font-size:10px;font-weight:700;background:${
-                m.voice === 'Soprano' ? 'rgba(236,72,153,0.12);color:#ec4899' :
-                m.voice === 'Alto'    ? 'rgba(6,182,212,0.12);color:#06b6d4' :
-                m.voice === 'Tenor'   ? 'rgba(245,158,11,0.12);color:#f59e0b' :
-                                        'rgba(16,185,129,0.12);color:#10b981'
-            };">${m.voice || '-'}</span></td>
-            <td style="font-size:11px;color:#475569;">${m.birthday ? formatDate(m.birthday) : '-'}</td>
-        </tr>`;
-    }).join('');
-    
-    // ============================================
-    // KORA HTML YA PDF
-    // ============================================
-    const w = window.open('', '_blank');
-    w.document.write(`<!DOCTYPE html><html><head>
-        <meta charset="UTF-8">
-        <title>Urutonde rw'Abaririmbyi — ${choirName}</title>
-        <style>
-            *{margin:0;padding:0;box-sizing:border-box}
-            body{font-family:'Segoe UI',Arial,sans-serif;padding:30px 35px;color:#1e293b;background:white;}
-            
-            /* HEADER */
-            .header{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:16px;border-bottom:3px solid #38bdf8;margin-bottom:20px;}
-            .header-left h1{font-size:22px;font-weight:800;color:#0284c7;margin-bottom:4px;}
-            .header-left h2{font-size:14px;font-weight:600;color:#475569;}
-            .header-left p{font-size:11px;color:#94a3b8;margin-top:6px;}
-            .header-right{text-align:right;font-size:11px;color:#64748b;line-height:1.6;}
-            .header-right .badge{display:inline-block;background:#38bdf8;color:white;padding:6px 14px;border-radius:50px;font-size:12px;font-weight:800;margin-bottom:8px;}
-            
-            /* STATS */
-            .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px;}
-            .stat{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px;text-align:center;}
-            .stat .value{font-size:22px;font-weight:800;line-height:1;margin-bottom:4px;}
-            .stat .label{font-size:9px;text-transform:uppercase;color:#64748b;font-weight:700;letter-spacing:0.5px;}
-            .stat.total .value{color:#0284c7;}
-            .stat.soprano .value{color:#ec4899;}
-            .stat.alto .value{color:#06b6d4;}
-            .stat.tenor .value{color:#f59e0b;}
-            .stat.bass .value{color:#10b981;}
-            
-            /* TABLE */
-            table{width:100%;border-collapse:collapse;font-size:11px;}
-            thead th{background:linear-gradient(135deg,#38bdf8,#0ea5e9);color:white;padding:10px 8px;text-align:left;font-size:9.5px;text-transform:uppercase;font-weight:800;letter-spacing:0.5px;}
-            tbody td{padding:9px 8px;border-bottom:1px solid #e2e8f0;vertical-align:middle;}
-            tbody tr:nth-child(even) td{background:#f8fafc;}
-            tbody tr:hover td{background:#e0f2fe;}
-            
-            /* FOOTER */
-            .footer{margin-top:24px;padding-top:14px;border-top:1px solid #e2e8f0;text-align:center;font-size:10px;color:#94a3b8;}
-            .footer strong{color:#0284c7;}
-            
-            @media print {
-                body{padding:15px 20px;}
-                .header{padding-bottom:10px;}
-                thead{display:table-header-group;}
-                tr{page-break-inside:avoid;}
-            }
-            @page { size: A4 landscape; margin: 12mm; }
-        </style>
-    </head><body>
-        <div class="header">
-            <div class="header-left">
-                <h1>🎵 ${choirName}</h1>
-                <h2>Urutonde rw'Abaririmbyi Bose</h2>
-                <p>📅 ${dateStr} &nbsp;•&nbsp; 🕐 ${timeStr}</p>
-            </div>
-            <div class="header-right">
-                <div class="badge">${filtered.length} Abaririmbyi</div>
-                ${vf || lf ? `<div style="font-size:10px;">Filter: ${[vf, lf].filter(Boolean).join(' • ')}</div>` : ''}
-            </div>
-        </div>
-        
-        <div class="stats">
-            <div class="stat total"><div class="value">${filtered.length}</div><div class="label">Bose</div></div>
-            <div class="stat soprano"><div class="value">${soprano}</div><div class="label">Soprano</div></div>
-            <div class="stat alto"><div class="value">${alto}</div><div class="label">Alto</div></div>
-            <div class="stat tenor"><div class="value">${tenor}</div><div class="label">Tenor</div></div>
-            <div class="stat bass"><div class="value">${bass}</div><div class="label">Bass</div></div>
-        </div>
-        
-        <table>
-            <thead>
-                <tr>
-                    <th style="width:35px;text-align:center;">#</th>
-                    <th>Amazina</th>
-                    <th style="width:80px;">Nimero (ID)</th>
-                    <th style="width:95px;">Telefone</th>
-                    <th style="width:80px;">Level</th>
-                    <th style="width:80px;">Ijwi</th>
-                    <th style="width:85px;">Birthday</th>
-                </tr>
-            </thead>
-            <tbody>${rows}</tbody>
-        </table>
-        
-        <div class="footer">
-             Powered by  <strong>${choirName}</strong> — Attendance System &nbsp;•&nbsp; ${dateStr} ${timeStr}
-        </div>
-        
-        <script>
-            window.onload = function() {
-                setTimeout(function() { window.print(); }, 400);
-            };
-        <\/script>
-    </body></html>`);
-    w.document.close();
-    
-    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-    showToast(`📄 PDF iri korwa... Hitamo "Save as PDF" muri print dialog`, 'info');
-};
 </script>
 </body>
 </html>
