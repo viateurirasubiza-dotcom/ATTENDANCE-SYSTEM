@@ -3048,7 +3048,23 @@ body {
                         </div>
                     </div>
                 </div>
-      <div class="filter-bar">
+
+                <!-- ============ MEMBERS ============ -->
+              <div class="page-header">
+    <div>
+        <h1>👥 Abaririmbyi</h1>
+        <p>Manage abaririmbyi bose</p>
+    </div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn btn-danger" onclick="downloadMembersListPDF()">
+            <i class="fas fa-file-pdf"></i>download member list (PDF)
+        </button>
+        <button class="btn btn-primary" onclick="openAddMemberModal()">
+            <i class="fas fa-user-plus"></i> Ongeraho
+        </button>
+    </div>
+</div>
+                    <div class="filter-bar">
                         <div class="filter-group">
                             <label>Ijwi:</label>
                             <select class="filter-select" id="membersFilterVoice" onchange="renderMembers()">
@@ -5544,7 +5560,7 @@ enterApp();
             }, 1000);
         }
 
-   async function enterApp() {
+     async function enterApp() {
     const authScreen = document.getElementById('authScreen');
     const appEl = document.getElementById('app');
     const ls = document.getElementById('loadingScreen');
@@ -5562,19 +5578,11 @@ enterApp();
     // 1. HIDE/SHOW MEMBER vs ADMIN
     // ============================================
     if (isMember) {
-        // Hisha ibintu byose bya Admin
         document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
         document.querySelectorAll('.super-admin-only').forEach(el => el.style.display = 'none');
-        
-        // Hisha Paji zose za Admin muri Main Content (izi ni zo zikomeye)
-        document.querySelectorAll('.page.admin-only').forEach(el => el.style.display = 'none');
-        
-        // Hisha Nav-items za Admin
+        document.querySelectorAll('.member-only').forEach(el => el.style.display = '');
         document.querySelectorAll('.nav-item.admin-only').forEach(item => item.style.display = 'none');
         document.querySelectorAll('.nav-item.super-admin-only').forEach(item => item.style.display = 'none');
-        
-        // Erekana ibya Member
-        document.querySelectorAll('.member-only').forEach(el => el.style.display = '');
     } else {
         document.querySelectorAll('.member-only').forEach(el => el.style.display = 'none');
         document.querySelectorAll('.admin-only').forEach(el => el.style.display = '');
