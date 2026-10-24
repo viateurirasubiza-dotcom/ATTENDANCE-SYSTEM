@@ -3795,7 +3795,29 @@ body {
                         </div>
                     </div>
                 </div>
-  
+    <!-- ===== STATS CARDS ZA TRANSACTIONS ===== -->
+    <div class="stats-grid" id="transactionStats" style="margin-bottom: 24px;">
+        <div class="finance-stat-card">
+            <div class="finance-stat-icon income"><i class="fas fa-arrow-down"></i></div>
+            <div class="finance-stat-value income" id="txStatTotalIncome">0 RWF</div>
+            <div class="finance-stat-label">Amafaranga Yinjiye</div>
+        </div>
+        <div class="finance-stat-card">
+            <div class="finance-stat-icon expense"><i class="fas fa-arrow-up"></i></div>
+            <div class="finance-stat-value expense" id="txStatTotalExpense">0 RWF</div>
+            <div class="finance-stat-label">Amafaranga Yasohotse</div>
+        </div>
+        <div class="finance-stat-card">
+            <div class="finance-stat-icon balance"><i class="fas fa-wallet"></i></div>
+            <div class="finance-stat-value balance" id="txStatBalance">0 RWF</div>
+            <div class="finance-stat-label">Balance (Ibisigaye)</div>
+        </div>
+        <div class="finance-stat-card">
+            <div class="finance-stat-icon contrib"><i class="fas fa-list"></i></div>
+            <div class="finance-stat-value contrib" id="txStatCount">0</div>
+            <div class="finance-stat-label">Transactions Zose</div>
+        </div>
+    </div>
                 <!-- ============ FINANCE REPORTS ============ -->
                 <div class="page" id="page-finance-reports">
                     <div class="page-header">
@@ -6028,86 +6050,125 @@ enterApp();
         window.toggleSidebar = function() { 
             document.getElementById('sidebar').classList.toggle('open'); 
         };
-window.switchPage = function(page, element) {
-    // ============================================
-    // 1. RINDA: Member ntashobora kujya kuri paji z'Admin/Finance
-    // ============================================
-    const role = currentUserData?.role;
-    const isMember = role === 'member';
-    
-    const blockedPagesForMember = [
-        'finance', 'payment-requests', 'contributions', 
-        'transactions', 'finance-reports', 'pending', 
-        'users', 'settings', 'recycle-bin', 'members', 
-        'voices', 'photos', 'reports', 'uniform', 
-        'birthday', 'attendance'
-    ];
-    
-    if (isMember && blockedPagesForMember.includes(page)) {
-        showToast('❌ Ntushobora kubona aya mafaranga cyangwa aya makuru. Admin gusa!', 'error');
-        return; // Hagarika guhindura page
-    }
 
-    // ============================================
-    // 2. GUTANGIRA GUHINDURA PAGE
-    // ============================================
-    const previousPage = window._currentPage || 'dashboard';
-    
-    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-    if (element) element.classList.add('active');
-    
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    const pageEl = document.getElementById('page-' + page);
-    if (pageEl) pageEl.classList.add('active');
-    
-    window._currentPage = page;
-    
-    // ============================================
-    // 3. GUHAMAGARA FUNCTIONS ZA BURI PAJI
-    // ============================================
-    if (page === 'members') renderMembers();
-    if (page === 'pending') renderPending();
-    if (page === 'users') renderUsers();
-    if (page === 'my-dashboard') renderMyDashboard();
-    if (page === 'my-finance') renderMyFinance();
-    if (page === 'payment-requests') renderPaymentRequests();
-    if (page === 'attendance') renderAttendancePage();
-    if (page === 'voices') renderVoicesPage();
-    if (page === 'photos') renderPhotosPage();
-    if (page === 'reports') initReportsPage();
-    if (page === 'profile') updateProfileUI();
-    if (page === 'uniform') {
-        if (currentUniformTab === 'checklist') renderChecklist();
-        else renderUniforms();
-    }
-    if (page === 'lyrics') renderLyrics();
-    if (page === 'announcements') renderAnnouncements();
-    if (page === 'birthday') renderBirthdayPage();
-    if (page === 'recycle-bin') renderRecycleBin();
-    if (page === 'finance') renderFinance();
-    if (page === 'contributions') renderContributions();
-    if (page === 'transactions') renderTransactions();
-    if (page === 'finance-reports') initFinanceReportsPage();
-    
-    // ============================================
-    // 4. IBINDI BIKORWA
-    // ============================================
-    if (previousPage === 'chat' && page !== 'chat') {
-        if (typeof window.markGroupMessagesAsRead === 'function') {
-            setTimeout(() => {
-                window.markGroupMessagesAsRead();
-            }, 300);
+        window.switchPage = function(page, element) {
+            const previousPage = window._currentPage || 'dashboard';
+            
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            if (element) element.classList.add('active');
+            
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const pageEl = document.getElementById('page-' + page);
+            if (pageEl) pageEl.classList.add('active');
+            
+            window._currentPage = page;
+            
+            if (page === 'members') renderMembers();
+            if (page === 'pending') renderPending();
+            if (page === 'users') renderUsers();
+            if (page === 'my-dashboard') renderMyDashboard();
+            if (page === 'my-finance') renderMyFinance();
+            if (page === 'payment-requests') renderPaymentRequests();
+            if (page === 'attendance') renderAttendancePage();
+            if (page === 'voices') renderVoicesPage();
+            if (page === 'photos') renderPhotosPage();
+            if (page === 'reports') initReportsPage();
+            if (page === 'profile') updateProfileUI();
+            if (page === 'uniform') {
+                if (currentUniformTab === 'checklist') renderChecklist();
+                else renderUniforms();
+            }
+            if (page === 'lyrics') renderLyrics();
+            if (page === 'announcements') renderAnnouncements();
+            if (page === 'birthday') renderBirthdayPage();
+            if (page === 'recycle-bin') renderRecycleBin();
+            if (page === 'finance') renderFinance();
+            if (page === 'contributions') renderContributions();
+            if (page === 'transactions') renderTransactions();
+            if (page === 'finance-reports') initFinanceReportsPage();
+            
+            if (previousPage === 'chat' && page !== 'chat') {
+                if (typeof window.markGroupMessagesAsRead === 'function') {
+                    setTimeout(() => {
+                        window.markGroupMessagesAsRead();
+                    }, 300);
+                }
+            }
+            
+            if (page === 'chat') initChatPage();
+            
+            if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        function updateClock() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            const el = document.getElementById('liveClock');
+            if (el) el.textContent = `${h}:${m}:${s}`;
         }
-    }
-    
-    if (page === 'chat') initChatPage();
-    
-    if (window.innerWidth <= 900) {
-        const sidebar = document.getElementById('sidebar');
-        if (sidebar) sidebar.classList.remove('open');
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-};
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // ============================================
+        // DASHBOARD
+        // ============================================
+        window.renderDashboard = function() {
+            if (currentUserData?.role === 'member') return;
+            
+            const activeMembers = members.filter(m => m.status === 'active' || !m.status);
+            const pendingMembers = members.filter(m => m.status === 'pending');
+            const deletedMembers = members.filter(m => m.status === 'deleted');
+            
+            document.getElementById('statTotalMembers').textContent = activeMembers.length;
+            document.getElementById('statTotalSessions').textContent = sessions.length;
+            
+            let totalPct = 0;
+            sessions.forEach(s => { 
+                const present = (s.presentMembers || []).length;
+                totalPct += activeMembers.length > 0 ? (present / activeMembers.length) * 100 : 0; 
+            });
+            const avgPct = sessions.length > 0 ? Math.round(totalPct / sessions.length) : 0;
+            document.getElementById('statAvgPercent').textContent = avgPct + '%';
+            
+            const todayBirthdays = activeMembers.filter(m => isBirthdayToday(m.birthday));
+            document.getElementById('statBirthdayToday').textContent = todayBirthdays.length;
+            
+            const memberCountEl = document.getElementById('sidebarMemberCount');
+            if (memberCountEl) memberCountEl.textContent = activeMembers.length;
+            const sessionCountEl = document.getElementById('sidebarSessionCount');
+            if (sessionCountEl) sessionCountEl.textContent = sessions.length;
+            
+            const pendingCountEl = document.getElementById('sidebarPendingCount');
+            if (pendingCountEl) {
+                pendingCountEl.textContent = pendingMembers.length;
+                pendingCountEl.style.display = pendingMembers.length > 0 ? '' : 'none';
+            }
+            
+            const annCountEl = document.getElementById('sidebarAnnouncementCount');
+            if (annCountEl) {
+                annCountEl.textContent = announcements.length;
+                annCountEl.style.display = announcements.length > 0 ? '' : 'none';
+            }
+            
+            const recycleCountEl = document.getElementById('sidebarRecycleCount');
+            if (recycleCountEl) {
+                recycleCountEl.textContent = deletedMembers.length;
+                recycleCountEl.style.display = deletedMembers.length > 0 ? '' : 'none';
+            }
+            
+            const contribCountEl = document.getElementById('sidebarContribCount');
+            if (contribCountEl) {
+                const activeC = contributions.filter(c => c.status === 'active').length;
+                contribCountEl.textContent = activeC;
+                contribCountEl.style.display = activeC > 0 ? '' : 'none';
+            }
+            
+            renderSavedList();
+        };
+
         function renderSavedList() {
             const list = document.getElementById('savedList');
             if (!list) return;
@@ -10728,59 +10789,6 @@ window.downloadMembersListPDF = function() {
     
     confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
     showToast(`📄 PDF iri korwa... Hitamo "Save as PDF" muri print dialog`, 'info');
-};
-        window.renderDashboard = function() {
-    if (currentUserData?.role === 'member') return;
-    
-    const activeMembers = members.filter(m => m.status === 'active' || !m.status);
-    const pendingMembers = members.filter(m => m.status === 'pending');
-    const deletedMembers = members.filter(m => m.status === 'deleted');
-    
-    document.getElementById('statTotalMembers').textContent = activeMembers.length;
-    document.getElementById('statTotalSessions').textContent = sessions.length;
-    
-    let totalPct = 0;
-    sessions.forEach(s => { 
-        const present = (s.presentMembers || []).length;
-        totalPct += activeMembers.length > 0 ? (present / activeMembers.length) * 100 : 0; 
-    });
-    const avgPct = sessions.length > 0 ? Math.round(totalPct / sessions.length) : 0;
-    document.getElementById('statAvgPercent').textContent = avgPct + '%';
-    
-    const todayBirthdays = activeMembers.filter(m => isBirthdayToday(m.birthday));
-    document.getElementById('statBirthdayToday').textContent = todayBirthdays.length;
-    
-    const memberCountEl = document.getElementById('sidebarMemberCount');
-    if (memberCountEl) memberCountEl.textContent = activeMembers.length;
-    const sessionCountEl = document.getElementById('sidebarSessionCount');
-    if (sessionCountEl) sessionCountEl.textContent = sessions.length;
-    
-    const pendingCountEl = document.getElementById('sidebarPendingCount');
-    if (pendingCountEl) {
-        pendingCountEl.textContent = pendingMembers.length;
-        pendingCountEl.style.display = pendingMembers.length > 0 ? '' : 'none';
-    }
-    
-    const annCountEl = document.getElementById('sidebarAnnouncementCount');
-    if (annCountEl) {
-        annCountEl.textContent = announcements.length;
-        annCountEl.style.display = announcements.length > 0 ? '' : 'none';
-    }
-    
-    const recycleCountEl = document.getElementById('sidebarRecycleCount');
-    if (recycleCountEl) {
-        recycleCountEl.textContent = deletedMembers.length;
-        recycleCountEl.style.display = deletedMembers.length > 0 ? '' : 'none';
-    }
-    
-    const contribCountEl = document.getElementById('sidebarContribCount');
-    if (contribCountEl) {
-        const activeC = contributions.filter(c => c.status === 'active').length;
-        contribCountEl.textContent = activeC;
-        contribCountEl.style.display = activeC > 0 ? '' : 'none';
-    }
-    
-    renderSavedList();
 };
 </script>
 </body>
