@@ -1811,9 +1811,12 @@ body {
 /* ============================================
    CHAT UI NZIZA + ANIMATIONS (YAKOSOWE)
    ============================================ */
+/* ============================================
+   CHAT UI NZIZA + ANIMATIONS (YAKOSOWE BURUNDU)
+   ============================================ */
 .chat-layout {
     display: grid; 
-    grid-template-columns: 280px 1fr;
+    grid-template-columns: 280px 1fr; /* Sidebar 280px, Chat Main ifata ahasigaye */
     gap: 20px; 
     height: calc(100vh - 180px); 
     min-height: 500px;
@@ -1894,7 +1897,10 @@ body {
     flex-direction: column; 
     overflow: hidden;
     box-shadow: var(--shadow-lg);
-    animation: slideUpFade 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; /* Animation iyo ufunguye chat */
+    animation: slideUpFade 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    /* Ibi ni byo bituma akazu gafata umwanya wose mu ruhande */
+    width: 100%;
+    height: 100%;
 }
 
 @keyframes slideUpFade {
@@ -1917,8 +1923,12 @@ body {
    AHO UBUTUMWA BUGARAGARA (Background nziza)
    ============================================ */
 .chat-messages {
-    flex: 1; overflow-y: auto; padding: 24px;
-    display: flex; flex-direction: column; gap: 16px;
+    flex: 1; 
+    overflow-y: auto; 
+    padding: 24px;
+    display: flex; 
+    flex-direction: column; 
+    gap: 16px;
     background-color: var(--bg);
     /* Pattern nziza yoroheje (nka WhatsApp) */
     background-image: radial-gradient(var(--border) 1px, transparent 1px);
@@ -1989,7 +1999,7 @@ body {
    AHO BANDIKA (Input Bar) - UI NZIZA
    ============================================ */
 .chat-input-bar {
-    padding: 16px 20px; /* Yagabanyijwe gato kugira ngo ishyiremo neza */
+    padding: 16px 20px; 
     border-top: 1px solid var(--border);
     display: flex; 
     gap: 12px; 
@@ -2002,10 +2012,16 @@ body {
 }
 
 .chat-input-bar input {
-    flex: 1; padding: 14px 20px;
-    border: 2px solid var(--border); border-radius: 50px;
-    background: var(--bg); color: var(--text);
-    font-family: inherit; font-size: 14.5px; outline: none;
+    flex: 1; 
+    min-width: 0; /* Ibi ni ngombwa cyane kugira ngo input itakure buto isohoke */
+    padding: 14px 20px;
+    border: 2px solid var(--border); 
+    border-radius: 50px;
+    background: var(--bg); 
+    color: var(--text);
+    font-family: inherit; 
+    font-size: 14.5px; 
+    outline: none;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
 }
@@ -2016,19 +2032,10 @@ body {
     box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15); 
     transform: translateY(-1px);
 }
-.chat-input-bar input {
-    flex: 1; 
-    min-width: 0; /* Ibi ni ngombwa kugira ngo input itakura buto isohoke */
-    padding: 12px 20px;
-    border: 2px solid var(--border); border-radius: 50px;
-    background: var(--bg); color: var(--text);
-    font-family: inherit; font-size: 14.5px; outline: none;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
-}
+
 .chat-input-bar button {
-    width: 46px; 
-    height: 46px; 
+    width: 48px; 
+    height: 48px; 
     border-radius: 50%;
     border: none; 
     background: var(--gradient-1); 
@@ -2041,7 +2048,11 @@ body {
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); 
     flex-shrink: 0; /* Ibi bituma buto itagabanyuka */
     box-shadow: 0 8px 25px rgba(56, 189, 248, 0.4);
-    margin: 0; /* Kuraho margin niba ihari */
+    margin: 0; 
+}
+.chat-input-bar button:hover { 
+    transform: scale(1.1) rotate(-10deg); 
+    box-shadow: 0 12px 30px rgba(56, 189, 248, 0.6); 
 }
 .chat-input-bar button:active { transform: scale(0.95); }
 
@@ -2096,7 +2107,6 @@ body {
         padding: 12px 16px;
     }
 }
-
 /* ============================================
    FINANCE / COMPTABLE
    ============================================ */
