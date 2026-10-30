@@ -3587,9 +3587,8 @@ body {
                     </div>
                 </div>
 
-             
-                   <!-- ============ CHAT ============ -->
-<div class="page" id="page-chat"> <!-- REKA IYI YONGEHWEHO -->
+             <!-- ============ CHAT ============ -->
+<div class="page" id="page-chat">
     <div class="chat-layout">
         <div class="chat-sidebar">
             <div class="chat-sidebar-header">
@@ -3607,10 +3606,31 @@ body {
             </div>
         </div>
 
-        <!-- ... chat-main na messages ... -->
+        <!-- IYI NI YO YARI IBURAYE: chat-main -->
+        <div class="chat-main" id="chatMain">
+            <div class="chat-main-header">
+                <div class="chat-item-avatar" style="background: var(--gradient-2);"><i class="fas fa-users"></i></div>
+                <div>
+                    <h3 id="chatHeaderTitle">Itsinda Rusange</h3>
+                    <p id="chatHeaderSubtitle">Abaririmbyi bose</p>
+                </div>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-empty">
+                    <i class="fas fa-comments"></i>
+                    <h3>Nta butumwa</h3>
+                    <p>Tangira kuvuga</p>
+                </div>
+            </div>
+            <div class="chat-input-bar">
+                <input type="text" id="chatInput" placeholder="Andika ubutumwa..." onkeypress="if(event.key==='Enter') sendChatMessage()">
+                <button onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+        <!-- IYI NI YO YARI IBURAYE: ifunga chat-main -->
 
     </div> <!-- FUNGA chat-layout -->
-</div> <!-- FUNGA page-chat HANO -->
+</div> <!-- FUNGA page-chat -->
                 <!-- ============ LYRICS ============ -->
                 <div class="page" id="page-lyrics">
                     <div class="page-header">
