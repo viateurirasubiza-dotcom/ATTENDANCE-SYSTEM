@@ -6193,60 +6193,72 @@ enterApp();
             document.getElementById('sidebar').classList.toggle('open'); 
         };
 
-        window.switchPage = function(page, element) {
-            const previousPage = window._currentPage || 'dashboard';
-            
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            if (element) element.classList.add('active');
-            
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            const pageEl = document.getElementById('page-' + page);
-            if (pageEl) pageEl.classList.add('active');
-            
-            window._currentPage = page;
-            
-            if (page === 'members') renderMembers();
-            if (page === 'pending') renderPending();
-            if (page === 'users') renderUsers();
-            if (page === 'my-dashboard') renderMyDashboard();
-            if (page === 'my-finance') renderMyFinance();
-            if (page === 'payment-requests') renderPaymentRequests();
-            if (page === 'attendance') renderAttendancePage();
-            if (page === 'voices') renderVoicesPage();
-            if (page === 'photos') renderPhotosPage();
-            if (page === 'reports') initReportsPage();
-            if (page === 'profile') updateProfileUI();
-            if (page === 'uniform') {
-                if (currentUniformTab === 'checklist') renderChecklist();
-                else renderUniforms();
-            }
-            if (page === 'lyrics') renderLyrics();
-            if (page === 'announcements') renderAnnouncements();
-            if (page === 'birthday') renderBirthdayPage();
-            if (page === 'recycle-bin') renderRecycleBin();
-            if (page === 'finance') renderFinance();
-            if (page === 'contributions') renderContributions();
-            if (page === 'transactions') renderTransactions();
-            if (page === 'finance-reports') initFinanceReportsPage();
-         if (page === 'delete-requests') {
-    renderDeleteRequests();
-    updateDeleteReqBadge();
-}
-            
-            if (previousPage === 'chat' && page !== 'chat') {
-                if (typeof window.markGroupMessagesAsRead === 'function') {
-                    setTimeout(() => {
-                        window.markGroupMessagesAsRead();
-                    }, 300);
-                }
-            }
-            
-            if (page === 'chat') initChatPage();
-            
-            if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        };
-
+       window.switchPage = function(page, element) {
+    const previousPage = window._currentPage || 'dashboard';
+    
+    // 1. Gukuraho "active" kuri nav-items zose
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    if (element) element.classList.add('active');
+    
+    // 2. Gukuraho "active" kuri pages zose no gushyira kuri page nshya
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const pageEl = document.getElementById('page-' + page);
+    if (pageEl) pageEl.classList.add('active');
+    
+    window._currentPage = page;
+    
+    // 3. Guhamagara functions ziri muri buri page
+    if (page === 'members') renderMembers();
+    if (page === 'pending') renderPending();
+    if (page === 'users') renderUsers();
+    if (page === 'my-dashboard') renderMyDashboard();
+    if (page === 'my-finance') renderMyFinance();
+    if (page === 'payment-requests') renderPaymentRequests();
+    if (page === 'attendance') renderAttendancePage();
+    if (page === 'voices') renderVoicesPage();
+    if (page === 'photos') renderPhotosPage();
+    if (page === 'reports') initReportsPage();
+    if (page === 'profile') updateProfileUI();
+    if (page === 'uniform') {
+        if (currentUniformTab === 'checklist') renderChecklist();
+        else renderUniforms();
+    }
+    if (page === 'lyrics') renderLyrics();
+    if (page === 'announcements') renderAnnouncements();
+    if (page === 'birthday') renderBirthdayPage();
+    if (page === 'recycle-bin') renderRecycleBin();
+    if (page === 'finance') renderFinance();
+    if (page === 'contributions') renderContributions();
+    if (page === 'transactions') renderTransactions();
+    if (page === 'finance-reports') initFinanceReportsPage();
+    
+    // 👇 IYI NI YO YARI IBURAYE (Yari hanze ya function)
+    if (page === 'delete-requests') {
+        renderDeleteRequests();
+        updateDeleteReqBadge();
+    }
+    
+    // 4. Kumenya niba turi kuva kuri chat (kugira ngo tumarke messages nk'izisomwe)
+    if (previousPage === 'chat' && page !== 'chat') {
+        if (typeof window.markGroupMessagesAsRead === 'function') {
+            setTimeout(() => {
+                window.markGroupMessagesAsRead();
+            }, 300);
+        }
+    }
+    
+    // 5. Gutangiza chat niba turi kuri page ya chat
+    if (page === 'chat') initChatPage();
+    
+    // 6. Kufunga sidebar kuri telefone
+    if (window.innerWidth <= 900) {
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar) sidebar.classList.remove('open');
+    }
+    
+    // 7. Gusubiza hejuru
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+};
         function updateClock() {
             const now = new Date();
             const h = String(now.getHours()).padStart(2, '0');
