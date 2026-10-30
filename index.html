@@ -2617,6 +2617,41 @@ body {
     font-weight: 700;
     letter-spacing: 0.5px;
 }
+     /* ============================================ */
+/* ANIMATION Y'AMABARA (RAINBOW EFFECT)         */
+/* ============================================ */
+
+/* Kuri "Itsinda Rusange" (Hindura amabara yose) */
+.animated-text {
+    background: linear-gradient(90deg, #38bdf8, #ec4899, #10b981, #f59e0b, #38bdf8);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: rainbowColor 5s linear infinite, floatText 3s ease-in-out infinite;
+}
+
+/* Kuri "Abaririmbyi bose" (Hindura amabara yose) */
+.animated-text-pink {
+    background: linear-gradient(90deg, #ec4899, #8b5cf6, #06b6d4, #ec4899);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: rainbowColor 4s linear infinite reverse, floatText 2.5s ease-in-out infinite;
+}
+
+/* ANIMATION YO GUHINDURA AMABARA */
+@keyframes rainbowColor {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+/* ANIMATION YO KUNYEGANYEGA (Kuzamuka no Kumanuka gato) */
+@keyframes floatText {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-3px); }
+}
 </style>
 </head>
 <body>
@@ -3618,15 +3653,14 @@ body {
             </div>
         </div>
 
-        <!-- IYI NI YO YARI IBURAYE: chat-main -->
-       <div class="chat-main" id="chatMain">
+      <div class="chat-main" id="chatMain">
     <div class="chat-main-header">
         <div class="chat-item-avatar" style="background: var(--gradient-2);"><i class="fas fa-users"></i></div>
         <div>
-            <!-- HANO NSHYIZE IBARA RY'UBURURU KURI "Itsinda Rusange" -->
-            <h3 id="chatHeaderTitle" style="color: #0ea5e9; font-weight: 800; font-size: 18px; margin-bottom: 2px;">Itsinda Rusange</h3>
-            <!-- HANO NSHYIZE IBARA RY'UMUTUKU KURI "Abaririmbyi bose" -->
-            <p id="chatHeaderSubtitle" style="color: #ec4899; font-weight: 600; font-size: 13px;">Abaririmbyi bose</p>
+            <!-- HANO: Twayongeyeho class "animated-text" -->
+            <h3 id="chatHeaderTitle" class="animated-text" style="font-weight: 800; font-size: 18px; margin-bottom: 2px;">Itsinda Rusange</h3>
+            <!-- HANO: Twayongeyeho class "animated-text-pink" -->
+            <p id="chatHeaderSubtitle" class="animated-text-pink" style="font-weight: 600; font-size: 13px;">Abaririmbyi bose</p>
         </div>
     </div>
     
