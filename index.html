@@ -2605,6 +2605,18 @@ body {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-3px); }
 }
+     /* Ibara ry'izina ry'itsinda */
+#chatHeaderTitle {
+    color: #0ea5e9 !important; /* Ubururu bukomeye (Sky Blue) */
+    text-shadow: 0 2px 4px rgba(14, 165, 233, 0.3); /* Iki gituma risa n'irifite urumuri */
+}
+
+/* Ibara ry'abantu bari mu itsinda */
+#chatHeaderSubtitle {
+    color: #ec4899 !important; /* Umutuku/Umukara (Pink) */
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
 </style>
 </head>
 <body>
@@ -3607,30 +3619,30 @@ body {
         </div>
 
         <!-- IYI NI YO YARI IBURAYE: chat-main -->
-        <div class="chat-main" id="chatMain">
-            <div class="chat-main-header">
-                <div class="chat-item-avatar" style="background: var(--gradient-2);"><i class="fas fa-users"></i></div>
-                <div>
-                    <h3 id="chatHeaderTitle">Itsinda Rusange</h3>
-                    <p id="chatHeaderSubtitle">Abaririmbyi bose</p>
-                </div>
-            </div>
-            <div class="chat-messages" id="chatMessages">
-                <div class="chat-empty">
-                    <i class="fas fa-comments"></i>
-                    <h3>Nta butumwa</h3>
-                    <p>Tangira kuvuga</p>
-                </div>
-            </div>
-            <div class="chat-input-bar">
-                <input type="text" id="chatInput" placeholder="Andika ubutumwa..." onkeypress="if(event.key==='Enter') sendChatMessage()">
-                <button onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button>
-            </div>
+       <div class="chat-main" id="chatMain">
+    <div class="chat-main-header">
+        <div class="chat-item-avatar" style="background: var(--gradient-2);"><i class="fas fa-users"></i></div>
+        <div>
+            <!-- HANO NSHYIZE IBARA RY'UBURURU KURI "Itsinda Rusange" -->
+            <h3 id="chatHeaderTitle" style="color: #0ea5e9; font-weight: 800; font-size: 18px; margin-bottom: 2px;">Itsinda Rusange</h3>
+            <!-- HANO NSHYIZE IBARA RY'UMUTUKU KURI "Abaririmbyi bose" -->
+            <p id="chatHeaderSubtitle" style="color: #ec4899; font-weight: 600; font-size: 13px;">Abaririmbyi bose</p>
         </div>
-        <!-- IYI NI YO YARI IBURAYE: ifunga chat-main -->
-
-    </div> <!-- FUNGA chat-layout -->
-</div> <!-- FUNGA page-chat -->
+    </div>
+    
+    <div class="chat-messages" id="chatMessages">
+        <div class="chat-empty">
+            <i class="fas fa-comments"></i>
+            <h3>Nta butumwa</h3>
+            <p>Tangira kuvuga</p>
+        </div>
+    </div>
+    
+    <div class="chat-input-bar">
+        <input type="text" id="chatInput" placeholder="Andika ubutumwa..." onkeypress="if(event.key==='Enter') sendChatMessage()">
+        <button onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+</div>
                 <!-- ============ LYRICS ============ -->
                 <div class="page" id="page-lyrics">
                     <div class="page-header">
