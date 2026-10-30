@@ -1810,21 +1810,40 @@ body {
 /* ============================================
    CHAT
    ============================================ */
+/* ============================================
+   CHAT (YAKOSOWE NEZA KURI DESIGN)
+   ============================================ */
 .chat-layout {
-    display: grid; grid-template-columns: 280px 1fr;
-    gap: 16px; height: calc(100vh - 180px); min-height: 500px;
+    display: grid; 
+    grid-template-columns: 280px 1fr;
+    gap: 20px; 
+    height: calc(100vh - 180px); 
+    min-height: 500px;
 }
+
+/* Sidebar y'ibiyaga (Left) */
 .chat-sidebar {
-    background: var(--bg-card); border: 1px solid var(--border);
-    border-radius: var(--radius); overflow-y: auto;
-    display: flex; flex-direction: column;
+    background: var(--bg-card); 
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg); /* Design nziza */
+    overflow-y: auto;
+    display: flex; 
+    flex-direction: column;
+    box-shadow: var(--shadow);
 }
+
 .chat-sidebar-header {
-    padding: 16px; border-bottom: 1px solid var(--border);
-    font-size: 15px; font-weight: 800;
-    display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+    padding: 16px; 
+    border-bottom: 1px solid var(--border);
+    font-size: 15px; 
+    font-weight: 800;
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+    flex-shrink: 0;
 }
 .chat-sidebar-header i { color: var(--primary); }
+
 .chat-tabs { display: flex; padding: 8px; gap: 6px; flex-shrink: 0; }
 .chat-tab {
     flex: 1; padding: 8px 10px; border-radius: 10px;
@@ -1834,6 +1853,7 @@ body {
     transition: var(--transition);
 }
 .chat-tab.active { background: var(--gradient-1); color: white; }
+
 .chat-list { flex: 1; overflow-y: auto; padding: 8px; }
 .chat-item {
     display: flex; align-items: center; gap: 10px;
@@ -1842,6 +1862,7 @@ body {
 }
 .chat-item:hover { background: var(--bg); }
 .chat-item.active { background: rgba(56, 189, 248, 0.1); }
+
 .chat-item-avatar {
     width: 40px; height: 40px; border-radius: 50%;
     background: var(--gradient-1); color: white;
@@ -1850,9 +1871,11 @@ body {
     overflow: hidden; flex-shrink: 0;
 }
 .chat-item-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
 .chat-item-info { flex: 1; min-width: 0; }
 .chat-item-name { font-size: 13.5px; font-weight: 700; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .chat-item-preview { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
 .chat-item-unread {
     background: var(--danger); color: white;
     font-size: 10px; font-weight: 800;
@@ -1860,24 +1883,34 @@ body {
     border-radius: 50px; display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
 }
+
+/* Aho baganirira (Right - Rectangle) */
 .chat-main {
-    background: var(--bg-card); border: 1px solid var(--border);
-    border-radius: var(--radius);
-    display: flex; flex-direction: column; overflow: hidden;
+    background: var(--bg-card); 
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg); /* Design nziza */
+    display: flex; 
+    flex-direction: column; 
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
 }
+
 .chat-main-header {
     padding: 16px 20px; border-bottom: 1px solid var(--border);
     display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+    background: var(--bg-card);
 }
 .chat-main-header h3 { font-size: 16px; font-weight: 800; }
 .chat-main-header p { font-size: 12px; color: var(--text-secondary); }
+
 .chat-messages {
-    flex: 1; overflow-y: auto; padding: 20px;
-    display: flex; flex-direction: column; gap: 12px;
-    background: var(--bg);
+    flex: 1; overflow-y: auto; padding: 24px;
+    display: flex; flex-direction: column; gap: 16px;
+    background: var(--bg); /* Ibarwa rito ry'inyuma */
 }
+
 .chat-message {
-    display: flex; gap: 10px; max-width: 70%;
+    display: flex; gap: 12px; max-width: 75%;
     animation: messageFadeIn 0.3s ease;
 }
 @keyframes messageFadeIn {
@@ -1885,61 +1918,75 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 .chat-message.mine { margin-left: auto; flex-direction: row-reverse; }
+
 .chat-message-avatar {
-    width: 32px; height: 32px; border-radius: 50%;
+    width: 36px; height: 36px; border-radius: 50%;
     background: var(--gradient-1); color: white;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 800; font-size: 12px;
+    font-weight: 800; font-size: 13px;
     overflow: hidden; flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 .chat-message-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
 .chat-message-bubble {
-    background: var(--bg-card); padding: 10px 14px;
-    border-radius: 14px; border-top-left-radius: 4px;
+    background: var(--bg-card); padding: 12px 16px;
+    border-radius: 16px; border-top-left-radius: 4px;
     box-shadow: var(--shadow); max-width: 100%;
+    border: 1px solid var(--border);
 }
 .chat-message.mine .chat-message-bubble {
     background: var(--gradient-1); color: white;
-    border-top-left-radius: 14px; border-top-right-radius: 4px;
+    border-top-left-radius: 16px; border-top-right-radius: 4px;
+    border: none;
 }
+
 .chat-message-sender {
-    font-size: 11px; font-weight: 700;
-    margin-bottom: 4px; color: var(--primary);
+    font-size: 11.5px; font-weight: 700;
+    margin-bottom: 6px; color: var(--primary);
 }
-.chat-message.mine .chat-message-sender { color: rgba(255, 255, 255, 0.8); }
-.chat-message-text { font-size: 13.5px; line-height: 1.5; word-wrap: break-word; }
-.chat-message-time { font-size: 10.5px; opacity: 0.6; margin-top: 4px; }
+.chat-message.mine .chat-message-sender { color: rgba(255, 255, 255, 0.9); }
+.chat-message-text { font-size: 14px; line-height: 1.5; word-wrap: break-word; }
+.chat-message-time { font-size: 11px; opacity: 0.7; margin-top: 6px; text-align: right; }
+
 .chat-input-bar {
-    padding: 14px 16px; border-top: 1px solid var(--border);
-    display: flex; gap: 10px; flex-shrink: 0;
+    padding: 16px 20px; border-top: 1px solid var(--border);
+    display: flex; gap: 12px; flex-shrink: 0;
     background: var(--bg-card);
 }
 .chat-input-bar input {
-    flex: 1; padding: 12px 16px;
+    flex: 1; padding: 14px 20px;
     border: 2px solid var(--border); border-radius: 50px;
     background: var(--bg); color: var(--text);
     font-family: inherit; font-size: 14px; outline: none;
     transition: var(--transition);
 }
-.chat-input-bar input:focus { border-color: var(--primary); background: var(--bg-card); }
+.chat-input-bar input:focus { border-color: var(--primary); background: var(--bg-card); box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.1); }
 .chat-input-bar button {
-    width: 46px; height: 46px; border-radius: 50%;
+    width: 48px; height: 48px; border-radius: 50%;
     border: none; background: var(--gradient-1); color: white;
     cursor: pointer; display: flex; align-items: center; justify-content: center;
-    font-size: 16px; transition: var(--transition); flex-shrink: 0;
+    font-size: 18px; transition: var(--transition); flex-shrink: 0;
+    box-shadow: 0 8px 20px rgba(56, 189, 248, 0.3);
 }
-.chat-input-bar button:hover { transform: scale(1.08); box-shadow: 0 8px 20px rgba(56, 189, 248, 0.4); }
+.chat-input-bar button:hover { transform: scale(1.08) translateY(-2px); box-shadow: 0 12px 25px rgba(56, 189, 248, 0.5); }
+
+/* Empty state niba nta butumwa (Kugira ngo "Vugana n'itsinda" biveho) */
 .chat-empty {
     flex: 1; display: flex; flex-direction: column;
     align-items: center; justify-content: center;
     color: var(--text-secondary); text-align: center; padding: 40px;
+    background: transparent;
 }
-.chat-empty i { font-size: 60px; opacity: 0.3; margin-bottom: 16px; }
-.chat-empty h3 { font-size: 17px; color: var(--text); margin-bottom: 6px; }
+.chat-empty i { font-size: 70px; opacity: 0.2; margin-bottom: 20px; color: var(--primary); }
+.chat-empty h3 { font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+.chat-empty p { font-size: 14px; }
+
+/* Kuri Telefone (Mobile) */
 @media (max-width: 768px) {
     .chat-layout { 
         grid-template-columns: 1fr !important; 
-        height: calc(100vh - 150px) !important; 
+        height: calc(100vh - 120px) !important; 
         min-height: 450px;
     }
     .chat-sidebar { 
@@ -1955,9 +2002,13 @@ body {
     .chat-messages {
         flex: 1 !important;
         overflow-y: auto !important;
+        padding: 16px !important;
     }
     .chat-message { 
-        max-width: 85%; 
+        max-width: 90%; 
+    }
+    .chat-input-bar {
+        padding: 12px 16px;
     }
 }
 
