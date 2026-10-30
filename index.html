@@ -1807,11 +1807,9 @@ body {
 .recycle-banner h3 { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
 .recycle-banner p { font-size: 13px; opacity: 0.9; }
 
+
 /* ============================================
-   CHAT
-   ============================================ */
-/* ============================================
-   CHAT (YAKOSOWE NEZA KURI DESIGN)
+   CHAT UI NZIZA + ANIMATIONS (YAKOSOWE)
    ============================================ */
 .chat-layout {
     display: grid; 
@@ -1825,7 +1823,7 @@ body {
 .chat-sidebar {
     background: var(--bg-card); 
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg); /* Design nziza */
+    border-radius: var(--radius-lg); 
     overflow-y: auto;
     display: flex; 
     flex-direction: column;
@@ -1857,23 +1855,24 @@ body {
 .chat-list { flex: 1; overflow-y: auto; padding: 8px; }
 .chat-item {
     display: flex; align-items: center; gap: 10px;
-    padding: 10px 12px; border-radius: 10px; cursor: pointer;
-    transition: var(--transition); margin-bottom: 4px; position: relative;
+    padding: 12px; border-radius: 12px; cursor: pointer;
+    transition: all 0.3s ease; margin-bottom: 4px; position: relative;
 }
-.chat-item:hover { background: var(--bg); }
-.chat-item.active { background: rgba(56, 189, 248, 0.1); }
+.chat-item:hover { background: var(--bg); transform: translateX(4px); }
+.chat-item.active { background: rgba(56, 189, 248, 0.1); border-left: 4px solid var(--primary); }
 
 .chat-item-avatar {
-    width: 40px; height: 40px; border-radius: 50%;
-    background: var(--gradient-1); color: white;
+    width: 45px; height: 45px; border-radius: 50%;
+    background: var(--gradient-2); color: white;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 800; font-size: 14px;
+    font-weight: 800; font-size: 16px;
     overflow: hidden; flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
 }
 .chat-item-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
 .chat-item-info { flex: 1; min-width: 0; }
-.chat-item-name { font-size: 13.5px; font-weight: 700; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chat-item-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
 .chat-item-preview { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .chat-item-unread {
@@ -1884,105 +1883,170 @@ body {
     flex-shrink: 0;
 }
 
-/* Aho baganirira (Right - Rectangle) */
+/* ============================================
+   RECTANGLE BAGANIRIRAMO (Chat Main) - ANIMATED
+   ============================================ */
 .chat-main {
     background: var(--bg-card); 
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg); /* Design nziza */
+    border-radius: var(--radius-lg); 
     display: flex; 
     flex-direction: column; 
     overflow: hidden;
     box-shadow: var(--shadow-lg);
+    animation: slideUpFade 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; /* Animation iyo ufunguye chat */
+}
+
+@keyframes slideUpFade {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .chat-main-header {
-    padding: 16px 20px; border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+    padding: 18px 24px; 
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 14px; flex-shrink: 0;
     background: var(--bg-card);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+    z-index: 10;
 }
-.chat-main-header h3 { font-size: 16px; font-weight: 800; }
-.chat-main-header p { font-size: 12px; color: var(--text-secondary); }
+.chat-main-header h3 { font-size: 17px; font-weight: 800; color: var(--text); }
+.chat-main-header p { font-size: 12.5px; color: var(--text-secondary); }
 
+/* ============================================
+   AHO UBUTUMWA BUGARAGARA (Background nziza)
+   ============================================ */
 .chat-messages {
     flex: 1; overflow-y: auto; padding: 24px;
     display: flex; flex-direction: column; gap: 16px;
-    background: var(--bg); /* Ibarwa rito ry'inyuma */
+    background-color: var(--bg);
+    /* Pattern nziza yoroheje (nka WhatsApp) */
+    background-image: radial-gradient(var(--border) 1px, transparent 1px);
+    background-size: 20px 20px;
+    scroll-behavior: smooth;
 }
 
+/* Custom Scrollbar nziza */
+.chat-messages::-webkit-scrollbar { width: 6px; }
+.chat-messages::-webkit-scrollbar-track { background: transparent; }
+.chat-messages::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.3); border-radius: 10px; }
+.chat-messages::-webkit-scrollbar-thumb:hover { background: rgba(56, 189, 248, 0.6); }
+
+/* ============================================
+   UBUTUMWA (Messages) - BUNGANIRA (ANIMATION)
+   ============================================ */
 .chat-message {
     display: flex; gap: 12px; max-width: 75%;
-    animation: messageFadeIn 0.3s ease;
+    animation: messagePopIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
-@keyframes messageFadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+
+@keyframes messagePopIn {
+    from { opacity: 0; transform: scale(0.9) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
 }
+
 .chat-message.mine { margin-left: auto; flex-direction: row-reverse; }
 
 .chat-message-avatar {
-    width: 36px; height: 36px; border-radius: 50%;
+    width: 38px; height: 38px; border-radius: 50%;
     background: var(--gradient-1); color: white;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 800; font-size: 13px;
+    font-weight: 800; font-size: 14px;
     overflow: hidden; flex-shrink: 0;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    border: 2px solid white;
 }
 .chat-message-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
 .chat-message-bubble {
     background: var(--bg-card); padding: 12px 16px;
-    border-radius: 16px; border-top-left-radius: 4px;
-    box-shadow: var(--shadow); max-width: 100%;
+    border-radius: 18px; border-top-left-radius: 4px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05); max-width: 100%;
     border: 1px solid var(--border);
+    transition: all 0.2s ease;
+    position: relative;
 }
+.chat-message-bubble:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.1); transform: translateY(-2px); }
+
 .chat-message.mine .chat-message-bubble {
     background: var(--gradient-1); color: white;
-    border-top-left-radius: 16px; border-top-right-radius: 4px;
+    border-top-left-radius: 18px; border-top-right-radius: 4px;
     border: none;
+    box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
 }
 
 .chat-message-sender {
-    font-size: 11.5px; font-weight: 700;
+    font-size: 12px; font-weight: 800;
     margin-bottom: 6px; color: var(--primary);
+    letter-spacing: 0.3px;
 }
 .chat-message.mine .chat-message-sender { color: rgba(255, 255, 255, 0.9); }
-.chat-message-text { font-size: 14px; line-height: 1.5; word-wrap: break-word; }
-.chat-message-time { font-size: 11px; opacity: 0.7; margin-top: 6px; text-align: right; }
 
+.chat-message-text { font-size: 14.5px; line-height: 1.5; word-wrap: break-word; }
+.chat-message-time { font-size: 10.5px; opacity: 0.7; margin-top: 6px; text-align: right; }
+
+/* ============================================
+   AHO BANDIKA (Input Bar) - UI NZIZA
+   ============================================ */
 .chat-input-bar {
-    padding: 16px 20px; border-top: 1px solid var(--border);
+    padding: 16px 24px; border-top: 1px solid var(--border);
     display: flex; gap: 12px; flex-shrink: 0;
     background: var(--bg-card);
+    z-index: 10;
 }
+
 .chat-input-bar input {
     flex: 1; padding: 14px 20px;
     border: 2px solid var(--border); border-radius: 50px;
     background: var(--bg); color: var(--text);
-    font-family: inherit; font-size: 14px; outline: none;
-    transition: var(--transition);
+    font-family: inherit; font-size: 14.5px; outline: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
 }
-.chat-input-bar input:focus { border-color: var(--primary); background: var(--bg-card); box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.1); }
+.chat-input-bar input:focus { 
+    border-color: var(--primary); 
+    background: var(--bg-card); 
+    box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15); 
+    transform: translateY(-1px);
+}
+
 .chat-input-bar button {
-    width: 48px; height: 48px; border-radius: 50%;
+    width: 50px; height: 50px; border-radius: 50%;
     border: none; background: var(--gradient-1); color: white;
     cursor: pointer; display: flex; align-items: center; justify-content: center;
-    font-size: 18px; transition: var(--transition); flex-shrink: 0;
-    box-shadow: 0 8px 20px rgba(56, 189, 248, 0.3);
+    font-size: 20px; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); 
+    flex-shrink: 0;
+    box-shadow: 0 8px 25px rgba(56, 189, 248, 0.4);
 }
-.chat-input-bar button:hover { transform: scale(1.08) translateY(-2px); box-shadow: 0 12px 25px rgba(56, 189, 248, 0.5); }
+.chat-input-bar button:hover { 
+    transform: scale(1.1) rotate(-10deg); 
+    box-shadow: 0 12px 30px rgba(56, 189, 248, 0.6); 
+}
+.chat-input-bar button:active { transform: scale(0.95); }
 
-/* Empty state niba nta butumwa (Kugira ngo "Vugana n'itsinda" biveho) */
+/* ============================================
+   IYO NTA BUTUMWA BUHARI (Empty State)
+   ============================================ */
 .chat-empty {
     flex: 1; display: flex; flex-direction: column;
     align-items: center; justify-content: center;
     color: var(--text-secondary); text-align: center; padding: 40px;
-    background: transparent;
+    animation: fadeIn 0.5s ease;
 }
-.chat-empty i { font-size: 70px; opacity: 0.2; margin-bottom: 20px; color: var(--primary); }
-.chat-empty h3 { font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+.chat-empty i { 
+    font-size: 80px; opacity: 0.15; margin-bottom: 20px; color: var(--primary);
+    animation: floatIcon 3s ease-in-out infinite;
+}
+@keyframes floatIcon {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+.chat-empty h3 { font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
 .chat-empty p { font-size: 14px; }
 
-/* Kuri Telefone (Mobile) */
+/* ============================================
+   KURI TELEFONE (Mobile)
+   ============================================ */
 @media (max-width: 768px) {
     .chat-layout { 
         grid-template-columns: 1fr !important; 
