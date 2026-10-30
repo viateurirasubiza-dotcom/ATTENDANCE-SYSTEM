@@ -1989,10 +1989,16 @@ body {
    AHO BANDIKA (Input Bar) - UI NZIZA
    ============================================ */
 .chat-input-bar {
-    padding: 16px 24px; border-top: 1px solid var(--border);
-    display: flex; gap: 12px; flex-shrink: 0;
+    padding: 16px 20px; /* Yagabanyijwe gato kugira ngo ishyiremo neza */
+    border-top: 1px solid var(--border);
+    display: flex; 
+    gap: 12px; 
+    flex-shrink: 0;
     background: var(--bg-card);
     z-index: 10;
+    width: 100%;
+    box-sizing: border-box; /* Ibi bituma padding idakura akazu */
+    overflow: hidden; /* Ibi bituma buto itasohoka hanze y'akazu */
 }
 
 .chat-input-bar input {
@@ -2003,24 +2009,39 @@ body {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
 }
+
 .chat-input-bar input:focus { 
     border-color: var(--primary); 
     background: var(--bg-card); 
     box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15); 
     transform: translateY(-1px);
 }
-
-.chat-input-bar button {
-    width: 50px; height: 50px; border-radius: 50%;
-    border: none; background: var(--gradient-1); color: white;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    font-size: 20px; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); 
-    flex-shrink: 0;
-    box-shadow: 0 8px 25px rgba(56, 189, 248, 0.4);
+.chat-input-bar input {
+    flex: 1; 
+    min-width: 0; /* Ibi ni ngombwa kugira ngo input itakura buto isohoke */
+    padding: 12px 20px;
+    border: 2px solid var(--border); border-radius: 50px;
+    background: var(--bg); color: var(--text);
+    font-family: inherit; font-size: 14.5px; outline: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
 }
-.chat-input-bar button:hover { 
-    transform: scale(1.1) rotate(-10deg); 
-    box-shadow: 0 12px 30px rgba(56, 189, 248, 0.6); 
+.chat-input-bar button {
+    width: 46px; 
+    height: 46px; 
+    border-radius: 50%;
+    border: none; 
+    background: var(--gradient-1); 
+    color: white;
+    cursor: pointer; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    font-size: 18px; 
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); 
+    flex-shrink: 0; /* Ibi bituma buto itagabanyuka */
+    box-shadow: 0 8px 25px rgba(56, 189, 248, 0.4);
+    margin: 0; /* Kuraho margin niba ihari */
 }
 .chat-input-bar button:active { transform: scale(0.95); }
 
