@@ -8500,33 +8500,43 @@ enterApp();
             chatList.innerHTML = html;
         }
 
-        window.openGroupChat = function() {
-            currentChatType = 'group';
-            
-            document.getElementById('chatHeaderTitle').textContent = 'Itsinda Rusange';
-            document.getElementById('chatHeaderSubtitle').textContent = 'Abaririmbyi bose';
-            
-            const headerAvatar = document.querySelector('#chatMain .chat-main-header .chat-item-avatar');
-            if (headerAvatar) {
-                headerAvatar.innerHTML = '<i class="fas fa-users"></i>';
-                headerAvatar.style.background = 'var(--gradient-2)';
-            }
-            
-            loadGroupMessages();
-            
-            setTimeout(() => {
-                if (typeof window.markGroupMessagesAsRead === 'function') {
-                    window.markGroupMessagesAsRead();
-                }
-            }, 800);
-            
-            setTimeout(() => {
-                if (typeof window.markGroupMessagesAsRead === 'function') {
-                    window.markGroupMessagesAsRead();
-                }
-            }, 2500);
-        };
-
+      window.openGroupChat = function() {
+    currentChatType = 'group';
+    
+    // --- HANO NI HO HARI IMPINDURA ---
+    const titleEl = document.getElementById('chatHeaderTitle');
+    const subtitleEl = document.getElementById('chatHeaderSubtitle');
+    
+    if (titleEl) {
+        titleEl.textContent = 'Itsinda Rusange';
+        titleEl.classList.add('animated-text'); // Iyi ituma amabara ahinduka (kandi ntikuraho iyindi)
+    }
+    if (subtitleEl) {
+        subtitleEl.textContent = 'Abaririmbyi bose';
+        subtitleEl.classList.add('animated-text-pink'); // Iyi ituma amabara ahinduka
+    }
+    // ---------------------------------
+    
+    const headerAvatar = document.querySelector('#chatMain .chat-main-header .chat-item-avatar');
+    if (headerAvatar) {
+        headerAvatar.innerHTML = '<i class="fas fa-users"></i>';
+        headerAvatar.style.background = 'var(--gradient-2)';
+    }
+    
+    loadGroupMessages();
+    
+    setTimeout(() => {
+        if (typeof window.markGroupMessagesAsRead === 'function') {
+            window.markGroupMessagesAsRead();
+        }
+    }, 800);
+    
+    setTimeout(() => {
+        if (typeof window.markGroupMessagesAsRead === 'function') {
+            window.markGroupMessagesAsRead();
+        }
+    }, 2500);
+};
         function loadGroupMessages() {
             if (chatUnsubscribe) { chatUnsubscribe(); chatUnsubscribe = null; }
             
