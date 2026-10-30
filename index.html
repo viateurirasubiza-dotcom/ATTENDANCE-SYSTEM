@@ -6228,6 +6228,10 @@ enterApp();
             if (page === 'contributions') renderContributions();
             if (page === 'transactions') renderTransactions();
             if (page === 'finance-reports') initFinanceReportsPage();
+         if (page === 'delete-requests') {
+    renderDeleteRequests();
+    updateDeleteReqBadge();
+}
             
             if (previousPage === 'chat' && page !== 'chat') {
                 if (typeof window.markGroupMessagesAsRead === 'function') {
