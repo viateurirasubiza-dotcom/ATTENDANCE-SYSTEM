@@ -3588,26 +3588,29 @@ body {
                 </div>
 
              
-                    <div class="chat-layout">
-                        <div class="chat-sidebar">
-                            <div class="chat-sidebar-header">
-                                <i class="fas fa-comments"></i>
-                                <span>Ubutumwa</span>
-                            </div>
+                   <!-- ============ CHAT ============ -->
+<div class="page" id="page-chat"> <!-- REKA IYI YONGEHWEHO -->
+    <div class="chat-layout">
+        <div class="chat-sidebar">
+            <div class="chat-sidebar-header">
+                <i class="fas fa-comments"></i>
+                <span>Ubutumwa</span>
+            </div>
+            <div class="chat-list" id="chatList">
+                <div class="chat-item active" onclick="openGroupChat()" style="background: rgba(56,189,248,0.1);">
+                    <div class="chat-item-avatar" style="background: var(--gradient-2);"><i class="fas fa-users"></i></div>
+                    <div class="chat-item-info">
+                        <div class="chat-item-name">Itsinda Rusange</div>
+                        <div class="chat-item-preview" id="groupChatPreview">Vugana n'itsinda...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                            <div class="chat-list" id="chatList">
-                                <div class="chat-item active" onclick="openGroupChat()" style="background: rgba(56,189,248,0.1);">
-                                    <div class="chat-item-avatar" style="background: var(--gradient-2);"><i class="fas fa-users"></i></div>
-                                    <div class="chat-item-info">
-                                        <div class="chat-item-name">Itsinda Rusange</div>
-                                        <div class="chat-item-preview" id="groupChatPreview">Vugana n'itsinda...</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+        <!-- ... chat-main na messages ... -->
 
-                       
-
+    </div> <!-- FUNGA chat-layout -->
+</div> <!-- FUNGA page-chat HANO -->
                 <!-- ============ LYRICS ============ -->
                 <div class="page" id="page-lyrics">
                     <div class="page-header">
