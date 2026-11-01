@@ -7129,7 +7129,7 @@ enterApp();
             } catch (error) { showToast('❌ ' + error.message, 'error'); }
         };
 
-        window.renderUsers = async function() {
+      window.renderUsers = async function() {
     // ============================================
     // 1. ZANA DATA MBERE (kuri BOSE: admin na super_admin)
     // ============================================
@@ -7161,21 +7161,57 @@ enterApp();
     const tbody = document.getElementById('usersBody');
     if (!tbody) return;
     
-    const usersCountEl = document.getElementById('usersCount');
-    if (usersCountEl) usersCountEl.textContent = users.length;
+    // Shyiraho Search Bar (niba itarabaho)
+    let searchBar = document.getElementById('usersSearchBar');
+    if (!searchBar) {
+        searchBar = document.createElement('div');
+        searchBar.id = 'usersSearchBar';
+        searchBar.className = 'search-box';
+        searchBar.style.marginBottom = '16px';
+        searchBar.innerHTML = `
+            <i class="fas fa-search"></i>
+            <input type="text" id="usersSearchInput" placeholder="Shakisha izina cyangwa email..." oninput="window.renderUsers()">
+        `;
+        // Shyira search bar imbere y'imbonerahamwe (table)
+        const tableContainer = tbody.closest('.table-card');
+        if (tableContainer) {
+            tableContainer.parentNode.insertBefore(searchBar, tableContainer);
+        }
+    }
+
+    // Fata ibyo umukoresha yanditse mu ishakiro (Search term)
+    const searchInput = document.getElementById('usersSearchInput');
+    const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+    // ============================================
+    // 5. SHAKISHA (Filter) ABANTU
+    // ============================================
+    let filteredUsers = users;
     
-    if (users.length === 0) {
+    if (searchTerm) {
+        filteredUsers = users.filter(u => 
+            (u.name || '').toLowerCase().includes(searchTerm) || 
+            (u.email || '').toLowerCase().includes(searchTerm) ||
+            (u.role || '').toLowerCase().includes(searchTerm)
+        );
+    }
+
+    // Erekana umubare w'abantu ubonye nyirizina
+    const usersCountEl = document.getElementById('usersCount');
+    if (usersCountEl) usersCountEl.textContent = filteredUsers.length;
+    
+    if (filteredUsers.length === 0) {
         tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text-secondary);">
-            <i class="fas fa-users-cog" style="font-size:40px;opacity:0.3;display:block;margin-bottom:10px;"></i>
-            Nta bakoresha babonetse
+            <i class="fas fa-user-slash" style="font-size:40px;opacity:0.3;display:block;margin-bottom:10px;"></i>
+            Nta wabonetse muri iyi shakiro
         </td></tr>`;
         return;
     }
     
     // ============================================
-    // 5. RENDER USERS
+    // 6. RENDER USERS
     // ============================================
-    tbody.innerHTML = users.map(u => {
+    tbody.innerHTML = filteredUsers.map(u => {
         // ---- Role Badge ----
         const roleBadge = u.role === 'super_admin' 
             ? `<span class="role-badge super_admin">Super Admin</span>` 
