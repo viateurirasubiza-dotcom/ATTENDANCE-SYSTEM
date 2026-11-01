@@ -7129,20 +7129,54 @@ enterApp();
             } catch (error) { showToast('❌ ' + error.message, 'error'); }
         };
 
-        // ============================================
-        // USERS
-        // ============================================
-       window.renderUsers = async function() {
-    if (currentUserData?.role !== 'super_admin') return;
+        window.renderUsers = async function() {
+    // ============================================
+    // 1. ZANA DATA MBERE (kuri BOSE: admin na super_admin)
+    // ============================================
     await loadUsers();
-    const tbody = document.getElementById('usersBody');
-    if (!tbody) return;
-    document.getElementById('usersCount').textContent = users.length;
-    if (users.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text-secondary);">Nta bakoresha</td></tr>`;
+    
+    // ============================================
+    // 2. REBA ROLE (super_admin cyangwa admin gusa)
+    // ============================================
+    const isSuperAdmin = currentUserData?.role === 'super_admin';
+    const isAdmin = currentUserData?.role === 'admin';
+    
+    // Niba atari admin cyangwa super_admin — nta burenganzira
+    if (!isSuperAdmin && !isAdmin) {
+        showToast('❌ Nta burenganzira bwo kubona abakoresha', 'error');
         return;
     }
+    
+    // ============================================
+    // 3. Hisha "Ongeraho Admin" button niba utari super_admin
+    // ============================================
+    const addAdminBtn = document.querySelector('#page-users .page-header .btn-primary');
+    if (addAdminBtn) {
+        addAdminBtn.style.display = isSuperAdmin ? '' : 'none';
+    }
+    
+    // ============================================
+    // 4. ZUZA TABLE
+    // ============================================
+    const tbody = document.getElementById('usersBody');
+    if (!tbody) return;
+    
+    const usersCountEl = document.getElementById('usersCount');
+    if (usersCountEl) usersCountEl.textContent = users.length;
+    
+    if (users.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text-secondary);">
+            <i class="fas fa-users-cog" style="font-size:40px;opacity:0.3;display:block;margin-bottom:10px;"></i>
+            Nta bakoresha babonetse
+        </td></tr>`;
+        return;
+    }
+    
+    // ============================================
+    // 5. RENDER USERS
+    // ============================================
     tbody.innerHTML = users.map(u => {
+        // ---- Role Badge ----
         const roleBadge = u.role === 'super_admin' 
             ? `<span class="role-badge super_admin">Super Admin</span>` 
             : u.role === 'admin' 
@@ -7150,22 +7184,61 @@ enterApp();
             : u.role === 'comptable'
             ? `<span class="role-badge comptable">Comptable</span>`
             : `<span class="role-badge member">Member</span>`;
+        
         const isSelf = u.uid === currentUser.uid;
-        return `<tr>
-            <td><strong>${u.name || '-'}</strong></td>
-            <td>${u.email || '-'}</td>
-            <td>${roleBadge}</td>
-            <td><div style="display:flex;gap:6px;flex-wrap:wrap;">
-                ${!isSelf && u.role === 'member' ? `<button class="action-btn promote" onclick="promoteToAdmin('${u.uid}')" title="Kora Admin"><i class="fas fa-user-shield"></i></button>` : ''}
+        
+        // ---- Actions (zihinduka bitewe n'uburenganzira) ----
+        let actionsHtml = '';
+        
+        if (isSuperAdmin) {
+            // ===== SUPER ADMIN: ashobora byose =====
+            actionsHtml = `
+                ${!isSelf && u.role === 'member' ? 
+                    `<button class="action-btn promote" onclick="promoteToAdmin('${u.uid}')" title="Kora Admin">
+                        <i class="fas fa-user-shield"></i>
+                    </button>` : ''}
                 
                 ${!isSelf && (u.role === 'admin' || u.role === 'comptable') ? 
-                    `<button class="action-btn" onclick="openAdminPermissionsModal('${u.uid}')" title="Hindura Uburenganzira" style="background: rgba(139,92,246,0.15); color: #8b5cf6; border-color: #8b5cf6;"><i class="fas fa-key"></i></button>` 
-                    : ''}
+                    `<button class="action-btn" onclick="openAdminPermissionsModal('${u.uid}')" title="Hindura Uburenganzira" 
+                        style="background: rgba(139,92,246,0.15); color: #8b5cf6; border-color: #8b5cf6;">
+                        <i class="fas fa-key"></i>
+                    </button>` : ''}
                 
-                ${!isSelf && u.role === 'admin' ? `<button class="action-btn delete" onclick="demoteToMember('${u.uid}')" title="Kuraho Admin"><i class="fas fa-user-minus"></i></button>` : ''}
+                ${!isSelf && u.role === 'admin' ? 
+                    `<button class="action-btn delete" onclick="demoteToMember('${u.uid}')" title="Kuraho Admin">
+                        <i class="fas fa-user-minus"></i>
+                    </button>` : ''}
                 
-                ${!isSelf && u.role !== 'super_admin' ? `<button class="action-btn delete" onclick="deleteUser('${u.uid}')" title="Siba"><i class="fas fa-trash"></i></button>` : ''}
-            </div></td>
+                ${!isSelf && u.role !== 'super_admin' ? 
+                    `<button class="action-btn delete" onclick="deleteUser('${u.uid}')" title="Siba">
+                        <i class="fas fa-trash"></i>
+                    </button>` : ''}
+                
+                ${isSelf ? `<span style="font-size:11px;color:var(--text-secondary);font-weight:600;">(Wowe)</span>` : ''}
+            `;
+        } else if (isAdmin) {
+            // ===== ADMIN GUSA: ashobora kureba gusa (READ ONLY) =====
+            actionsHtml = `
+                <span style="font-size:11.5px;color:var(--text-secondary);font-style:italic;">
+                    <i class="fas fa-eye"></i> Reba gusa
+                </span>
+            `;
+        }
+        
+        // ---- Row ----
+        return `<tr>
+            <td>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    ${u.photo 
+                        ? `<img src="${u.photo}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--border);" onerror="this.outerHTML='<div style=\\'width:36px;height:36px;border-radius:50%;background:var(--gradient-1);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;\\'>${(u.name||'?').split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase()}</div>'">`
+                        : `<div style="width:36px;height:36px;border-radius:50%;background:var(--gradient-1);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;">${(u.name||'?').split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase()}</div>`
+                    }
+                    <strong>${u.name || '-'}</strong>
+                </div>
+            </td>
+            <td>${u.email || '-'}</td>
+            <td>${roleBadge}</td>
+            <td><div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">${actionsHtml}</div></td>
         </tr>`;
     }).join('');
 };
