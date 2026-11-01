@@ -6193,7 +6193,7 @@ enterApp();
             document.getElementById('sidebar').classList.toggle('open'); 
         };
 
-       window.switchPage = function(page, element) {
+     window.switchPage = async function(page, element) {
     const previousPage = window._currentPage || 'dashboard';
     
     // 1. Gukuraho "active" kuri nav-items zose
@@ -6207,38 +6207,115 @@ enterApp();
     
     window._currentPage = page;
     
-    // 3. Guhamagara functions ziri muri buri page
-    if (page === 'members') renderMembers();
-    if (page === 'pending') renderPending();
-    if (page === 'users') renderUsers();
-    if (page === 'my-dashboard') renderMyDashboard();
-    if (page === 'my-finance') renderMyFinance();
-    if (page === 'payment-requests') renderPaymentRequests();
-    if (page === 'attendance') renderAttendancePage();
-    if (page === 'voices') renderVoicesPage();
-    if (page === 'photos') renderPhotosPage();
-    if (page === 'reports') initReportsPage();
-    if (page === 'profile') updateProfileUI();
-    if (page === 'uniform') {
-        if (currentUniformTab === 'checklist') renderChecklist();
-        else renderUniforms();
+    // ============================================
+    // 3. ZANA AMAKURU MBERE (await) HANYUMA WEREKANE
+    // ============================================
+    try {
+        if (page === 'members') {
+            await loadMembers();
+            renderMembers();
+        }
+        if (page === 'pending') {
+            await loadMembers();
+            renderPending();
+        }
+        if (page === 'users') {
+            await loadUsers();    // 👈 IYI NI YO YAKEMURAGA IKIBAZO CYA 34 vs 35
+            renderUsers();
+        }
+        if (page === 'my-dashboard') {
+            await loadMembers();  // Zana amakuru mashya
+            renderMyDashboard();
+        }
+        if (page === 'my-finance') {
+            await loadTransactions();
+            await loadContributions();
+            renderMyFinance();
+        }
+        if (page === 'payment-requests') {
+            await loadTransactions();
+            renderPaymentRequests();
+        }
+        if (page === 'attendance') {
+            await loadSessions();
+            renderAttendancePage();
+        }
+        if (page === 'voices') {
+            await loadMembers();
+            renderVoicesPage();
+        }
+        if (page === 'photos') {
+            await loadMembers();
+            await loadUsers();
+            renderPhotosPage();
+        }
+        if (page === 'reports') {
+            await loadSessions();
+            initReportsPage();
+        }
+        if (page === 'profile') {
+            updateProfileUI();
+        }
+        if (page === 'uniform') {
+            await loadUniforms();
+            await loadUniformAssignments();
+            if (currentUniformTab === 'checklist') renderChecklist();
+            else renderUniforms();
+        }
+        if (page === 'lyrics') {
+            await loadLyrics();
+            renderLyrics();
+        }
+        if (page === 'announcements') {
+            await loadAnnouncements();
+            renderAnnouncements();
+        }
+        if (page === 'birthday') {
+            await loadMembers();
+            await loadUsers();
+            renderBirthdayPage();
+        }
+        if (page === 'recycle-bin') {
+            await loadMembers();
+            renderRecycleBin();
+        }
+        if (page === 'finance') {
+            await loadTransactions();
+            await loadContributions();
+            renderFinance();
+        }
+        if (page === 'contributions') {
+            await loadContributions();
+            renderContributions();
+        }
+        if (page === 'transactions') {
+            await loadTransactions();
+            renderTransactions();
+        }
+        if (page === 'finance-reports') {
+            await loadTransactions();
+            initFinanceReportsPage();
+        }
+        if (page === 'social-media') {
+            await loadSocialMedia();
+            renderSocialMedia();
+        }
+        
+        // Paji ya delete-requests
+        if (page === 'delete-requests') {
+            await renderDeleteRequests();
+            updateDeleteReqBadge();
+        }
+
+    } catch (error) {
+        console.error("❌ Ikibazo mu kuzana amakuru ya paji:", error);
+        showToast('❌ Hari ikibazo mu kuzana amakuru. Ongera ugerageze.', 'error');
     }
-    if (page === 'lyrics') renderLyrics();
-    if (page === 'announcements') renderAnnouncements();
-    if (page === 'birthday') renderBirthdayPage();
-    if (page === 'recycle-bin') renderRecycleBin();
-    if (page === 'finance') renderFinance();
-    if (page === 'contributions') renderContributions();
-    if (page === 'transactions') renderTransactions();
-    if (page === 'finance-reports') initFinanceReportsPage();
     
-    // 👇 IYI NI YO YARI IBURAYE (Yari hanze ya function)
-    if (page === 'delete-requests') {
-        renderDeleteRequests();
-        updateDeleteReqBadge();
-    }
-    
-    // 4. Kumenya niba turi kuva kuri chat (kugira ngo tumarke messages nk'izisomwe)
+    // ============================================
+    // 4. CHAT & SIDEBAR
+    // ============================================
+    // Kumenya niba turi kuva kuri chat (kugira ngo tumarke messages nk'izisomwe)
     if (previousPage === 'chat' && page !== 'chat') {
         if (typeof window.markGroupMessagesAsRead === 'function') {
             setTimeout(() => {
@@ -6247,16 +6324,16 @@ enterApp();
         }
     }
     
-    // 5. Gutangiza chat niba turi kuri page ya chat
+    // Gutangiza chat niba turi kuri page ya chat
     if (page === 'chat') initChatPage();
     
-    // 6. Kufunga sidebar kuri telefone
+    // Kufunga sidebar kuri telefone
     if (window.innerWidth <= 900) {
         const sidebar = document.getElementById('sidebar');
         if (sidebar) sidebar.classList.remove('open');
     }
     
-    // 7. Gusubiza hejuru
+    // Gusubiza hejuru
     window.scrollTo({ top: 0, behavior: 'smooth' });
 };
         function updateClock() {
