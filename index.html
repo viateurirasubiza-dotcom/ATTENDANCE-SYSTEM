@@ -8928,6 +8928,8 @@ enterApp();
 
         window.initChatPage = function() {
             renderChatList();
+             // 🔥 TANGIZA AUTO-DELETE
+    startAutoDeleteInterval();
             
             const chatInput = document.getElementById('chatInput');
             if (chatInput && !chatInput.dataset.init) {
@@ -9017,22 +9019,117 @@ enterApp();
         }
     }, 2500);
 };
-        function loadGroupMessages() {
-            if (chatUnsubscribe) { chatUnsubscribe(); chatUnsubscribe = null; }
-            
-            const messagesEl = document.getElementById('chatMessages');
-            messagesEl.innerHTML = `<div style="text-align:center;padding:20px;color:var(--text-secondary);"><i class="fas fa-spinner fa-spin"></i> Turazana...</div>`;
-            
-            const q = query(collection(db, 'groupChats'), orderBy('createdAt', 'asc'), limit(100));
-            
-            chatUnsubscribe = onSnapshot(q, (snap) => {
-                chatMessages = [];
-                snap.forEach(d => chatMessages.push({ id: d.id, ...d.data() }));
-                renderChatMessages();
-            }, (error) => {
-                messagesEl.innerHTML = `<div class="chat-empty"><i class="fas fa-exclamation-triangle"></i><h3>Ikibazo cyabaye</h3><p>${error.message}</p></div>`;
-            });
+     // ============================================
+// DISAPPEARING MESSAGES - ICYUMWERU KIMWE (7 DAYS)
+// ============================================
+const MESSAGE_LIFETIME_DAYS = 7;
+const MESSAGE_LIFETIME_MS = MESSAGE_LIFETIME_DAYS * 24 * 60 * 60 * 1000;
+
+// Isiba messages zishaje (zirenga iminsi 7) kuri database
+async function deleteOldMessages() {
+    try {
+        const cutoffTime = new Date(Date.now() - MESSAGE_LIFETIME_MS);
+        
+        const q = query(
+            collection(db, 'groupChats'),
+            where('createdAt', '<', cutoffTime)
+        );
+        
+        const snap = await getDocs(q);
+        
+        if (snap.empty) {
+            console.log('✅ Nta messages zishaje');
+            return 0;
         }
+        
+        let deletedCount = 0;
+        const deletePromises = [];
+        
+        snap.forEach(d => {
+            deletePromises.push(
+                deleteDoc(doc(db, 'groupChats', d.id))
+                    .then(() => deletedCount++)
+                    .catch(e => console.warn('Delete failed:', e))
+            );
+        });
+        
+        await Promise.all(deletePromises);
+        console.log(`🗑️ ${deletedCount} messages zishaje zisibwe (zirenga iminsi ${MESSAGE_LIFETIME_DAYS})`);
+        return deletedCount;
+        
+    } catch (error) {
+        console.warn('⚠️ Delete error:', error.message);
+        return 0;
+    }
+}
+
+// Igenzura buri minota 30
+let autoDeleteInterval = null;
+
+function startAutoDeleteInterval() {
+    if (autoDeleteInterval) clearInterval(autoDeleteInterval);
+    
+    // Kora ako kanya
+    deleteOldMessages();
+    
+    // Hanyuma buri minota 30
+    autoDeleteInterval = setInterval(async () => {
+        const count = await deleteOldMessages();
+        if (count > 0) console.log(`🔄 ${count} messages zishaje zisibwe`);
+    }, 30 * 60 * 1000);
+    
+    console.log('✅ Auto-delete yatangijwe (b. minota 30)');
+}
+    function loadGroupMessages() {
+    if (chatUnsubscribe) { chatUnsubscribe(); chatUnsubscribe = null; }
+
+    const messagesEl = document.getElementById('chatMessages');
+    messagesEl.innerHTML = `<div style="text-align:center;padding:20px;color:var(--text-secondary);"><i class="fas fa-spinner fa-spin"></i> Turazana...</div>`;
+
+    // 🔥 Siba messages zishaje MBERE
+    deleteOldMessages().then(() => {
+        const cutoffTime = new Date(Date.now() - MESSAGE_LIFETIME_MS);
+
+        // Zana gusa messages ziri mu cyumweru
+        const q = query(
+            collection(db, 'groupChats'),
+            where('createdAt', '>=', cutoffTime),
+            orderBy('createdAt', 'asc'),
+            limit(100)
+        );
+
+        chatUnsubscribe = onSnapshot(q, (snap) => {
+            chatMessages = [];
+            snap.forEach(d => chatMessages.push({ id: d.id, ...d.data() }));
+            renderChatMessages();
+        }, (error) => {
+            console.warn('⚠️ Query error (index):', error.message);
+
+            // Fallback: niba index itarabaho
+            const fallbackQ = query(
+                collection(db, 'groupChats'),
+                orderBy('createdAt', 'asc'),
+                limit(200)
+            );
+
+            chatUnsubscribe = onSnapshot(fallbackQ, (snap) => {
+                chatMessages = [];
+                const cutoff = new Date(Date.now() - MESSAGE_LIFETIME_MS);
+                snap.forEach(d => {
+                    const data = d.data();
+                    const created = data.createdAt?.toDate ? data.createdAt.toDate() : null;
+                    // Reba niba itarenze iminsi 7
+                    if (!created || created >= cutoff) {
+                        chatMessages.push({ id: d.id, ...data });
+                    }
+                });
+                renderChatMessages();
+            }, (err) => {
+                messagesEl.innerHTML = `<div class="chat-empty"><h3>Ikibazo</h3><p>${err.message}</p></div>`;
+            });
+        });
+    });
+}
 
         function renderChatMessages() {
             const messagesEl = document.getElementById('chatMessages');
