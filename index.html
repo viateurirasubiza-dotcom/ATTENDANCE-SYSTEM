@@ -2740,6 +2740,11 @@ body {
     0% { transform: scale(0); opacity: 0; }
     100% { transform: scale(1); opacity: 1; }
 }
+     @keyframes toastBounce {
+    0% { transform: translateX(500px) scale(0.8); opacity: 0; }
+    60% { transform: translateX(-10px) scale(1.05); opacity: 1; }
+    100% { transform: translateX(0) scale(1); opacity: 1; }
+}
 </style>
 </head>
 <body>
@@ -5206,18 +5211,95 @@ try {
         // ============================================
         // HELPERS
         // ============================================
-        window.showToast = function(message, type = 'success') {
-            const container = document.getElementById('toastContainer');
-            if (!container) return;
-            const icons = { success: 'fa-check', error: 'fa-times', warning: 'fa-exclamation', info: 'fa-info' };
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerHTML = `<div class="toast-icon"><i class="fas ${icons[type]}"></i></div><span>${escapeHtml(message)}</span>`;
-            container.appendChild(toast);
-            setTimeout(() => toast.classList.add('show'), 10);
-            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 3500);
-        };
-
+       window.showToast = function(message, type = 'success', showConfetti = true) {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+    
+    const icons = { success: 'fa-check', error: 'fa-times', warning: 'fa-exclamation', info: 'fa-info' };
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `<div class="toast-icon"><i class="fas ${icons[type]}"></i></div><span>${escapeHtml(message)}</span>`;
+    container.appendChild(toast);
+    setTimeout(() => toast.classList.add('show'), 10);
+    setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 3500);
+    
+    // 🎉 CONFETTI (FLYERS) IYO ACTION YAKOZE NEZA
+    if (showConfetti && type === 'success') {
+        try {
+            // Flyers nini ku butumwa bukomeye, nto ku bindi
+            const isBigAction = /yongeweho|yabitswe|yahawe|byemejwe|byakozwe|yahinduwe|yemewe|yasubijwe|yemejwe|byabitswe|yongeye|yarakozwe|yatanze/i.test(message);
+            
+            confetti({
+                particleCount: isBigAction ? 200 : 100,
+                spread: isBigAction ? 120 : 80,
+                origin: { y: 0.6 },
+                colors: ['#10b981', '#38bdf8', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4'],
+                zIndex: 99999
+            });
+            
+            // Iyo ari action ikomeye cyane, ongera undi murongo wa confetti
+            if (isBigAction) {
+                setTimeout(() => {
+                    confetti({
+                        particleCount: 80,
+                        angle: 60,
+                        spread: 55,
+                        origin: { x: 0, y: 0.7 },
+                        colors: ['#10b981', '#38bdf8', '#f59e0b']
+                    });
+                    confetti({
+                        particleCount: 80,
+                        angle: 120,
+                        spread: 55,
+                        origin: { x: 1, y: 0.7 },
+                        colors: ['#ec4899', '#8b5cf6', '#06b6d4']
+                    });
+                }, 250);
+            }
+        } catch (e) {
+            console.warn('Confetti error:', e);
+        }
+    }
+};
+     // 🎉 CONGRATULATIONS MODAL - Kuri action ikomeye
+window.showCongratulation = function(title, message, type = 'success') {
+    // Confetti nini cyane
+    confetti({
+        particleCount: 300,
+        spread: 160,
+        origin: { y: 0.5 },
+        colors: ['#10b981', '#38bdf8', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4', '#ef4444']
+    });
+    
+    // Ongeza confetti nyinshi
+    setTimeout(() => confetti({ particleCount: 150, angle: 60, spread: 70, origin: { x: 0, y: 0.7 } }), 200);
+    setTimeout(() => confetti({ particleCount: 150, angle: 120, spread: 70, origin: { x: 1, y: 0.7 } }), 400);
+    setTimeout(() => confetti({ particleCount: 100, spread: 100, origin: { y: 0.4 } }), 600);
+    
+    // Toast nini
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+    
+    const icons = { success: 'fa-trophy', warning: 'fa-star', info: 'fa-info-circle', error: 'fa-exclamation-triangle' };
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.style.cssText = 'min-width: 320px; max-width: 500px; padding: 18px 24px; font-size: 15px; font-weight: 700; border-left-width: 6px; animation: toastBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);';
+    toast.innerHTML = `
+        <div class="toast-icon" style="width: 44px; height: 44px; font-size: 20px;">
+            <i class="fas ${icons[type] || 'fa-check'}"></i>
+        </div>
+        <div style="flex: 1;">
+            <div style="font-size: 16px; font-weight: 900; margin-bottom: 4px;">🎉 ${escapeHtml(title)}</div>
+            <div style="font-size: 13px; font-weight: 500; opacity: 0.9;">${escapeHtml(message)}</div>
+        </div>
+    `;
+    container.appendChild(toast);
+    setTimeout(() => toast.classList.add('show'), 10);
+    setTimeout(() => { 
+        toast.classList.remove('show'); 
+        setTimeout(() => toast.remove(), 400); 
+    }, 5000);
+};
         window.closeModal = function(id) { 
             const el = document.getElementById(id);
             if (el) el.classList.remove('active');
@@ -5474,7 +5556,7 @@ try {
             
             const btn = document.getElementById('forgotBtn');
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turaohereza...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turohereza...';
             
             try {
                 await sendPasswordResetEmail(auth, email);
@@ -8102,7 +8184,7 @@ enterApp();
             
             const btn = document.getElementById('sendWishBtn');
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turaohereza...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turohereza...';
             
             try {
                 await addDoc(collection(db, 'birthdayWishes'), {
@@ -10379,7 +10461,7 @@ window.addEventListener('appinstalled', () => {
             
             const btn = document.getElementById('memberPayBtn');
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turaohereza...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turohereza...';
             
             try {
                 const date = new Date().toISOString().split('T')[0];
@@ -11121,7 +11203,7 @@ window.requestAccountDeletion = async function() {
     
     const btn = document.getElementById('requestDeleteBtn');
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turaohereza...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turohereza...';
 
     try {
         await addDoc(collection(db, 'deletionRequests'), {
