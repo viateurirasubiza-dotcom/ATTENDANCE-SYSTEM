@@ -1416,9 +1416,43 @@ body {
 .assign-uniform-item {
     position: relative; border: 2px solid var(--border);
     border-radius: 14px; overflow: hidden;
-    cursor: pointer; transition: var(--transition);
+    cursor: pointer; transition: all 0.3s ease-in-out; /* Hinduye hano */
     background: var(--bg);
 }
+.assign-uniform-item:hover { 
+    border-color: var(--primary); 
+    transform: translateY(-3px); 
+    box-shadow: 0 10px 25px rgba(56, 189, 248, 0.25); 
+}
+
+/* IYI NI YO YARI IBUZE: Iyo uhiseho (Selected) */
+.assign-uniform-item.selected { 
+    border-color: #10b981; 
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.35); 
+    background: rgba(16, 185, 129, 0.05); /* Ibara ry'icyatsi gike */
+}
+.assign-uniform-item.selected::after {
+    content: '✓'; position: absolute; top: 8px; right: 8px;
+    width: 28px; height: 28px;
+    background: linear-gradient(135deg, #10b981, #34d399);
+    color: white; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 14px;
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.5); z-index: 2;
+    animation: popCheck 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); /* Animation nshya */
+}
+
+/* Animation yo kugaragara kwa check */
+@keyframes popCheck {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.assign-uniform-item img { 
+    width: 100%; height: 110px; object-fit: cover; display: block; 
+    transition: transform 0.4s; /* Kugira ngo ifoto yongere */
+}
+.assign-uniform-item:hover img { transform: scale(1.05); }
 .assign-uniform-item:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 10px 25px rgba(56, 189, 248, 0.25); }
 .assign-uniform-item.selected { border-color: #10b981; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.35); }
 .assign-uniform-item.selected::after {
@@ -2651,6 +2685,60 @@ body {
 @keyframes floatText {
     0%, 100% { transform: translateY(0px); }
     50% { transform: translateY(-3px); }
+}
+     /* Uniform umuririmbyi yari asanzwe afite */
+.assign-uniform-item.current {
+    border-color: #f59e0b;
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.3);
+    background: rgba(245, 158, 11, 0.05);
+}
+.assign-uniform-item.current::before {
+    content: '⭐';
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 26px;
+    height: 26px;
+    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    box-shadow: 0 4px 10px rgba(245, 158, 11, 0.5);
+    z-index: 2;
+}
+
+/* Iyo uhisemo uniform nshya (kugira ngo itwereke neza) */
+.assign-uniform-item.selected {
+    border-color: #10b981;
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.35);
+    background: rgba(16, 185, 129, 0.05);
+    transform: translateY(-3px);
+}
+.assign-uniform-item.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, #10b981, #34d399);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 14px;
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.5);
+    z-index: 2;
+    animation: popCheck 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes popCheck {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
 }
 </style>
 </head>
@@ -8236,51 +8324,137 @@ enterApp();
             document.getElementById('assignUniformModal').classList.add('active');
         };
 
-        function renderAssignUniformGrid() {
-            const grid = document.getElementById('assignUniformGrid');
-            const currentAssign = assignedUniforms[currentAssignMemberId];
-            grid.innerHTML = uniforms.map(u => {
-                const isSelected = currentAssign?.uniformId === u.id || selectedUniformForAssign === u.id;
-                return `<div class="assign-uniform-item ${isSelected ? 'selected' : ''}" onclick="selectAssignUniform('${u.id}')">
-                    <img src="${u.image}" onerror="this.src='https://via.placeholder.com/200x200'" alt="${u.title}">
-                    <div class="assign-uniform-item-title">${u.title}</div>
-                </div>`;
-            }).join('');
-        }
-
+       function renderAssignUniformGrid() {
+    const grid = document.getElementById('assignUniformGrid');
+    if (!grid) return;
+    
+    // Reba niba nta uniform ihari
+    if (!uniforms || uniforms.length === 0) {
+        grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:40px 20px; color:var(--text-secondary);">
+            <i class="fas fa-tshirt" style="font-size:50px; opacity:0.3; display:block; margin-bottom:12px;"></i>
+            <h3 style="font-size:15px; color:var(--text); margin-bottom:6px;">Nta uniform irahari</h3>
+            <p style="font-size:13px;">Banza wongereho uniform muri "Gallery"</p>
+        </div>`;
+        return;
+    }
+    
+    // Fata uniform yari isanzwe ifitwe n'uyu muririmbyi (niba ihari)
+    const currentAssign = assignedUniforms[currentAssignMemberId] || null;
+    const currentUniformId = currentAssign?.uniformId || null;
+    
+    grid.innerHTML = uniforms.map(u => {
+        // Reba niba iyi uniform ari yo yahiswemo (mu guhitamo gushya)
+        const isSelectedNow = selectedUniformForAssign === u.id;
+        // Reba niba iyi uniform ari yo umuririmbyi yari asanzwe afite
+        const isCurrentAssigned = currentUniformId === u.id;
+        
+        // Class: 'selected' niba ari yo yahiswemo ubu, 'current' niba ari yo yari ifitwe
+        let itemClass = 'assign-uniform-item';
+        if (isSelectedNow) itemClass += ' selected';
+        else if (isCurrentAssigned) itemClass += ' current';
+        
+        return `<div class="${itemClass}" onclick="selectAssignUniform('${u.id}')">
+            <img src="${u.image}" 
+                 onerror="this.src='https://via.placeholder.com/200x200?text=No+Image'" 
+                 alt="${u.title}"
+                 loading="lazy">
+            <div class="assign-uniform-item-title">${u.title}</div>
+            ${isCurrentAssigned ? `<div style="position:absolute; top:6px; left:6px; background:rgba(245,158,11,0.95); color:white; padding:3px 8px; border-radius:50px; font-size:10px; font-weight:800; box-shadow:0 2px 8px rgba(245,158,11,0.5);">⭐ Yari ifite</div>` : ''}
+        </div>`;
+    }).join('');
+}
         window.selectAssignUniform = function(uniformId) {
             selectedUniformForAssign = uniformId;
             renderAssignUniformGrid();
         };
 
-        window.saveUniformAssignment = async function() {
-            if (!selectedUniformForAssign) { showToast('Hitamo uniform', 'warning'); return; }
-            const m = members.find(x => x.id === currentAssignMemberId);
-            if (!m) return;
-            const u = uniforms.find(x => x.id === selectedUniformForAssign);
-            if (!u) return;
-            const note = document.getElementById('assignUniformNote').value.trim();
-            const existing = assignedUniforms[currentAssignMemberId];
-            const btn = document.getElementById('assignUniformBtn');
-            btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-            try {
-                if (existing) {
-                    await updateDoc(doc(db, 'uniformAssignments', existing.id), { uniformId: u.id, uniformTitle: u.title, uniformImage: u.image, note, updatedAt: serverTimestamp() });
-                    showToast(`✅ Yahinduwe`, 'success');
-                } else {
-                    await addDoc(collection(db, 'uniformAssignments'), {
-                        memberId: m.id, memberName: m.name, memberNumber: m.number || '',
-                        uniformId: u.id, uniformTitle: u.title, uniformImage: u.image, note,
-                        assignedAt: serverTimestamp(), assignedBy: currentUser.uid
-                    });
-                    showToast(`✅ Yahawe ${m.name}`, 'success');
-                }
-                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-                closeModal('assignUniformModal');
-                btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Bika';
-                await renderChecklist();
-            } catch (error) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Bika'; showToast('❌ ' + error.message, 'error'); }
-        };
+       window.saveUniformAssignment = async function() {
+    // 1. Reba niba hari uniform yahiswemo
+    if (!selectedUniformForAssign) { 
+        showToast('⚠️ Hitamo uniform mbere yo kubika', 'warning'); 
+        return; 
+    }
+    
+    // 2. Shakisha umuririmbyi n'uniform
+    const m = members.find(x => x.id === currentAssignMemberId);
+    if (!m) { showToast('❌ Umuririmbyi ntabonetse', 'error'); return; }
+    
+    const u = uniforms.find(x => x.id === selectedUniformForAssign);
+    if (!u) { showToast('❌ Uniform ntabonetse', 'error'); return; }
+    
+    // 3. Fata note niba ihari
+    const note = document.getElementById('assignUniformNote').value.trim();
+    const existing = assignedUniforms[currentAssignMemberId];
+    
+    // 4. Bika uko button yari imeze mbere
+    const btn = document.getElementById('assignUniformBtn');
+    const originalBtnHtml = btn.innerHTML;
+    
+    // 5. Erekana ko irimo gukora (loading)
+    btn.disabled = true; 
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turabika...';
+    
+    try {
+        if (existing) {
+            // --- GIHINDURA (Update) ---
+            await updateDoc(doc(db, 'uniformAssignments', existing.id), { 
+                uniformId: u.id, 
+                uniformTitle: u.title, 
+                uniformImage: u.image, 
+                note, 
+                updatedAt: serverTimestamp() 
+            });
+            showToast(`✅ Uniform ya ${m.name} yahinduwe!`, 'success');
+        } else {
+            // --- GISHYA (Create) ---
+            await addDoc(collection(db, 'uniformAssignments'), {
+                memberId: m.id, 
+                memberName: m.name, 
+                memberNumber: m.number || '',
+                uniformId: u.id, 
+                uniformTitle: u.title, 
+                uniformImage: u.image, 
+                note,
+                assignedAt: serverTimestamp(), 
+                assignedBy: currentUser.uid
+            });
+            showToast(`🎉 ${m.name} yahawe ${u.title}!`, 'success');
+        }
+        
+        // 6. Flyers (Confetti) ziraduze!
+        confetti({ 
+            particleCount: 150, 
+            spread: 80, 
+            origin: { y: 0.6 },
+            colors: ['#10b981', '#38bdf8', '#f59e0b', '#ec4899']
+        });
+        
+        // 7. Hindura button nka "Byabitswe!"
+        btn.innerHTML = '<i class="fas fa-check"></i> Byabitswe!';
+        
+        // 8. Tegereza gato mbere yo gufunga modal
+        setTimeout(async () => {
+            closeModal('assignUniformModal');
+            btn.disabled = false; 
+            btn.innerHTML = originalBtnHtml;
+            
+            // 9. Refresh checklist (kugira ngo iboneke ako kanya)
+            await renderChecklist();
+            
+            // 10. Niba uri kuri my-dashboard, refresh na yo
+            if (currentUserData?.role === 'member') {
+                renderMyDashboard();
+            }
+        }, 800); // 0.8s yo kwerekana "Byabitswe!"
+        
+    } catch (error) { 
+        // Niba habaye ikibazo
+        console.error('❌ Save uniform error:', error);
+        btn.disabled = false; 
+        btn.innerHTML = originalBtnHtml; 
+        showToast('❌ ' + error.message, 'error'); 
+    }
+};
 
         window.viewAssignedUniform = function(memberId) {
             const assignment = assignedUniforms[memberId];
