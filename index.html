@@ -5017,7 +5017,7 @@ body {
 
 <!-- ===== MODAL YO KWISHYURA (MEMBER) ===== -->
 <div class="modal-overlay" id="memberPaymentModal">
-    <div class="modal" style="max-height: 95vh; overflow-y: auto;">
+    <div class="modal" style="max-height: 90vh; overflow-y: auto;">
         <div class="modal-header">
             <h3><i class="fas fa-hand-holding-usd"></i> Gutanga Umusanzu</h3>
             <button class="close-btn" onclick="closeModal('memberPaymentModal')"><i class="fas fa-times"></i></button>
@@ -5053,10 +5053,27 @@ body {
             <input type="text" class="form-control" id="memberPayDescription" placeholder="Urugero: Umusanzu wa Mutarama">
         </div>
         
-        <div class="modal-actions" style="position: sticky; bottom: 0; background: var(--bg-card); padding-top: 16px; margin-top: 8px;">
-            <button class="btn btn-outline" onclick="closeModal('memberPaymentModal')">Hagarika</button>
-            <button class="btn btn-primary" id="memberPayBtn" onclick="submitMemberPayment()">
+        <!-- 🔥 HANO NI HO HARI AMABUTO YOSE (HORIZONTAL SCROLL) -->
+        <div class="modal-actions" style="display: flex; overflow-x: auto; gap: 10px; padding-bottom: 10px; position: sticky; bottom: 0; background: var(--bg-card); padding-top: 16px; border-top: 1px solid var(--border); scroll-behavior: smooth;">
+            
+            <button class="btn btn-outline" onclick="closeModal('memberPaymentModal')" style="flex-shrink: 0;">Hagarika</button>
+            
+            <button class="btn btn-primary" id="memberPayBtn" onclick="submitMemberPayment()" style="flex-shrink: 0;">
                 <i class="fas fa-paper-plane"></i> Ohereza kwa Comptable
+            </button>
+            
+            <!-- IYI BUTTON IZAGARAGARA IYO UHISEMO MTN -->
+            <a href="tel:*182*8*1*29327%23" 
+               id="mtnDialBtn" 
+               style="display: none; align-items: center; justify-content: center; gap: 8px; padding: 12px 22px; background: linear-gradient(135deg, #FFCC00, #FFD700); color: #000; text-decoration: none; border-radius: 12px; font-size: 14px; font-weight: 800; flex-shrink: 0; box-shadow: 0 4px 15px rgba(255, 204, 0, 0.4);">
+                <i class="fas fa-phone-volume"></i> Fungura MTN
+            </a>
+            
+            <!-- IYI NI BUTTON YO KUKOPORA CODE -->
+            <button id="mtnCopyBtn" 
+                    style="display: none; align-items: center; justify-content: center; gap: 8px; padding: 12px 22px; background: #e2e8f0; color: #0f172a; border: none; border-radius: 12px; font-size: 14px; font-weight: 800; flex-shrink: 0;" 
+                    onclick="copyMtnCode('*182*8*1*29327#')">
+                <i class="fas fa-copy"></i> *182*8*1*29327#
             </button>
         </div>
     </div>
@@ -10709,45 +10726,26 @@ window.addEventListener('appinstalled', () => {
     document.getElementById('memberPayMethod').value = 'MoMo';
     document.getElementById('memberPayDescription').value = '';
     
-    // 🔥 Siba tracking ya kera
-    try { localStorage.removeItem('hcfc_mtn_dial_clicked'); } catch(e) {}
-    
-    // Hisha MTN section
-    const mtnSection = document.getElementById('mtnPaymentSection');
-    if (mtnSection) mtnSection.style.display = 'none';
+    // Hisha MTN buttons
+    const mtnDialBtn = document.getElementById('mtnDialBtn');
+    const mtnCopyBtn = document.getElementById('mtnCopyBtn');
+    if (mtnDialBtn) mtnDialBtn.style.display = 'none';
+    if (mtnCopyBtn) mtnCopyBtn.style.display = 'none';
     
     // Subiza button ya mbere
     const payBtn = document.getElementById('memberPayBtn');
     if (payBtn) {
         payBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Ohereza kwa Comptable';
         payBtn.setAttribute('onclick', 'submitMemberPayment()');
-        payBtn.style.background = '';
-        payBtn.style.boxShadow = '';
+        payBtn.style.background = 'linear-gradient(135deg, #38bdf8, #0ea5e9)';
     }
+    
+    // Subiza scroll ibe kuri 0
+    const footer = payBtn?.parentElement;
+    if (footer) footer.scrollLeft = 0;
     
     document.getElementById('memberPaymentModal').classList.add('active');
 };
-        window.submitMemberPayment = async function() {
-    const type = document.getElementById('memberPayType').value;
-    const amount = parseFloat(document.getElementById('memberPayAmount').value);
-    const method = document.getElementById('memberPayMethod').value;
-    const description = document.getElementById('memberPayDescription').value.trim();
-    
-    if (!amount || amount <= 0) {
-        showToast('Shyiramo amafaranga', 'warning');
-        return;
-    }
-    
-    // 🔥 IYO HITAMO MTN - BANZA WEREKANE MTN PAYMENT SECTION
-    if (method === 'MoMo') {
-        showMtnPaymentSection(amount, type, description);
-        return;
-    }
-    
-    // Kubindi buryo (Airtel, Bank, Cash) - Komeza uko byari bimeze
-    await saveMemberPayment(type, amount, method, description);
-};
-
 window.showMtnPaymentSection = function(amount, type, description) {
     const mtnSection = document.getElementById('mtnPaymentSection');
     const mtnAmountDisplay = document.getElementById('mtnAmountDisplay');
