@@ -11178,6 +11178,9 @@ async function saveMemberPayment(type, amount, method, description) {
         // ============================================
         // PAYMENT REQUESTS (COMPTABLE)
         // ============================================
+              // ============================================
+        // PAYMENT REQUESTS (COMPTABLE)
+        // ============================================
        window.renderPaymentRequests = async function() {
     if (currentUserData?.role !== 'admin' && currentUserData?.role !== 'super_admin' && currentUserData?.role !== 'comptable') {
         return;
@@ -11291,9 +11294,6 @@ async function saveMemberPayment(type, amount, method, description) {
     // ============================================
     // AMATEKA (Confirmed + Rejected)
     // ============================================
-    // ============================================
-    // AMATEKA (Confirmed + Rejected)
-    // ============================================
     const history = [...confirmed, ...rejected].sort((a, b) => {
         if (!a.date) return 1;
         if (!b.date) return -1;
@@ -11314,7 +11314,7 @@ async function saveMemberPayment(type, amount, method, description) {
             
             // 🛠️ IYI NI YO YONGEWEHO: Buto yo Gusiba Burundu (Igaragara gusa ku byanzwe)
             const deleteBtnHtml = isRejected 
-                ? `<button class="btn btn-danger btn-sm" onclick="permanentDeleteTransaction('${t.id}')" style="margin-left: 10px; padding: 6px 12px; font-size: 12px;">
+                ? `<button class="btn btn-danger btn-sm" onclick="window.permanentDeleteTransaction('${t.id}')" style="margin-left: 10px; padding: 6px 12px; font-size: 12px;">
                        <i class="fas fa-trash-alt"></i> Siba Burundu
                    </button>` 
                 : '';
@@ -11336,6 +11336,10 @@ async function saveMemberPayment(type, amount, method, description) {
             </div>`;
         }).join('');
     }
+    
+    list.innerHTML = html;
+};
+
 // ============================================
 // FUNCTION NSHYA: Koporora MTN Code
 // ============================================
@@ -11411,6 +11415,7 @@ window.copyMtnCode = function(code) {
                 showToast('❌ ' + error.message, 'error');
             }
         };
+
 window.permanentDeleteMember = async function(id) {
     const m = members.find(x => x.id === id);
     if (!m) return;
@@ -11938,6 +11943,25 @@ window.updateDeleteReqBadge = async function() {
     }
 };
         // ============================================
+// GUSIBA UBWISHYU BWANZWE BURUNDU
+// ============================================
+window.permanentDeleteTransaction = async function(id) {
+    if (!confirm('⚠️ Urabyemeza gusiba ubu bwishyu BURUNDU?\n\nIbi ntibizasubizwa.')) return;
+    
+    try {
+        await deleteDoc(doc(db, 'transactions', id));
+        showToast('🗑️ Ubwishyu bwasibwe burundu!', 'warning');
+        
+        // Refresh page kugira ngo buboneke ko bwasibwe
+        await loadTransactions();
+        renderPaymentRequests();
+        renderFinance();
+        
+    } catch (error) {
+        showToast('❌ ' + error.message, 'error');
+    }
+};
+     // ============================================
 // GUSIBA UBWISHYU BWANZWE BURUNDU
 // ============================================
 window.permanentDeleteTransaction = async function(id) {
