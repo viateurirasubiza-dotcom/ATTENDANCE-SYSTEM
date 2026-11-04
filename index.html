@@ -5074,7 +5074,7 @@ body {
             <!-- Amabuto asanzwe -->
             <div style="display: flex; gap: 10px; width: 100%;">
                 <button class="btn btn-outline" onclick="closeModal('memberPaymentModal')" style="flex: 1;">Hagarika</button>
-                <button class="btn btn-primary" id="memberPayBtn" onclick="submitMemberPayment()" style="flex: 2;">
+               <button class="btn btn-primary" id="memberPayBtn" onclick="window.submitMemberPayment()" style="flex: 2;">
                     <i class="fas fa-paper-plane"></i> Ohereza kwa Comptable
                 </button>
             </div>
@@ -10735,7 +10735,7 @@ window.addEventListener('appinstalled', () => {
     const payBtn = document.getElementById('memberPayBtn');
     if (payBtn) {
         payBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Ohereza kwa Comptable';
-        payBtn.setAttribute('onclick', 'submitMemberPayment()');
+payBtn.setAttribute('onclick', 'window.submitMemberPayment()');     
         payBtn.style.background = 'linear-gradient(135deg, #38bdf8, #0ea5e9)';
     }
     
