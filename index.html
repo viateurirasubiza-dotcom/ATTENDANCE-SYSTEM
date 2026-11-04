@@ -2745,6 +2745,39 @@ body {
     60% { transform: translateX(-10px) scale(1.05); opacity: 1; }
     100% { transform: translateX(0) scale(1); opacity: 1; }
 }
+     /* ============================================ */
+/* MTN DIAL BUTTON ANIMATIONS                    */
+/* ============================================ */
+@keyframes phoneRing {
+    0%, 100% { transform: rotate(0deg); }
+    10%, 30% { transform: rotate(-15deg); }
+    20%, 40% { transform: rotate(15deg); }
+    50% { transform: rotate(0deg); }
+}
+
+@keyframes mtnButtonPulse {
+    0%, 100% { 
+        transform: scale(1);
+        box-shadow: 0 10px 30px rgba(255, 204, 0, 0.6);
+    }
+    50% { 
+        transform: scale(1.05);
+        box-shadow: 0 15px 45px rgba(255, 204, 0, 0.9);
+    }
+}
+
+/* Kuri telefone — button ibe nini cyane */
+@media (max-width: 768px) {
+    #mtnDialBtn {
+        padding: 22px 20px !important;
+        font-size: 17px !important;
+    }
+    
+    #mtnPaymentSection {
+        padding: 16px !important;
+        margin-top: 12px !important;
+    }
+}
 </style>
 </head>
 <body>
