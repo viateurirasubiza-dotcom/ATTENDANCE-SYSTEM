@@ -11895,7 +11895,7 @@ if (page === 'delete-requests') {
     renderDeleteRequests();
     updateDeleteReqBadge();
 }
-     window.submitMemberPayment = async function() {
+  window.submitMemberPayment = async function() {
     const type = document.getElementById('memberPayType').value;
     const amount = parseFloat(document.getElementById('memberPayAmount').value);
     const method = document.getElementById('memberPayMethod').value;
@@ -11915,7 +11915,10 @@ if (page === 'delete-requests') {
         
         if (payBtn) {
             payBtn.innerHTML = '<i class="fas fa-check-circle"></i> Nishyuye - Ohereza kwa Comptable';
-            payBtn.setAttribute('onclick', `confirmMtnPayment(${amount}, '${type}', '${description.replace(/'/g, "\\'")}')`);
+            
+            // HANO NI HO HARI IMPINDURA: Twongeyeho "window." mbere ya confirmMtnPayment
+            payBtn.setAttribute('onclick', `window.confirmMtnPayment(${amount}, '${type}', '${description.replace(/'/g, "\\'")}')`);
+            
             payBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)'; // Hindura ibara
         }
         
@@ -11924,9 +11927,10 @@ if (page === 'delete-requests') {
     }
     
     // Kubindi buryo (Airtel, Bank, Cash) - Komeza uko byari bimeze
-    await saveMemberPayment(type, amount, method, description);
+    if (typeof saveMemberPayment === 'function') {
+        await saveMemberPayment(type, amount, method, description);
+    }
 };
-    
 </script>
 </body>
 </html>
