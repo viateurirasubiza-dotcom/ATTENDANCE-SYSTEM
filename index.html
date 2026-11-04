@@ -11892,11 +11892,7 @@ window.updateDeleteReqBadge = async function() {
     } catch(e) {}
 };
 
-// 6. Erekana paji iyo isabwe
-// Shakisha muri switchPage() function yawe, hanyuma wongereho:
-if (page === 'delete-requests') {
-    renderDeleteRequests();
-    updateDeleteReqBadge();
+
 }
   window.submitMemberPayment = async function() {
     const type = document.getElementById('memberPayType').value;
