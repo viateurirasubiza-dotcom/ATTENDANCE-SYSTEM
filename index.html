@@ -4296,8 +4296,8 @@ body {
                 <label>Email yawe <span>*</span></label>
                 <input type="email" class="form-control" id="forgotEmail" placeholder="email@example.com">
             </div>
-         <!-- 🔥 MTN PAYMENT SECTION (IYI NI NSHYA) -->
-<div id="mtnPaymentSection" style="display: none; margin-top: 20px; 
+       <!-- 🔥 MTN PAYMENT SECTION (YAKOSOWE NEZA) -->
+<div id="mtnPaymentSection" style="display: none; margin-top: 20px; margin-bottom: 20px;
      padding: 20px; background: rgba(255, 204, 0, 0.1); 
      border: 2px solid #FFCC00; border-radius: 16px;">
     
@@ -4309,23 +4309,40 @@ body {
                     box-shadow: 0 8px 25px rgba(255, 204, 0, 0.4);">
             📱
         </div>
-        <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 4px; color: #333;">
+        <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 4px; color: var(--text);">
             Kwishyura kuri MTN Mobile Money
         </h3>
-        <p style="font-size: 13px; color: #666;">
+        <p style="font-size: 13px; color: var(--text-secondary);">
             Kurikiza amabwiriza akurikira
         </p>
     </div>
 
+    <!-- 🔥 BUTTON NINI YO GUFUNGURA MTN KURI TELEFONE -->
+    <a href="tel:*182*8*1*29327%23" 
+       onclick="trackMtnDialClick()"
+       id="mtnDialBtn"
+       style="display: flex; align-items: center; justify-content: center; gap: 12px;
+              width: 100%; padding: 20px 24px; 
+              background: linear-gradient(135deg, #FFCC00, #FFD700);
+              color: #000; text-decoration: none; 
+              border-radius: 16px; font-size: 18px; font-weight: 900;
+              box-shadow: 0 10px 30px rgba(255, 204, 0, 0.6);
+              transition: all 0.3s; border: 3px solid #000;
+              cursor: pointer; margin-bottom: 16px;
+              text-transform: uppercase; letter-spacing: 0.5px;">
+        <i class="fas fa-phone-volume" style="font-size: 24px; animation: phoneRing 1.5s ease-in-out infinite;"></i>
+        <span>📞 KANDA HANO UFUNGURE MTN</span>
+    </a>
+
     <!-- Amabwiriza -->
-    <div style="background: white; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+    <div style="background: var(--bg-card); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
         <div style="display: flex; gap: 12px; margin-bottom: 12px;">
             <div style="width: 28px; height: 28px; background: #FFCC00; 
                         border-radius: 50%; display: flex; align-items: center; 
                         justify-content: center; font-weight: 800; 
                         color: #000; flex-shrink: 0;">1</div>
-            <div style="font-size: 13px; color: #333; padding-top: 4px;">
-                Fungura app ya <strong>MTN Mobile Money</strong> kuri telefone yawe
+            <div style="font-size: 13px; color: var(--text); padding-top: 4px;">
+                Fungura app ya <strong>MTN Mobile Money</strong> kuri telefone yawe cyangwa ukande button yo hejuru.
             </div>
         </div>
         <div style="display: flex; gap: 12px; margin-bottom: 12px;">
@@ -4333,8 +4350,8 @@ body {
                         border-radius: 50%; display: flex; align-items: center; 
                         justify-content: center; font-weight: 800; 
                         color: #000; flex-shrink: 0;">2</div>
-            <div style="font-size: 13px; color: #333; padding-top: 4px;">
-                Kanda <strong>Pay Bill</strong> hanyuma ukande <strong>*182*8*1*29327#</strong>
+            <div style="font-size: 13px; color: var(--text); padding-top: 4px;">
+                Kanda <strong>Pay Bill</strong> hanyuma ukande <strong style="font-family: monospace; font-size: 14px;">*182*8*1*29327#</strong>
             </div>
         </div>
         <div style="display: flex; gap: 12px; margin-bottom: 12px;">
@@ -4342,8 +4359,8 @@ body {
                         border-radius: 50%; display: flex; align-items: center; 
                         justify-content: center; font-weight: 800; 
                         color: #000; flex-shrink: 0;">3</div>
-            <div style="font-size: 13px; color: #333; padding-top: 4px;">
-                Shyiramo amafaranga: <strong style="color: #10b981; font-size: 15px;" 
+            <div style="font-size: 13px; color: var(--text); padding-top: 4px;">
+                Shyiramo amafaranga: <strong style="color: var(--success); font-size: 15px;" 
                 id="mtnAmountDisplay">0 RWF</strong>
             </div>
         </div>
@@ -4352,20 +4369,17 @@ body {
                         border-radius: 50%; display: flex; align-items: center; 
                         justify-content: center; font-weight: 800; 
                         color: #000; flex-shrink: 0;">4</div>
-            <div style="font-size: 13px; color: #333; padding-top: 4px;">
-                Emeza ubwishyu, hanyuma ukande <strong>"Nishyuye"</strong> hepfo
+            <div style="font-size: 13px; color: var(--text); padding-top: 4px;">
+                Emeza ubwishyu kuri MTN, hanyuma ukande <strong>"NISHYUYE"</strong> hepfo.
             </div>
         </div>
     </div>
 
-    <!-- Code Display -->
-    <div id="mtnCodeDisplay"></div>
-
     <!-- Ubutumwa bwo kwibutsa -->
     <div style="margin-top: 16px; padding: 12px; background: rgba(239, 68, 68, 0.1); 
-                border-left: 4px solid #ef4444; border-radius: 8px; font-size: 12px; color: #666;">
-        <strong>⚠️ Icyitonderwa:</strong> Nyuma yo kwishyura, kanda buto ya 
-        <strong>"Nishyuye"</strong> hepfo kugira ngo Comptable abone ubwishyu bwawe.
+                border-left: 4px solid #ef4444; border-radius: 8px; font-size: 12px; color: var(--text);">
+        <strong>⚠️ Icyitonderwa:</strong> Nyuma yo kwishyura kuri MTN, kanda buto ya 
+        <strong>"NISHYUYE"</strong> hepfo kugira ngo Comptable abone ubwishyu bwawe.
     </div>
 </div>
             <div class="modal-actions">
