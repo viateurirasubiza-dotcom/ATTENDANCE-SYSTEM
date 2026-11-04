@@ -6499,7 +6499,7 @@ enterApp();
             document.getElementById('sidebar').classList.toggle('open'); 
         };
 
-     window.switchPage = async function(page, element) {
+window.switchPage = async function(page, element) {
     const previousPage = window._currentPage || 'dashboard';
     
     // 1. Gukuraho "active" kuri nav-items zose
@@ -6526,11 +6526,11 @@ enterApp();
             renderPending();
         }
         if (page === 'users') {
-            await loadUsers();    // 👈 IYI NI YO YAKEMURAGA IKIBAZO CYA 34 vs 35
+            await loadUsers();    
             renderUsers();
         }
         if (page === 'my-dashboard') {
-            await loadMembers();  // Zana amakuru mashya
+            await loadMembers();  
             renderMyDashboard();
         }
         if (page === 'my-finance') {
@@ -6639,6 +6639,9 @@ enterApp();
         if (sidebar) sidebar.classList.remove('open');
     }
     
+    // Gusubiza hejuru
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+};
     // Gusubiza hejuru
     window.scrollTo({ top: 0, behavior: 'smooth' });
 };
