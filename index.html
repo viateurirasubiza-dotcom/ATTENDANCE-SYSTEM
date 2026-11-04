@@ -5003,7 +5003,7 @@ body {
 
 <!-- ===== MODAL YO KWISHYURA (MEMBER) ===== -->
 <div class="modal-overlay" id="memberPaymentModal">
-    <div class="modal">
+    <div class="modal" style="max-height: 95vh; overflow-y: auto;">
         <div class="modal-header">
             <h3><i class="fas fa-hand-holding-usd"></i> Gutanga Umusanzu</h3>
             <button class="close-btn" onclick="closeModal('memberPaymentModal')"><i class="fas fa-times"></i></button>
@@ -5039,7 +5039,7 @@ body {
             <input type="text" class="form-control" id="memberPayDescription" placeholder="Urugero: Umusanzu wa Mutarama">
         </div>
         
-        <div class="modal-actions">
+        <div class="modal-actions" style="position: sticky; bottom: 0; background: var(--bg-card); padding-top: 16px; margin-top: 8px;">
             <button class="btn btn-outline" onclick="closeModal('memberPaymentModal')">Hagarika</button>
             <button class="btn btn-primary" id="memberPayBtn" onclick="submitMemberPayment()">
                 <i class="fas fa-paper-plane"></i> Ohereza kwa Comptable
@@ -5047,7 +5047,6 @@ body {
         </div>
     </div>
 </div>
-
     <!-- ===== ADD TRANSACTION MODAL ===== -->
     <div class="modal-overlay" id="addTransactionModal">
         <div class="modal">
@@ -10746,53 +10745,53 @@ window.showMtnPaymentSection = function(amount, type, description) {
         mtnAmountDisplay.textContent = formatMoney(amount);
     }
     
-    // 🔥 Erekana code ya MTN + BUTTON IKOMEYE YO GUFUNGURA APP
+    // 🔥 MTN code + BUTTON HEJURU CYANE
     if (mtnCodeDisplay) {
         mtnCodeDisplay.innerHTML = `
+            <!-- 🔥 BUTTON NINI YO GUFUNGURA MTN — IRI HEJURU CYANE -->
+            <a href="tel:*182*8*1*29327%23" 
+               onclick="trackMtnDialClick()"
+               id="mtnDialBtn"
+               style="display: flex; align-items: center; justify-content: center; gap: 12px;
+                      width: 100%; padding: 20px 24px; 
+                      background: linear-gradient(135deg, #FFCC00, #FFD700);
+                      color: #000; text-decoration: none; 
+                      border-radius: 16px; font-size: 18px; font-weight: 900;
+                      box-shadow: 0 10px 30px rgba(255, 204, 0, 0.6);
+                      transition: all 0.3s; border: 3px solid #000;
+                      cursor: pointer; margin-bottom: 16px;
+                      text-transform: uppercase; letter-spacing: 0.5px;">
+                <i class="fas fa-phone-volume" style="font-size: 24px; animation: phoneRing 1.5s ease-in-out infinite;"></i>
+                <span>📞 KANDA HANO UFUNGURE MTN</span>
+            </a>
+            
+            <!-- Code display -->
             <div style="background: linear-gradient(135deg, #FFCC00, #FFD700); 
-                        padding: 24px 20px; border-radius: 16px; text-align: center; 
-                        box-shadow: 0 8px 25px rgba(255, 204, 0, 0.5); margin-bottom: 16px;">
-                <div style="font-size: 12px; color: #333; font-weight: 700; margin-bottom: 10px;">
-                    📱 MTN MOBILE MONEY
+                        padding: 20px; border-radius: 16px; text-align: center; 
+                        box-shadow: 0 8px 25px rgba(255, 204, 0, 0.4); margin-bottom: 16px;">
+                <div style="font-size: 12px; color: #333; font-weight: 700; margin-bottom: 8px;">
+                    📱 MTN MOBILE MONEY CODE
                 </div>
-                <div style="font-size: 28px; font-weight: 900; color: #000; 
-                            letter-spacing: 1px; font-family: monospace; margin-bottom: 16px;">
+                <div style="font-size: 26px; font-weight: 900; color: #000; 
+                            letter-spacing: 1px; font-family: monospace;">
                     *182*8*1*29327#
                 </div>
-                
-                <!-- 🔥 BUTTON IKOMEYE YO GUFUNGURA TELEFONE -->
-                <a href="tel:*182*8*1*29327%23" 
-                   onclick="trackMtnDialClick()"
-                   style="display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-                          width: 100%; padding: 16px 24px; 
-                          background: linear-gradient(135deg, #10b981, #059669);
-                          color: white; text-decoration: none; 
-                          border-radius: 12px; font-size: 16px; font-weight: 800;
-                          box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
-                          transition: all 0.3s; border: none; cursor: pointer;
-                          margin-bottom: 12px;"
-                   onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 30px rgba(16,185,129,0.7)';"
-                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 25px rgba(16,185,129,0.5)';">
-                    <i class="fas fa-phone-volume" style="font-size: 20px;"></i>
-                    <span>Fungura MTN Ukande</span>
-                </a>
-                
                 <div style="font-size: 11px; color: #333; margin-top: 8px; font-weight: 600;">
-                    👆 Kanda iyi button — telefone yawe izafunguka neza
+                    Kanda iyi code kuri telefone yawe niba button itakunze
                 </div>
             </div>
             
             <!-- Ubutumwa bwo kwibutsa -->
-            <div style="background: rgba(56, 189, 248, 0.1); 
+            <div style="background: rgba(56, 189, 248, 0.15); 
                         border-left: 4px solid #38bdf8; 
-                        padding: 12px 16px; border-radius: 8px; 
+                        padding: 14px 16px; border-radius: 8px; 
                         font-size: 13px; color: var(--text); 
-                        line-height: 1.6;">
+                        line-height: 1.6; margin-bottom: 16px;">
                 <strong>📋 Intambwe:</strong>
                 <ol style="margin: 8px 0 0 20px; padding: 0;">
-                    <li>Kanda button ya <strong>"Fungura MTN"</strong> hejuru</li>
+                    <li>Kanda button ya <strong>"KANDA HANO UFUNGURE MTN"</strong> hejuru</li>
                     <li>Telefone yawe izafunguka kuri MTN</li>
-                    <li>Kurikiza amabwiriza ya MTN kugeza kwishyuye</li>
+                    <li>Kurikiza amabwiriza ya MTN kugeza wishyuye</li>
                     <li>Garuka hano — kanda <strong>"Nishyuye"</strong> hepfo</li>
                 </ol>
             </div>
@@ -10801,19 +10800,33 @@ window.showMtnPaymentSection = function(amount, type, description) {
     
     // 🔥 HINDURA BUTTON: "Nishyuye - Ohereza kwa Comptable"
     if (payBtn) {
-        payBtn.innerHTML = '<i class="fas fa-check-circle"></i> Nishyuye - Ohereza kwa Comptable';
+        payBtn.innerHTML = '<i class="fas fa-check-circle"></i> NISHYUYE - OHEREZA KWA COMPTABLE';
         payBtn.setAttribute('onclick', `confirmMtnPayment(${amount}, '${type}', '${description.replace(/'/g, "\\'")}')`);
         payBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
         payBtn.style.boxShadow = '0 8px 25px rgba(16, 185, 129, 0.5)';
+        payBtn.style.fontSize = '16px';
+        payBtn.style.fontWeight = '800';
+        payBtn.style.padding = '16px 24px';
     }
     
     // Erekana section
     if (mtnSection) mtnSection.style.display = 'block';
     
-    // Scroll to section
-    if (mtnSection) mtnSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // 🔥 SCROLL KURI BUTTON YA MTN — GUKORESHA setTimeout KUGIRA NGO IEZE
+    setTimeout(() => {
+        const dialBtn = document.getElementById('mtnDialBtn');
+        if (dialBtn) {
+            dialBtn.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center',
+                inline: 'center'
+            });
+            
+            // Ongeza animation yo gukurura amaso
+            dialBtn.style.animation = 'mtnButtonPulse 1.5s ease-in-out 3';
+        }
+    }, 300);
 };
-
 // 🔥 FUNCTION NSHYA: Kwandika ko umukoresha yakanze button ya MTN
 window.trackMtnDialClick = function() {
     // Bika mu localStorage ko yanze gukanda
