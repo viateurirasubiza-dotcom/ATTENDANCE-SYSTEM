@@ -3098,6 +3098,12 @@ body {
                             <div class="stat-label">Birthday Uyu Munsi</div>
                         </div>
                     </div>
+  <!-- IYI NI YO WONGERAHO: Buto ya Admin yo kwishyura -->
+    <div style="margin-top: 20px; margin-bottom: 24px; display: flex; gap: 12px; flex-wrap: wrap;">
+        <button class="btn btn-primary" onclick="openPaymentModal()" style="padding: 14px 24px; font-size: 15px; border-radius: 14px; box-shadow: 0 8px 25px rgba(56,189,248,0.4); width: 100%;">
+            <i class="fas fa-hand-holding-usd"></i> Gutanga Umusanzu / Kwishyura
+        </button>
+    </div>
 
                     <div class="section-title">
                         <i class="fas fa-folder-open"></i>
@@ -10728,7 +10734,7 @@ window.addEventListener('appinstalled', () => {
     document.getElementById('memberPayMethod').value = 'MoMo';
     document.getElementById('memberPayDescription').value = '';
     
-    // 🔥 Hisha amabuto ya MTN igihe ufunguye modal
+    // Hisha amabuto ya MTN igihe ufunguye modal
     const mtnContainer = document.getElementById('mtnActionButtons');
     if (mtnContainer) mtnContainer.style.display = 'none';
     
@@ -10736,8 +10742,25 @@ window.addEventListener('appinstalled', () => {
     const payBtn = document.getElementById('memberPayBtn');
     if (payBtn) {
         payBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Ohereza kwa Comptable';
-payBtn.setAttribute('onclick', 'window.submitMemberPayment()');     
+        payBtn.setAttribute('onclick', 'window.submitMemberPayment()');     
         payBtn.style.background = 'linear-gradient(135deg, #38bdf8, #0ea5e9)';
+    }
+    
+    // 🛠️ IYI NI YO YONGEWEHO: Reba niba ari Admin cyangwa Member
+    const isMember = currentUserData?.role === 'member';
+    
+    // Niba ari Admin, tureke tumwereke ibintu byose
+    if (!isMember) {
+        // (Optional) Niba ushaka ko Admin yishyura nk'umuririmbyi runaka, 
+        // ushobora kongeraho dropdown hano. Ariko kuba Admin yishyura nka "Itsinda" ni byo byoroshye.
+        const payTypeSelect = document.getElementById('memberPayType');
+        // Ongeraho option yo kwishyura nk'itsinda niba itarabaho
+        if (payTypeSelect && !payTypeSelect.querySelector('option[value="group"]')) {
+            const groupOption = document.createElement('option');
+            groupOption.value = 'group';
+            groupOption.textContent = '🏛️ Itsinda (Choir Group)';
+            payTypeSelect.appendChild(groupOption);
+        }
     }
     
     document.getElementById('memberPaymentModal').classList.add('active');
@@ -10845,20 +10868,18 @@ window.trackMtnDialClick = function() {
     showToast('📱 Fungura MTN kuri telefone yawe...', 'info');
 };
 window.confirmMtnPayment = async function(amount, type, description) {
-    // 🔥 Reba niba yanze gukanda button ya MTN mbere
+    // ... (Reba niba yanze gukanda button ya MTN)
     let dialClicked = false;
     try {
         const dialTime = localStorage.getItem('hcfc_mtn_dial_clicked');
         if (dialTime) {
             const timeDiff = Date.now() - parseInt(dialTime);
-            // Niba yanze gukanda muri minota 5 ishize
             if (timeDiff < 5 * 60 * 1000) {
                 dialClicked = true;
             }
         }
     } catch(e) {}
     
-    // Niba ataranze gukanda, mubaze niba yishyuye
     if (!dialClicked) {
         const confirmed = confirm(
             "⚠️ Ntabwo wakanze button ya 'Fungura MTN'.\n\n" +
@@ -10876,27 +10897,23 @@ window.confirmMtnPayment = async function(amount, type, description) {
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turohereza...';
     
     try {
-        const memberId = currentUserData.memberId;
-        const member = members.find(m => m.id === memberId);
-        if (!member) {
-            showToast('Ntabwo wabonetse muri sisitemu', 'error');
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-check-circle"></i> Nishyuye - Ohereza kwa Comptable';
-            return;
-        }
+        // 🛠️ IYI NI YO YAHINDUWE: Reba niba ari Member cyangwa Admin
+        const isMember = currentUserData?.role === 'member';
+        const memberId = isMember ? currentUserData.memberId : null;
+        const memberName = isMember ? currentUserData.name : 'Itsinda / Admin';
+        const memberPhoto = isMember ? currentUserData.photo : null;
         
         const date = new Date().toISOString().split('T')[0];
-        const finalDescription = description || `${member.name} - MTN MoMo`;
+        const finalDescription = description || `${memberName} - MTN MoMo`;
         
-        // 1. Bika transaction (pending - itegereje kwemezwa na Comptable)
         const txRef = await addDoc(collection(db, 'transactions'), {
             type: 'income',
             amount: amount,
             category: type,
             description: finalDescription,
-            memberId: member.id,
-            memberName: member.name,
-            memberPhoto: member.photo || null,
+            memberId: memberId,
+            memberName: memberName,
+            memberPhoto: memberPhoto,
             paymentMethod: 'MoMo',
             mtnCode: '*182*8*1*29327#',
             date: date,
@@ -10906,13 +10923,12 @@ window.confirmMtnPayment = async function(amount, type, description) {
             createdByName: currentUserData.name || currentUser.email
         });
         
-        // 2. Bika notification kwa Comptable
         await addDoc(collection(db, 'financeNotifications'), {
             type: 'payment_request',
             transactionId: txRef.id,
-            memberId: member.id,
-            memberName: member.name,
-            memberPhoto: member.photo || null,
+            memberId: memberId,
+            memberName: memberName,
+            memberPhoto: memberPhoto,
             amount: amount,
             category: type,
             method: 'MoMo',
@@ -10923,28 +10939,19 @@ window.confirmMtnPayment = async function(amount, type, description) {
             targetRole: 'comptable'
         });
         
-        // 3. Confetti nini
-        confetti({
-            particleCount: 200,
-            spread: 120,
-            origin: { y: 0.6 },
-            colors: ['#FFCC00', '#10b981', '#38bdf8', '#ec4899']
-        });
+        confetti({ particleCount: 200, spread: 120, origin: { y: 0.6 }, colors: ['#FFCC00', '#10b981', '#38bdf8', '#ec4899'] });
         
-        // 4. Ubutumwa bwiza
         showToast('✅ Ubwishyu bwoherejwe kwa Comptable!', 'success');
         showToast('⏳ Bitegereje kwemezwa - Comptable azabona ubutumwa', 'info');
         
-        // 5. Siba tracking ya dial
         try { localStorage.removeItem('hcfc_mtn_dial_clicked'); } catch(e) {}
         
-        // 6. Funga modal
         closeModal('memberPaymentModal');
         
-        // 7. Refresh
         if (typeof loadTransactions === 'function') await loadTransactions();
         if (typeof renderMyDashboard === 'function') renderMyDashboard();
         if (typeof renderMyFinance === 'function') renderMyFinance();
+        if (typeof renderDashboard === 'function') renderDashboard(); // Refresh Admin dash
         
     } catch (error) {
         showToast('❌ ' + error.message, 'error');
@@ -10952,32 +10959,29 @@ window.confirmMtnPayment = async function(amount, type, description) {
         btn.innerHTML = '<i class="fas fa-check-circle"></i> Nishyuye - Ohereza kwa Comptable';
     }
 };
-
-// 🔥 IYI NI FUNCTION NSHYA - IBIKA UBURYO UBWO ARI BWO BWOSE
 async function saveMemberPayment(type, amount, method, description) {
     const btn = document.getElementById('memberPayBtn');
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turohereza...';
     
     try {
-        const memberId = currentUserData.memberId;
-        const member = members.find(m => m.id === memberId);
-        if (!member) {
-            showToast('Ntabwo wabonetse muri sisitemu', 'error');
-            return;
-        }
+        // 🛠️ IYI NI YO YAHINDUWE
+        const isMember = currentUserData?.role === 'member';
+        const memberId = isMember ? currentUserData.memberId : null;
+        const memberName = isMember ? currentUserData.name : 'Itsinda / Admin';
+        const memberPhoto = isMember ? currentUserData.photo : null;
         
         const date = new Date().toISOString().split('T')[0];
-        const finalDescription = description || `${member.name} - ${method}`;
+        const finalDescription = description || `${memberName} - ${method}`;
         
         const txRef = await addDoc(collection(db, 'transactions'), {
             type: 'income',
             amount: amount,
             category: type,
             description: finalDescription,
-            memberId: member.id,
-            memberName: member.name,
-            memberPhoto: member.photo || null,
+            memberId: memberId,
+            memberName: memberName,
+            memberPhoto: memberPhoto,
             paymentMethod: method,
             date: date,
             status: 'pending',
@@ -10989,9 +10993,9 @@ async function saveMemberPayment(type, amount, method, description) {
         await addDoc(collection(db, 'financeNotifications'), {
             type: 'payment_request',
             transactionId: txRef.id,
-            memberId: member.id,
-            memberName: member.name,
-            memberPhoto: member.photo || null,
+            memberId: memberId,
+            memberName: memberName,
+            memberPhoto: memberPhoto,
             amount: amount,
             category: type,
             method: method,
@@ -11012,6 +11016,7 @@ async function saveMemberPayment(type, amount, method, description) {
         if (typeof loadTransactions === 'function') await loadTransactions();
         if (typeof renderMyDashboard === 'function') renderMyDashboard();
         if (typeof renderMyFinance === 'function') renderMyFinance();
+        if (typeof renderDashboard === 'function') renderDashboard();
         
     } catch (error) {
         showToast('❌ ' + error.message, 'error');
@@ -11917,20 +11922,18 @@ window.updateDeleteReqBadge = async function() {
         return;
     }
     
-    // 🔥 IYO HITAMO MTN - BANZA WEREKANE AMABUTO YA MTN
+    // Reba niba ari MTN
     if (method === 'MoMo') {
         const mtnContainer = document.getElementById('mtnActionButtons');
         const payBtn = document.getElementById('memberPayBtn');
         
-        if (mtnContainer) mtnContainer.style.display = 'flex'; // Erekana button ya MTN
+        if (mtnContainer) mtnContainer.style.display = 'flex';
         
         if (payBtn) {
             payBtn.innerHTML = '<i class="fas fa-check-circle"></i> Nishyuye - Ohereza kwa Comptable';
-            
-            // HANO NI HO HARI IMPINDURA: Twongeyeho "window." mbere ya confirmMtnPayment
+            // Hano turahamagara confirmMtnPayment, ariko tuzayihindura gato
             payBtn.setAttribute('onclick', `window.confirmMtnPayment(${amount}, '${type}', '${description.replace(/'/g, "\\'")}')`);
-            
-            payBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)'; // Hindura ibara
+            payBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
         }
         
         showToast('📱 Kanda "Fungura MTN" hejuru, wishyure, hanyuma ukande "Nishyuye"', 'info');
