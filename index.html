@@ -10657,15 +10657,27 @@ window.addEventListener('appinstalled', () => {
         // ============================================
         // MEMBER PAYMENT SYSTEM
         // ============================================
-       window.openPaymentModal = function() {
+      window.openPaymentModal = function() {
     document.getElementById('memberPayType').value = 'contribution';
     document.getElementById('memberPayAmount').value = '';
     document.getElementById('memberPayMethod').value = 'MoMo';
     document.getElementById('memberPayDescription').value = '';
     
-    // 🔥 Hisha cyangwa werekane MTN payment section
+    // 🔥 Siba tracking ya kera
+    try { localStorage.removeItem('hcfc_mtn_dial_clicked'); } catch(e) {}
+    
+    // Hisha MTN section
     const mtnSection = document.getElementById('mtnPaymentSection');
     if (mtnSection) mtnSection.style.display = 'none';
+    
+    // Subiza button ya mbere
+    const payBtn = document.getElementById('memberPayBtn');
+    if (payBtn) {
+        payBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Ohereza kwa Comptable';
+        payBtn.setAttribute('onclick', 'submitMemberPayment()');
+        payBtn.style.background = '';
+        payBtn.style.boxShadow = '';
+    }
     
     document.getElementById('memberPaymentModal').classList.add('active');
 };
@@ -10690,7 +10702,6 @@ window.addEventListener('appinstalled', () => {
     await saveMemberPayment(type, amount, method, description);
 };
 
-// 🔥 IYI NI FUNCTION NSHYA - YEREKANA MTN PAYMENT SECTION
 window.showMtnPaymentSection = function(amount, type, description) {
     const mtnSection = document.getElementById('mtnPaymentSection');
     const mtnAmountDisplay = document.getElementById('mtnAmountDisplay');
@@ -10702,30 +10713,65 @@ window.showMtnPaymentSection = function(amount, type, description) {
         mtnAmountDisplay.textContent = formatMoney(amount);
     }
     
-    // Erekana code ya MTN
+    // 🔥 Erekana code ya MTN + BUTTON IKOMEYE YO GUFUNGURA APP
     if (mtnCodeDisplay) {
         mtnCodeDisplay.innerHTML = `
             <div style="background: linear-gradient(135deg, #FFCC00, #FFD700); 
-                        padding: 20px; border-radius: 16px; text-align: center; 
-                        box-shadow: 0 8px 25px rgba(255, 204, 0, 0.4);">
-                <div style="font-size: 12px; color: #333; font-weight: 700; margin-bottom: 8px;">
+                        padding: 24px 20px; border-radius: 16px; text-align: center; 
+                        box-shadow: 0 8px 25px rgba(255, 204, 0, 0.5); margin-bottom: 16px;">
+                <div style="font-size: 12px; color: #333; font-weight: 700; margin-bottom: 10px;">
                     📱 MTN MOBILE MONEY
                 </div>
-                <div style="font-size: 24px; font-weight: 900; color: #000; 
-                            letter-spacing: 1px; font-family: monospace;">
+                <div style="font-size: 28px; font-weight: 900; color: #000; 
+                            letter-spacing: 1px; font-family: monospace; margin-bottom: 16px;">
                     *182*8*1*29327#
                 </div>
-                <div style="font-size: 11px; color: #333; margin-top: 8px;">
-                    Kanda iyi code kuri telefone yawe
+                
+                <!-- 🔥 BUTTON IKOMEYE YO GUFUNGURA TELEFONE -->
+                <a href="tel:*182*8*1*29327%23" 
+                   onclick="trackMtnDialClick()"
+                   style="display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+                          width: 100%; padding: 16px 24px; 
+                          background: linear-gradient(135deg, #10b981, #059669);
+                          color: white; text-decoration: none; 
+                          border-radius: 12px; font-size: 16px; font-weight: 800;
+                          box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
+                          transition: all 0.3s; border: none; cursor: pointer;
+                          margin-bottom: 12px;"
+                   onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 30px rgba(16,185,129,0.7)';"
+                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 25px rgba(16,185,129,0.5)';">
+                    <i class="fas fa-phone-volume" style="font-size: 20px;"></i>
+                    <span>Fungura MTN Ukande</span>
+                </a>
+                
+                <div style="font-size: 11px; color: #333; margin-top: 8px; font-weight: 600;">
+                    👆 Kanda iyi button — telefone yawe izafunguka neza
                 </div>
+            </div>
+            
+            <!-- Ubutumwa bwo kwibutsa -->
+            <div style="background: rgba(56, 189, 248, 0.1); 
+                        border-left: 4px solid #38bdf8; 
+                        padding: 12px 16px; border-radius: 8px; 
+                        font-size: 13px; color: var(--text); 
+                        line-height: 1.6;">
+                <strong>📋 Intambwe:</strong>
+                <ol style="margin: 8px 0 0 20px; padding: 0;">
+                    <li>Kanda button ya <strong>"Fungura MTN"</strong> hejuru</li>
+                    <li>Telefone yawe izafunguka kuri MTN</li>
+                    <li>Kurikiza amabwiriza ya MTN kugeza kwishyuye</li>
+                    <li>Garuka hano — kanda <strong>"Nishyuye"</strong> hepfo</li>
+                </ol>
             </div>
         `;
     }
     
-    // Hisha button ya mbere, werekane "Nishyuye" button
+    // 🔥 HINDURA BUTTON: "Nishyuye - Ohereza kwa Comptable"
     if (payBtn) {
-        payBtn.innerHTML = '<i class="fas fa-check"></i> Nishyuye - Ohereza kwa Comptable';
+        payBtn.innerHTML = '<i class="fas fa-check-circle"></i> Nishyuye - Ohereza kwa Comptable';
         payBtn.setAttribute('onclick', `confirmMtnPayment(${amount}, '${type}', '${description.replace(/'/g, "\\'")}')`);
+        payBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+        payBtn.style.boxShadow = '0 8px 25px rgba(16, 185, 129, 0.5)';
     }
     
     // Erekana section
@@ -10735,8 +10781,42 @@ window.showMtnPaymentSection = function(amount, type, description) {
     if (mtnSection) mtnSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
 };
 
-// 🔥 IYI NI FUNCTION NSHYA - YEMEZA KO YISHYURIYE
+// 🔥 FUNCTION NSHYA: Kwandika ko umukoresha yakanze button ya MTN
+window.trackMtnDialClick = function() {
+    // Bika mu localStorage ko yanze gukanda
+    try {
+        localStorage.setItem('hcfc_mtn_dial_clicked', Date.now().toString());
+    } catch(e) {}
+    
+    showToast('📱 Fungura MTN kuri telefone yawe...', 'info');
+};
 window.confirmMtnPayment = async function(amount, type, description) {
+    // 🔥 Reba niba yanze gukanda button ya MTN mbere
+    let dialClicked = false;
+    try {
+        const dialTime = localStorage.getItem('hcfc_mtn_dial_clicked');
+        if (dialTime) {
+            const timeDiff = Date.now() - parseInt(dialTime);
+            // Niba yanze gukanda muri minota 5 ishize
+            if (timeDiff < 5 * 60 * 1000) {
+                dialClicked = true;
+            }
+        }
+    } catch(e) {}
+    
+    // Niba ataranze gukanda, mubaze niba yishyuye
+    if (!dialClicked) {
+        const confirmed = confirm(
+            "⚠️ Ntabwo wakanze button ya 'Fungura MTN'.\n\n" +
+            "Urabyemeza ko WISHYURIYE kuri MTN?\n\n" +
+            "Kanda OK niba wishyuye, cyangwa Cancel niba utarishyura."
+        );
+        if (!confirmed) {
+            showToast('ℹ️ Banza ukande "Fungura MTN" hanyuma wishyure', 'warning');
+            return;
+        }
+    }
+    
     const btn = document.getElementById('memberPayBtn');
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Turohereza...';
@@ -10746,6 +10826,8 @@ window.confirmMtnPayment = async function(amount, type, description) {
         const member = members.find(m => m.id === memberId);
         if (!member) {
             showToast('Ntabwo wabonetse muri sisitemu', 'error');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check-circle"></i> Nishyuye - Ohereza kwa Comptable';
             return;
         }
         
@@ -10799,20 +10881,21 @@ window.confirmMtnPayment = async function(amount, type, description) {
         showToast('✅ Ubwishyu bwoherejwe kwa Comptable!', 'success');
         showToast('⏳ Bitegereje kwemezwa - Comptable azabona ubutumwa', 'info');
         
-        // 5. Funga modal
+        // 5. Siba tracking ya dial
+        try { localStorage.removeItem('hcfc_mtn_dial_clicked'); } catch(e) {}
+        
+        // 6. Funga modal
         closeModal('memberPaymentModal');
         
-        // 6. Refresh
+        // 7. Refresh
         if (typeof loadTransactions === 'function') await loadTransactions();
         if (typeof renderMyDashboard === 'function') renderMyDashboard();
         if (typeof renderMyFinance === 'function') renderMyFinance();
         
     } catch (error) {
         showToast('❌ ' + error.message, 'error');
-    } finally {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Ohereza kwa Comptable';
-        btn.setAttribute('onclick', 'submitMemberPayment()');
+        btn.innerHTML = '<i class="fas fa-check-circle"></i> Nishyuye - Ohereza kwa Comptable';
     }
 };
 
