@@ -9838,31 +9838,49 @@ function startAutoDeleteInterval() {
         // ============================================
         // CONTRIBUTIONS
         // ============================================
-        window.openAddContributionModal = function() {
-            document.getElementById('contribTitle').value = '';
-            document.getElementById('contribAmountPerMember').value = '';
-            document.getElementById('contribDeadline').value = '';
-            document.getElementById('contribDescription').value = '';
-            selectedContribMembers = [];
-            
-            const listEl = document.getElementById('contribMembersList');
-            const activeMembers = members.filter(m => m.status === 'active' || !m.status);
-            
-            if (activeMembers.length === 0) {
-                listEl.innerHTML = '<p style="color:var(--text-secondary);font-size:13px;">Nta baririmbyi babonetse.</p>';
-            } else {
-                listEl.innerHTML = activeMembers.map(m => `
-                    <label class="contribution-modal-member">
-                        <input type="checkbox" value="${m.id}" class="contrib-member-cb" onchange="updateContribMemberCount()">
-                        <span style="font-weight:600;font-size:13.5px;">${m.name}</span>
-                        <span style="font-size:11px;color:var(--text-secondary);margin-left:auto;">${m.memberId || ''}</span>
-                    </label>
-                `).join('');
-            }
-            
-            document.getElementById('addContributionModal').classList.add('active');
-        };
+       window.openAddContributionModal = function() {
+    // ============================================
+    // 1. REBA UBWENEGANZIRA (FIX)
+    // ============================================
+    // Kuri Super Admin, permissions ntabwo zikenewe. Yemera byose.
+    if (currentUserData?.role === 'super_admin') {
+        // Komeza (bypass)
+    } else {
+        // Kubandi (Admin, Comptable), reba niba bafite uburenganzira bwa finance
+        const perms = currentUserData?.permissions || {};
+        if (perms.viewFinance === false) {
+            showToast('❌ Nta burenganzira ufite bwo gukora Contribution', 'error');
+            return; // Hagarika niba nta burenganzira
+        }
+    }
 
+    // ============================================
+    // 2. GUFUNGURA MODAL (CODE YASANZWE)
+    // ============================================
+    document.getElementById('contribTitle').value = '';
+    document.getElementById('contribAmountPerMember').value = '';
+    document.getElementById('contribDeadline').value = '';
+    document.getElementById('contribDescription').value = '';
+    selectedContribMembers = [];
+    
+    const listEl = document.getElementById('contribMembersList');
+    const activeMembers = members.filter(m => m.status === 'active' || !m.status);
+    
+    if (activeMembers.length === 0) {
+        listEl.innerHTML = '<p style="color:var(--text-secondary);font-size:13px;">Nta baririmbyi babonetse.</p>';
+    } else {
+        listEl.innerHTML = activeMembers.map(m => `
+            <label class="contribution-modal-member">
+                <input type="checkbox" value="${m.id}" class="contrib-member-cb" onchange="updateContribMemberCount()">
+                <span style="font-weight:600;font-size:13.5px;">${m.name}</span>
+                <span style="font-size:11px;color:var(--text-secondary);margin-left:auto;">${m.memberId || ''}</span>
+            </label>
+        `).join('');
+    }
+    
+    // Hano ni ho modal ifunguka
+    document.getElementById('addContributionModal').classList.add('active');
+};
         window.selectAllContribMembers = function(checked) {
             document.querySelectorAll('.contrib-member-cb').forEach(cb => cb.checked = checked);
             updateContribMemberCount();
