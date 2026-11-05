@@ -6191,7 +6191,7 @@ enterApp();
                     }
                 } catch(e) {}
             }, 2000);
-        }*/ else if (Notification.permission === 'granted') {
+        } else if (Notification.permission === 'granted') {
             setTimeout(async () => {
                 if (typeof window.registerFCMToken === 'function') {
                     await window.registerFCMToken();
@@ -6205,7 +6205,7 @@ enterApp();
     } catch(e) {
         console.error('❌ FCM setup error:', e);
     }
-    
+    */
     // ============================================
     // 8. SET DATE
     // ============================================
