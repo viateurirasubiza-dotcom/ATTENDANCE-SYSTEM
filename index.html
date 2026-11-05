@@ -5290,10 +5290,12 @@ const auth = getAuth(firebaseApp);
 
 let messaging = null;
 try {
+ /*
     if ('serviceWorker' in navigator && 'Notification' in window) {
         messaging = getMessaging(firebaseApp);
         console.log('✅ Firebase Messaging initialized');
     }
+    */
 } catch(e) {
     console.warn('⚠️ Messaging ntabwo ishyigikiwe:', e.message);
 }
@@ -6176,7 +6178,8 @@ enterApp();
     // ============================================
     // 7. FCM NOTIFICATIONS
     // ============================================
-    try {
+    /*try {
+     
         if ('Notification' in window && Notification.permission === 'default') {
             setTimeout(async () => {
                 try {
@@ -6187,7 +6190,7 @@ enterApp();
                         }
                     }
                 } catch(e) {}
-            }, 2000);
+            }, 2000);*/
         } else if (Notification.permission === 'granted') {
             setTimeout(async () => {
                 if (typeof window.registerFCMToken === 'function') {
