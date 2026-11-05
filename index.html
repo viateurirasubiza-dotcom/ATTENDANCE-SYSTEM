@@ -5085,6 +5085,56 @@ body {
                 </button>
             </div>
         </div>
+       <!-- ===== ADD CONTRIBUTION MODAL ===== -->
+    <div class="modal-overlay" id="addContributionModal">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-hand-holding-usd"></i> Kora Contribution Nshya</h3>
+                <button class="close-btn" onclick="closeModal('addContributionModal')"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div class="form-group">
+                <label>Izina rya Contribution <span>*</span></label>
+                <input type="text" class="form-control" id="contribTitle" placeholder="Urugero: Contrib ya Mutarama 2026">
+            </div>
+            
+            <div class="form-group">
+                <label>Amafaranga kuri buri muntu (RWF) <span>*</span></label>
+                <input type="number" class="form-control" id="contribAmountPerMember" placeholder="Urugero: 5000" min="0">
+            </div>
+            
+            <div class="form-group">
+                <label>Itariki yo kurangiza <span>*</span></label>
+                <input type="date" class="form-control" id="contribDeadline">
+            </div>
+            
+            <div class="form-group">
+                <label>Ibisobanuro (optional)</label>
+                <textarea class="form-control" id="contribDescription" rows="2" placeholder="Icyo contrib iyi izakoreshwa..." style="resize:vertical;font-family:inherit;"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Hitamo Abaririmbyi <span>*</span></label>
+                <div style="margin-bottom: 8px; display: flex; gap: 8px;">
+                    <button type="button" class="btn btn-outline btn-sm" onclick="selectAllContribMembers(true)">
+                        <i class="fas fa-check-double"></i> Hitamo Bose
+                    </button>
+                    <button type="button" class="btn btn-outline btn-sm" onclick="selectAllContribMembers(false)">
+                        <i class="fas fa-times"></i> Kuraho Bose
+                    </button>
+                </div>
+                <div id="contribMembersList" style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border); border-radius: 12px; padding: 10px;"></div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeModal('addContributionModal')">Hagarika</button>
+                <button class="btn btn-primary" id="saveContribBtn" onclick="saveContribution()">
+                    <i class="fas fa-save"></i> Bika
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- ===== ADD TRANSACTION MODAL ===== -->
     <div class="modal-overlay" id="addTransactionModal">
         <div class="modal">
@@ -5194,56 +5244,7 @@ body {
         </div>
     </div>
 </div>
-    <!-- ===== ADD CONTRIBUTION MODAL ===== -->
-    <div class="modal-overlay" id="addContributionModal">
-        <div class="modal" style="max-width: 600px;">
-            <div class="modal-header">
-                <h3><i class="fas fa-hand-holding-usd"></i> Kora Contribution Nshya</h3>
-                <button class="close-btn" onclick="closeModal('addContributionModal')"><i class="fas fa-times"></i></button>
-            </div>
-            
-            <div class="form-group">
-                <label>Izina rya Contribution <span>*</span></label>
-                <input type="text" class="form-control" id="contribTitle" placeholder="Urugero: Contrib ya Mutarama 2026">
-            </div>
-            
-            <div class="form-group">
-                <label>Amafaranga kuri buri muntu (RWF) <span>*</span></label>
-                <input type="number" class="form-control" id="contribAmountPerMember" placeholder="Urugero: 5000" min="0">
-            </div>
-            
-            <div class="form-group">
-                <label>Itariki yo kurangiza <span>*</span></label>
-                <input type="date" class="form-control" id="contribDeadline">
-            </div>
-            
-            <div class="form-group">
-                <label>Ibisobanuro (optional)</label>
-                <textarea class="form-control" id="contribDescription" rows="2" placeholder="Icyo contrib iyi izakoreshwa..." style="resize:vertical;font-family:inherit;"></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label>Hitamo Abaririmbyi <span>*</span></label>
-                <div style="margin-bottom: 8px; display: flex; gap: 8px;">
-                    <button type="button" class="btn btn-outline btn-sm" onclick="selectAllContribMembers(true)">
-                        <i class="fas fa-check-double"></i> Hitamo Bose
-                    </button>
-                    <button type="button" class="btn btn-outline btn-sm" onclick="selectAllContribMembers(false)">
-                        <i class="fas fa-times"></i> Kuraho Bose
-                    </button>
-                </div>
-                <div id="contribMembersList" style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border); border-radius: 12px; padding: 10px;"></div>
-            </div>
-            
-            <div class="modal-actions">
-                <button class="btn btn-outline" onclick="closeModal('addContributionModal')">Hagarika</button>
-                <button class="btn btn-primary" id="saveContribBtn" onclick="saveContribution()">
-                    <i class="fas fa-save"></i> Bika
-                </button>
-            </div>
-        </div>
-    </div>
-
+  
     <script type="module">
         // ============================================
         // FIREBASE IMPORTS
