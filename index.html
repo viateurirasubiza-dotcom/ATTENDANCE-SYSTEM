@@ -6190,8 +6190,8 @@ enterApp();
                         }
                     }
                 } catch(e) {}
-            }, 2000);*/
-        } else if (Notification.permission === 'granted') {
+            }, 2000);
+        }*/ else if (Notification.permission === 'granted') {
             setTimeout(async () => {
                 if (typeof window.registerFCMToken === 'function') {
                     await window.registerFCMToken();
