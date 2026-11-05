@@ -12002,6 +12002,20 @@ window.permanentDeleteTransaction = async function(id) {
         showToast('❌ ' + error.message, 'error');
     }
 };
+     document.addEventListener('DOMContentLoaded', function() {
+    const btn = document.getElementById('btnAddContribution');
+    if (btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (typeof window.openAddContributionModal === 'function') {
+                window.openAddContributionModal();
+            } else {
+                console.error('Function openAddContributionModal ntibonetse!');
+                alert('Ikibazo: Function ntibonetse. Reba Console.');
+            }
+        });
+    }
+});
 </script>
 </body>
 </html>
