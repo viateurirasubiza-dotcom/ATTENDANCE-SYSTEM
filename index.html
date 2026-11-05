@@ -9841,24 +9841,20 @@ function startAutoDeleteInterval() {
         // ============================================
         // CONTRIBUTIONS
         // ============================================
-       window.openAddContributionModal = function() {
+    window.openAddContributionModal = function() {
     // ============================================
     // 1. REBA UBWENEGANZIRA (FIX)
     // ============================================
-    // Kuri Super Admin, permissions ntabwo zikenewe. Yemera byose.
-    if (currentUserData?.role === 'super_admin') {
-        // Komeza (bypass)
-    } else {
-        // Kubandi (Admin, Comptable), reba niba bafite uburenganzira bwa finance
+    if (currentUserData?.role !== 'super_admin') {
         const perms = currentUserData?.permissions || {};
         if (perms.viewFinance === false) {
             showToast('❌ Nta burenganzira ufite bwo gukora Contribution', 'error');
-            return; // Hagarika niba nta burenganzira
+            return;
         }
     }
 
     // ============================================
-    // 2. GUFUNGURA MODAL (CODE YASANZWE)
+    // 2. GUFUNGURA MODAL
     // ============================================
     document.getElementById('contribTitle').value = '';
     document.getElementById('contribAmountPerMember').value = '';
@@ -9881,7 +9877,6 @@ function startAutoDeleteInterval() {
         `).join('');
     }
     
-    // Hano ni ho modal ifunguka
     document.getElementById('addContributionModal').classList.add('active');
 };
         window.selectAllContribMembers = function(checked) {
