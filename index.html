@@ -5288,17 +5288,25 @@ import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/fireb
         
 const auth = getAuth(firebaseApp);
 
+
 let messaging = null;
+
 try {
- /*
-    if ('serviceWorker' in navigator && 'Notification' in window) {
+    if (
+        'serviceWorker' in navigator &&
+        'Notification' in window
+    ) {
         messaging = getMessaging(firebaseApp);
-        console.log('✅ Firebase Messaging initialized');
+        console.log('✅ HCFC Firebase Messaging initialized');
     }
-    */
-} catch(e) {
-    console.warn('⚠️ Messaging ntabwo ishyigikiwe:', e.message);
+} catch (e) {
+    messaging = null;
+    console.warn(
+        '⚠️ Firebase Messaging ntabwo ishyigikiwe:',
+        e.message
+    );
 }
+
 
         // ============================================
         // GLOBALS
