@@ -4333,7 +4333,7 @@ body {
                     </div>
                     <div class="settings-card">
                         <h3><i class="fas fa-users-cog"></i> Amakuru y'Itsinda</h3>
-                        <div class="form-group"><label>Izina ry'itsinda</label><input type="text" class="form-control" value="Choir Imanzi" id="choirName"></div>
+                        <div class="form-group"><label>Izina ry'itsinda</label><input type="text" class="form-control" value="HCF CHOIR" id="choirName"></div>
                         <button class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save"></i> Bika</button>
                     </div>
                     
@@ -5764,7 +5764,7 @@ window.showCongratulation = function(title, message, type = 'success') {
                     canManageUniform: permissions.manageUniform !== false,
                     canManageLyrics: permissions.manageLyrics !== false,
                     canManageAttendance: permissions.manageAttendance !== false,
-                    choirName: 'Choir Imanzi', 
+                    choirName: 'HCF CHOIR ', 
                     invitedBy: invitation?.invitedBy || null,
                     createdAt: serverTimestamp() 
                 });
@@ -6081,7 +6081,7 @@ window.showCongratulation = function(title, message, type = 'success') {
                                 memberId: memberData.id,
                                 memberNumber: memberData.memberId,
                                 birthday: memberData.birthday,
-                                choirName: 'Choir Imanzi'
+                                choirName: 'HCF CHOIR'
                             };
                         } else {
                             const usersSnap = await getDocs(collection(db, 'users'));
@@ -6098,7 +6098,7 @@ window.showCongratulation = function(title, message, type = 'success') {
                                 canManageUniform: true,
                                 canManageLyrics: true,
                                 canManageAttendance: true,
-                                choirName: 'Choir Imanzi'
+                                choirName: 'HCF CHOIR'
                             };
                             
                             await setDoc(doc(db, 'users', user.uid), {
@@ -6519,9 +6519,9 @@ enterApp();
             }
             
             const choirNameInput = document.getElementById('choirName');
-            if (choirNameInput) choirNameInput.value = currentUserData.choirName || 'Choir Imanzi';
+            if (choirNameInput) choirNameInput.value = currentUserData.choirName || 'HCF CHOIR';
             
-            const choirName = currentUserData.choirName || 'Choir Imanzi';
+            const choirName = currentUserData.choirName || 'HCF CHOIR';
             
             const choirTitleSubtitle = document.getElementById('choirTitleSubtitle');
             if (choirTitleSubtitle) {
@@ -7621,7 +7621,7 @@ window.switchPage = async function(page, element) {
                 uid: m.uid, name: m.name, email: m.email, photo: m.photo,
                 role: 'member', memberId: m.id, memberNumber: m.memberId,
                 birthday: m.birthday || null,
-                choirName: currentUserData.choirName || 'Choir Imanzi',
+                choirName: currentUserData.choirName || 'HCF CHOIR',
                 createdAt: serverTimestamp()
             });
         }
