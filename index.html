@@ -3037,6 +3037,49 @@ body {
                     <i class="fas fa-sign-out-alt"></i><span>Sohoka</span>
                 </div>
             </aside>
+         <!-- Shyiramo uru rupapuro muri Main Content -->
+<div class="page" id="page-request-permission">
+    <div class="page-header">
+        <div>
+            <h1>Saba Permission</h1>
+            <p>Niba utabonetse mu materaniro, saba uruhushya hano.</p>
+        </div>
+    </div>
+
+    <div class="settings-card" style="max-width: 600px; margin: 0 auto;">
+        <h3><i class="fas fa-paper-plane"></i> Form yo Gusaba Uruhushya</h3>
+        
+        <div class="form-group">
+            <label>Itariki ya Service <span>*</span></label>
+            <input type="date" class="form-control" id="permServiceDate">
+        </div>
+
+        <div class="form-group">
+            <label>Impamvu <span>*</span></label>
+            <select class="form-control" id="permReason">
+                <option value="">-- Hitamo impamvu --</option>
+                <option value="indwara">Indwara</option>
+                <option value="akazi">Akazi / Ishuri</option>
+                <option value="urugendo">Urugendo</option>
+                <option value="umuryango">Ibibazo by'umuryango</option>
+                <option value="izindi">Izindi mpamvu</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Ibisobanuro <span>*</span></label>
+            <textarea class="form-control form-textarea" id="permDetails" placeholder="Sobanura neza impamvu utabonetse..." style="min-height: 120px;"></textarea>
+        </div>
+
+        <button class="btn btn-primary" onclick="submitPermissionRequest()" style="width: 100%;">
+            <i class="fas fa-paper-plane"></i> Ohereza Icyifuzo
+        </button>
+    </div>
+
+    <div id="myPermissionStatusArea" style="max-width: 600px; margin: 20px auto 0;">
+        <!-- JavaScript izahira inyandiko hano -->
+    </div>
+</div>
 
             <main class="main">
                 <!-- ============ ADMIN DASHBOARD ============ -->
@@ -12124,8 +12167,8 @@ window.permanentDeleteTransaction = async function(id) {
         });
     }
 });
- // ============================================
-// PERMISSION SYSTEM - FIXED & COMPLETE
+// ============================================
+// PERMISSION SYSTEM & ATTENDANCE STORAGE (FIXED)
 // ============================================
 
 // 1. Guhisha cyangwa Kwerekana Sidebar Menu
@@ -12135,6 +12178,7 @@ function updatePermissionSidebar() {
     
     const user = JSON.parse(localStorage.getItem('hcfc_user') || '{}');
     
+    // Erekana gusa kuri member
     if (user.role === 'member') {
         navItem.style.display = 'flex';
     } else {
@@ -12142,7 +12186,7 @@ function updatePermissionSidebar() {
     }
 }
 
-// 2. Gutunganya urupapuro iyo rufunguwe
+// 2. Gutunganya urupapuro rwa Permission iyo rufunguwe
 function loadPermissionPage() {
     const today = new Date().toISOString().split('T')[0];
     const dateInput = document.getElementById('permServiceDate');
@@ -12195,7 +12239,6 @@ function submitPermissionRequest() {
 
     const requests = JSON.parse(localStorage.getItem('hcfc_permission_requests') || '[]');
     
-    // Reba niba atarasabye kuri iyi tariki
     if (requests.find(r => r.memberId === user.id && r.serviceDate === serviceDate)) {
         return alert("Usanzwe wasabye permission kuri iyi tariki!");
     }
@@ -12214,11 +12257,23 @@ function submitPermissionRequest() {
     localStorage.setItem('hcfc_permission_requests', JSON.stringify(requests));
     alert("Icyifuzo cyawe cyoherejwe neza! Tegereza kwemezwa.");
     
-    loadPermissionPage(); // Hita ugaruka kuri page
+    loadPermissionPage();
 }
 
-// 4. Guhuza na sisitemu yawe (Override showPage)
+// 4. Gufata no Kubika Attendance (Kugira ngo itazimira)
+function saveAttendanceToStorage(attendanceData) {
+    // attendanceData igomba kuba ari array y'abantu n'uko babonetse
+    localStorage.setItem('hcfc_attendance_records', JSON.stringify(attendanceData));
+}
+
+// 5. Gusoma Attendance yabitswe (Kugira ngo igume iyo ugarutse)
+function loadAttendanceFromStorage() {
+    return JSON.parse(localStorage.getItem('hcfc_attendance_records') || '[]');
+}
+
+// 6. Guhuza na Sisitemu (Override showPage)
 document.addEventListener('DOMContentLoaded', () => {
+    // Hita ureba niba sidebar igomba kugaragara
     updatePermissionSidebar();
 
     const originalShowPage = window.showPage;
@@ -12226,16 +12281,13 @@ document.addEventListener('DOMContentLoaded', () => {
         window.showPage = function(pageId) {
             originalShowPage(pageId);
             
-            // Niba ari page yacu, twayifungura
-            if (pageId === 'page-request-permission' || pageId === 'request-permission') {
-                
+            // Iyo winjiye muri permission page
+            if (pageId === 'request-permission') {
                 // Kuraho active kuri page zose
                 document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-                
-                // Kuraho active kuri nav-item zose
                 document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
                 
-                // Erekana page nshya n'ikimenyetso cyayo
+                // Erekana page nshya
                 const reqPage = document.getElementById('page-request-permission');
                 const navItem = document.getElementById('navRequestPermission');
                 
@@ -12243,6 +12295,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 if(navItem) navItem.classList.add('active');
                 
                 loadPermissionPage();
+            }
+            
+            // Iyo winjiye muri attendance page
+            if (pageId === 'attendance') {
+                // Hano uhamagare function yawe ya kera yerekana attendance
+                // Urugero: renderAttendanceTable(); 
+                // Ibi bizatuma attendance iba yabitswe igaragara.
             }
         };
     }
