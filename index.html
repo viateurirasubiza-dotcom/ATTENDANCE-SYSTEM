@@ -3007,6 +3007,10 @@ body {
                     <i class="fas fa-bullhorn"></i><span>Amatangazo</span>
                     <span class="count warning" id="sidebarAnnouncementCount" style="display: none;">0</span>
                 </div>
+             <div class="nav-item" id="navRequestPermission" onclick="showPage('page-request-permission')" data-page="page-request-permission">
+    <i class="fas fa-shield-halved"></i>
+    <span>Saba Permission</span>
+</div>
                 
                 <div class="nav-label super-admin-only" style="display: none;">Super Admin</div>
                 <div class="nav-item super-admin-only" onclick="switchPage('users', this)" style="display: none;">
@@ -3104,6 +3108,51 @@ body {
             <i class="fas fa-hand-holding-usd"></i> Gutanga Umusanzu / Kwishyura
         </button>
     </div>
+                 <!-- ============================================ -->
+<!-- PAGE: GUSABA PERMISSION                      -->
+<!-- ============================================ -->
+<div class="page" id="page-request-permission">
+    <div class="page-header">
+        <div>
+            <h1>Saba Permission</h1>
+            <p>Niba utabonetse mu materaniro, saba uruhushya hano.</p>
+        </div>
+    </div>
+
+    <div class="settings-card" style="max-width: 600px; margin: 0 auto;">
+        <h3><i class="fas fa-paper-plane"></i> Form yo Gusaba Uruhushya</h3>
+        
+        <div class="form-group">
+            <label>Itariki ya Service <span>*</span></label>
+            <input type="date" class="form-control" id="permServiceDate">
+        </div>
+
+        <div class="form-group">
+            <label>Impamvu <span>*</span></label>
+            <select class="form-control" id="permReason">
+                <option value="">-- Hitamo impamvu --</option>
+                <option value="indwara">Indwara</option>
+                <option value="akazi">Akazi / Ishuri</option>
+                <option value="urugendo">Urugendo</option>
+                <option value="umuryango">Ibibazo by'umuryango</option>
+                <option value="izindi">Izindi mpamvu</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Ibisobanuro <span>*</span></label>
+            <textarea class="form-control form-textarea" id="permDetails" placeholder="Sobanura neza impamvu utabonetse..." style="min-height: 120px;"></textarea>
+        </div>
+
+        <button class="btn btn-primary" onclick="submitPermissionRequest()" style="width: 100%;">
+            <i class="fas fa-paper-plane"></i> Ohereza Icyifuzo
+        </button>
+    </div>
+
+    <div id="myPermissionStatusArea" style="max-width: 600px; margin: 20px auto 0;">
+        <!-- JavaScript izahira inyandiko hano -->
+    </div>
+</div>
 
                     <div class="section-title">
                         <i class="fas fa-folder-open"></i>
@@ -12134,6 +12183,125 @@ document.addEventListener('DOMContentLoaded', () => {
         window.showPage = function(pageId) {
             originalShowPage(pageId);
             if (pageId === 'request-permission') {
+                loadPermissionPage();
+            }
+        };
+    }
+});
+     // ============================================
+// PERMISSION SYSTEM - YONGEWEHO
+// ============================================
+
+// 1. Guhisha cyangwa Kwerekana Sidebar Menu
+function updatePermissionSidebar() {
+    const navItem = document.getElementById('navRequestPermission');
+    if(!navItem) return;
+    
+    const user = JSON.parse(localStorage.getItem('hcfc_user') || '{}');
+    
+    if (user.role === 'member') {
+        navItem.style.display = 'flex';
+    } else {
+        navItem.style.display = 'none';
+    }
+}
+
+// 2. Gutunganya urupapuro iyo rufunguwe
+function loadPermissionPage() {
+    const today = new Date().toISOString().split('T')[0];
+    const dateInput = document.getElementById('permServiceDate');
+    if(dateInput) dateInput.value = today;
+
+    const user = JSON.parse(localStorage.getItem('hcfc_user') || '{}');
+    const statusArea = document.getElementById('myPermissionStatusArea');
+    
+    if(!statusArea) return;
+
+    const requests = JSON.parse(localStorage.getItem('hcfc_permission_requests') || '[]');
+    const myReq = requests.find(r => r.memberId === user.id && r.serviceDate === today);
+
+    if (!myReq) {
+        statusArea.innerHTML = '';
+        return;
+    }
+
+    let statusClass = myReq.status === 'approved' ? 'approved' : (myReq.status === 'rejected' ? 'rejected' : 'pending');
+    let statusText = myReq.status === 'approved' ? 'YEMEJWE' : (myReq.status === 'rejected' ? 'YANZWE' : 'ITEGEREJE');
+    let statusColor = myReq.status === 'approved' ? '#10b981' : (myReq.status === 'rejected' ? '#ef4444' : '#f59e0b');
+
+    statusArea.innerHTML = `
+        <div class="settings-card" style="border-left: 5px solid ${statusColor};">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <h4 style="margin:0; font-size:16px;">Icyifuzo cya ${myReq.serviceDate}</h4>
+                    <p style="margin:4px 0 0 0; font-size:13px; color:var(--text-secondary);">${myReq.details}</p>
+                </div>
+                <span class="permission-status-badge ${statusClass}" style="background:${statusColor}22; color:${statusColor}; border:1px solid ${statusColor}44;">
+                    ${statusText}
+                </span>
+            </div>
+        </div>
+    `;
+}
+
+// 3. Gusaba Permission (Submit)
+function submitPermissionRequest() {
+    const user = JSON.parse(localStorage.getItem('hcfc_user') || '{}');
+    if (!user.id) return alert("Ugomba kuba winjiye muri sisitemu!");
+
+    const serviceDate = document.getElementById('permServiceDate').value;
+    const reason = document.getElementById('permReason').value;
+    const details = document.getElementById('permDetails').value.trim();
+
+    if (!serviceDate || !reason || details.length < 5) {
+        return alert("Uzuza neza amakuru yose (Itariki, Impamvu, n'Ibisobanuro).");
+    }
+
+    const requests = JSON.parse(localStorage.getItem('hcfc_permission_requests') || '[]');
+    
+    // Reba niba atarasabye kuri iyi tariki
+    if (requests.find(r => r.memberId === user.id && r.serviceDate === serviceDate)) {
+        return alert("Usanzwe wasabye permission kuri iyi tariki!");
+    }
+
+    requests.push({
+        id: 'perm_' + Date.now(),
+        memberId: user.id,
+        memberName: user.name,
+        serviceDate: serviceDate,
+        reason: reason,
+        details: details,
+        status: 'pending',
+        createdAt: new Date().toISOString()
+    });
+
+    localStorage.setItem('hcfc_permission_requests', JSON.stringify(requests));
+    alert("Icyifuzo cyawe cyoherejwe neza! Tegereza kwemezwa.");
+    
+    loadPermissionPage(); // Hita ugaruka kuri page
+}
+
+// 4. Guhuza na sisitemu yawe (Override showPage)
+document.addEventListener('DOMContentLoaded', () => {
+    updatePermissionSidebar();
+
+    const originalShowPage = window.showPage;
+    if (typeof originalShowPage === 'function') {
+        window.showPage = function(pageId) {
+            originalShowPage(pageId);
+            
+            // Niba ari page yacu, twayifungura
+            if (pageId === 'page-request-permission' || pageId === 'request-permission') {
+                // Harimo gukuraho active kuri page zose
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                
+                // Hisha amakuru yose muri sidebar
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                
+                // Erekana page nshya
+                document.getElementById('page-request-permission').classList.add('active');
+                document.getElementById('navRequestPermission').classList.add('active');
+                
                 loadPermissionPage();
             }
         };
