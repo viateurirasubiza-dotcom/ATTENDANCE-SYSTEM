@@ -12124,73 +12124,8 @@ window.permanentDeleteTransaction = async function(id) {
         });
     }
 });
-     // 1. Guhisha cyangwa Kwerekana Sidebar Menu
-function updatePermissionSidebar() {
-    const navItem = document.getElementById('navRequestPermission');
-    const user = JSON.parse(localStorage.getItem('hcfc_user') || '{}');
-    
-    if (user.role === 'member') {
-        navItem.style.display = 'flex'; // Kwerekana kuri member gusa
-    } else {
-        navItem.style.display = 'none'; // Guhisha kuri Admin na Comptable
-    }
-}
-
-// 2. Gutunganya urupapuro iyo rufunguwe
-function loadPermissionPage() {
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('permServiceDate').value = today;
-
-    const user = JSON.parse(localStorage.getItem('hcfc_user') || '{}');
-    const statusArea = document.getElementById('myPermissionStatusArea');
-    
-    // Reba niba yarabasabye
-    const requests = JSON.parse(localStorage.getItem('hcfc_permission_requests') || '[]');
-    const myReq = requests.find(r => r.memberId === user.id && r.serviceDate === today);
-
-    if (!myReq) {
-        statusArea.innerHTML = '';
-        return;
-    }
-
-    // Hanga card yerekana status
-    let statusClass = myReq.status === 'approved' ? 'approved' : (myReq.status === 'rejected' ? 'rejected' : 'pending');
-    let statusText = myReq.status === 'approved' ? 'YEMEJWE' : (myReq.status === 'rejected' ? 'YANZWE' : 'ITEGEREJE');
-    let statusColor = myReq.status === 'approved' ? '#10b981' : (myReq.status === 'rejected' ? '#ef4444' : '#f59e0b');
-
-    statusArea.innerHTML = `
-        <div class="settings-card" style="border-left: 5px solid ${statusColor};">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                    <h4 style="margin:0; font-size:16px;">Icyifuzo cya ${myReq.serviceDate}</h4>
-                    <p style="margin:4px 0 0 0; font-size:13px; color:var(--text-secondary);">${myReq.details}</p>
-                </div>
-                <span class="permission-status-badge ${statusClass}" style="background:${statusColor}22; color:${statusColor}; border:1px solid ${statusColor}44;">
-                    ${statusText}
-                </span>
-            </div>
-        </div>
-    `;
-}
-
-// 3. Guhuza na sisitemu yawe (Hook into showPage)
-// Shyiramo iyi kode aho usanzwe ufite function ya showPage cyangwa navigation
-document.addEventListener('DOMContentLoaded', () => {
-    updatePermissionSidebar();
-
-    // Niba usanzwe ufite function showPage, tuyikomatanya
-    const originalShowPage = window.showPage;
-    if (typeof originalShowPage === 'function') {
-        window.showPage = function(pageId) {
-            originalShowPage(pageId);
-            if (pageId === 'request-permission') {
-                loadPermissionPage();
-            }
-        };
-    }
-});
-     // ============================================
-// PERMISSION SYSTEM - YONGEWEHO
+ // ============================================
+// PERMISSION SYSTEM - FIXED & COMPLETE
 // ============================================
 
 // 1. Guhisha cyangwa Kwerekana Sidebar Menu
@@ -12293,15 +12228,19 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Niba ari page yacu, twayifungura
             if (pageId === 'page-request-permission' || pageId === 'request-permission') {
-                // Harimo gukuraho active kuri page zose
+                
+                // Kuraho active kuri page zose
                 document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
                 
-                // Hisha amakuru yose muri sidebar
+                // Kuraho active kuri nav-item zose
                 document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
                 
-                // Erekana page nshya
-                document.getElementById('page-request-permission').classList.add('active');
-                document.getElementById('navRequestPermission').classList.add('active');
+                // Erekana page nshya n'ikimenyetso cyayo
+                const reqPage = document.getElementById('page-request-permission');
+                const navItem = document.getElementById('navRequestPermission');
+                
+                if(reqPage) reqPage.classList.add('active');
+                if(navItem) navItem.classList.add('active');
                 
                 loadPermissionPage();
             }
